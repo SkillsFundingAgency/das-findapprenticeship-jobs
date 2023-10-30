@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "FunctionApp1": {
+    "SFA.DAS.FindApprenticeship.Jobs": {
       "commandName": "Project",
       "commandLineArgs": "--port 7205",
       "launchBrowser": false
