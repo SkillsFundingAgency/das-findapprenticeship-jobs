@@ -9,7 +9,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
     public class RecruitIndexerTimerTrigger
     {
         private readonly IRecruitService _recruitService;
-
+        private const int PageNo = 1;
+        private const int PageSize = 500;
         public RecruitIndexerTimerTrigger(IRecruitService recruitService)
         {
             _recruitService = recruitService;   
@@ -20,9 +21,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         {
             log.LogInformation($"Recruit Indexer function executed at: {DateTime.UtcNow}");
 
-            // TODO - get paging params to send to GetLiveVacancies
-
-            var liveVacancies = await _recruitService.GetLiveVacancies(10, 1);
+            var liveVacancies = await _recruitService.GetLiveVacancies(PageNo, PageSize);
 
             // TODO - Create index
         }
