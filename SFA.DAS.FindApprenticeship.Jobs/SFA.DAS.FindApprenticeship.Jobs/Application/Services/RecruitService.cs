@@ -6,9 +6,9 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class RecruitService : IRecruitService
 {
-    private readonly IApiClient _apiClient;
+    private readonly IRecruitApiClient _apiClient;
 
-    public RecruitService(IApiClient apiClient)
+    public RecruitService(IRecruitApiClient apiClient)
     {
         _apiClient = apiClient;
     }
@@ -16,6 +16,6 @@ public class RecruitService : IRecruitService
     public async Task<GetLiveVacanciesApiResponse> GetLiveVacancies(int pageNumber, int pageSize)
     {
         var liveVacancies = await _apiClient.Get<GetLiveVacanciesApiResponse>(new GetLiveVacanciesRequest(pageNumber, pageSize));
-        return liveVacancies;
+        return liveVacancies.Body;
     }
 }

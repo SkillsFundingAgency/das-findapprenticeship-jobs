@@ -13,8 +13,8 @@ public class WhenGettingLiveVacancies
 {
     [Test, MoqAutoData]
     public async Task Then_The_Api_Is_Called_And_Live_Vacancies_Returned(
-        GetLiveVacanciesApiResponse response,
-        [Frozen] Mock<IApiClient> apiClient,
+        ApiResponse<GetLiveVacanciesApiResponse> response,
+        [Frozen] Mock<IRecruitApiClient> apiClient,
         RecruitService service)
     {
         apiClient.Setup(x =>
@@ -24,6 +24,6 @@ public class WhenGettingLiveVacancies
 
         var actual = await service.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>());
 
-        actual.Should().BeEquivalentTo(response);
+        actual.Should().BeEquivalentTo(response.Body);
     }
 }

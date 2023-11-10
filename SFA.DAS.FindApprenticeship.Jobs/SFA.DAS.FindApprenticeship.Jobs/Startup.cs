@@ -3,6 +3,8 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using SFA.DAS.Api.Common.Infrastructure;
+using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.FindApprenticeship.Jobs;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
@@ -46,13 +48,16 @@ public class Startup : FunctionsStartup
 
         _configuration = config.Build();
         builder.Services.AddOptions();
-        builder.Services.Configure<FindApprenticeshipJobsApiConfiguration>(_configuration.GetSection(nameof(FindApprenticeshipJobsApiConfiguration)));
-        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsApiConfiguration>>().Value);
+        builder.Services.Configure<FindApprenticeshipJobsConfiguration>(_configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
+        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
 
         builder.Services.AddSingleton(new FunctionEnvironment(configuration["EnvironmentName"]));
 
         builder.Services.AddTransient<IRecruitService, RecruitService>();
-        builder.Services.AddHttpClient<IApiClient, ApiClient>();
+        builder.Services.AddTransient<IAzureSearchIndexService, AzureSearchIndexService>();
+        builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
+        builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
+        builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>();
 
         builder.Services.BuildServiceProvider();
     }

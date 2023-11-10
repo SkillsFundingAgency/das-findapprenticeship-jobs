@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
@@ -14,86 +15,29 @@ public class GetLiveVacanciesApiResponse
 public class LiveVacancy
 {
     public Guid VacancyId { get; set; }
-    public string? ApplicationInstructions { get; set; }
-    public string? ApplicationMethod { get; set; }
-    public string? ApplicationUrl { get; set; }
-    public DateTime ApprovedDate { get; set; }
-    public DateTime ClosedDate { get; set; }
-    public DateTime ClosingDate { get; set; }
-    public string? ClosureReason { get; set; }
-    public User? CreatedByUser { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public User? DeletedByUser { get; set; }
-    public DateTime DeletedDate { get; set; }
-    public string? Description { get; set; }
-    public DisabilityConfident DisabilityConfident { get; set; }
-    public string? EmployerAccountId { get; set; }
-    public EmployerContact? EmployerContact { get; set; }
-    public string? EmployerDescription { get; set; }
-    public Address? EmployerLocation { get; set; }
-    public string? EmployerName { get; set; }
-    public string? EmployerNameOption { get; set; }
-    public string? EmployerWebsiteUrl { get; set; }
-    public bool IsAnonymous { get; set; }
-    public string? GeoCodeMethod { get; set; }
-    public bool? IsDeleted { get; set; }
-    public User? LastUpdatedByUser { get; set; }
-    public DateTime LastUpdatedDate { get; set; }
-    public string? LegalEntityName { get; set; }
+    public string VacancyTitle { get; set; } = null!;
+    public string ApprenticeshipTitle { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public Address EmployerLocation { get; set; } = null!;
+    public string EmployerName { get; set; } = null!;
+    public long ProviderId { get; set; }
+    public string ProviderName { get; set; } = null!;
     public DateTime LiveDate { get; set; }
-    public int NumberOfPositions { get; set; }
-    public string? OutcomeDescription { get; set; }
-    public string? OwnerType { get; set; }
-    public string? ProgrammeId { get; set; }
-    public string? ProgrammeLevel { get; set; }
-    public string? ProgrammeType { get; set; }
-    public IEnumerable<Qualification>? Qualifications { get; set; }
-    public string? ShortDescription { get; set; }
-    public IEnumerable<string>? Skills { get; set; }
+    public string ProgrammeId { get; set; } = null!;
+    public string ProgrammeType { get; set; } = null!;
     public DateTime StartDate { get; set; }
-    public string? Status { get; set; }
-    public User? SubmittedByUser { get; set; }
-    public DateTime SubmittedDate { get; set; }
-    public string? ThingsToConsider { get; set; }
-    public string? Title { get; set; }
-    public string? TrainingDescription { get; set; }
-    public TrainingProvider? TrainingProvider { get; set; }
-    public long VacancyReference { get; set; }
-    public Wage? Wage { get; set; }
-    public int? EducationLevelNumber { get; set; }
-    public string? AccountPublicHashedId { get; set; }
-    public string? AccountLegalEntityPublicHashedId { get; set; }
+    public DateTime ClosingDate { get; set; }
     public int? RouteId { get; set; }
-    public string? WorkExperience { get; set; }
-    public VacancyType? VacancyType { get; set; }
-    public string? AdditionalQuestion1 { get; set; }
-    public string? AdditionalQuestion2 { get; set; }
-    public string? Id { get; set; }
-    public string? ViewType { get; set; }
-    public DateTime? LastUpdated { get; set; }
-
-}
-
-public class User
-{
-    public string? Email { get; set; }
-    public string? Name { get; set; }
-    public Guid UserId { get; set; }
-}
-
-public class TrainingProvider
-{
-    public string? Name { get; set; }
-    public long Ukprn { get; set; }
+    public Wage Wage { get; set; } = null!;
 }
 
 public class Address
 {
-    public string? AddressLine1 { get; set; }
-    public string? AddressLine2 { get; set; }
-    public string? AddressLine3 { get; set; }
-    public string? AddressLine4 { get; set; }
-    public string? Postcode { get; set; }
+    public string AddressLine1 { get; set; } = null!;
+    public string AddressLine2 { get; set; } = null!;
+    public string AddressLine3 { get; set; } = null!;
+    public string AddressLine4 { get; set; } = null!;
+    public string Postcode { get; set; } = null!;
     public double Latitude { get; set; }
     public double Longitude { get; set; }
 
@@ -102,26 +46,10 @@ public class Address
 public class Wage
 {
     public int Duration { get; set; }
-    public string? DurationUnit { get; set; }
+    public string DurationUnit { get; set; } = null!;
     public decimal? FixedWageYearlyAmount { get; set; }
-    public string? WageAdditionalInformation { get; set; }
-    public string? WageType { get; set; }
+    public string WageAdditionalInformation { get; set; } = null!;
+    public string WageType { get; set; } = null!;
     public decimal WeeklyHours { get; set; }
-    public string? WorkingWeekDescription { get; set; }
+    public string WorkingWeekDescription { get; set; } = null!;
 }
-
-public class Qualification
-{
-    public string? QualificationType { get; set; }
-    public string? Subject { get; set; }
-    public string? Grade { get; set; }
-    public string? Weighting { get; set; }
-}
-
-public class EmployerContact
-{
-    public string? EmployerContactEmail { get; set; }
-    public string? EmployerContactName { get; set; }
-    public string? EmployerContactPhone { get; set; }
-}
-
