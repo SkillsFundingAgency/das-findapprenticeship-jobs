@@ -1,4 +1,5 @@
-﻿using Azure.Search.Documents.Indexes;
+﻿#nullable enable
+using Azure.Search.Documents.Indexes;
 using System;
 using Microsoft.Spatial;
 using Azure.Core.Serialization;
@@ -24,7 +25,9 @@ public class ApprenticeAzureSearchDocument
             Wage = new WageAzureSearchDocument() { WageAdditionalInformation = source.Wage.WageAdditionalInformation, WageAmount = (long)source.Wage.FixedWageYearlyAmount, WageType = source.Wage.WageType, WageUnit = source.Wage.DurationUnit, WorkingWeekDescription = source.Wage.WorkingWeekDescription },
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,
-            Location = GeographyPoint.Create(source.EmployerLocation.Latitude, source.EmployerLocation.Longitude)
+            Location = GeographyPoint.Create(source.EmployerLocation.Latitude, source.EmployerLocation.Longitude),
+            // to test azure search with 'vacancies' index, use below:
+            //NumberOfPositions = 2
         };
     }
 
@@ -68,6 +71,9 @@ public class ApprenticeAzureSearchDocument
     [System.Text.Json.Serialization.JsonConverter(typeof(MicrosoftSpatialGeoJsonConverter))]
     [SimpleField(IsSortable = true, IsFilterable = true)]
     public GeographyPoint Location { get; set; }
+
+    [SimpleField]
+    public long NumberOfPositions { get; set; }
 }
 
 public class CourseAzureSearchDocument
@@ -76,21 +82,23 @@ public class CourseAzureSearchDocument
     {
         return new CourseAzureSearchDocument
         {
-            //Level = source.Level, todo: add in once courses has been added to outer API
+            // to test azure search with 'vacancies' index, use below:
+            //todo: add in once courses has been added to outer API
+            //Level = 4,
             Title = source.ApprenticeshipTitle,
-            LarsCode = source.ProgrammeId
+            LarsCode = (long)Convert.ToDouble(source.ProgrammeId)
         };
     }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string LarsCode { get; set; }
+    public long LarsCode { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string Title { get; set; }
 
-    //[SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)] todo: add in once courses has been added to outer API
+    //todo: add in once courses has been added to outer API
+    //[SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     //public long Level { get; set; }
-
 }
 
 public class AddressAzureSearchDocument
@@ -130,6 +138,7 @@ public class WageAzureSearchDocument
     {
         return new WageAzureSearchDocument
         {
+            // wage amount comes through as a string, can we ensure it is string in index? 
             WageAmount = (long) source.FixedWageYearlyAmount,
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
@@ -138,7 +147,7 @@ public class WageAzureSearchDocument
         };
     }
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string WageAdditionalInformation { get; set; }
+    public string? WageAdditionalInformation { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string WageType { get; set; }

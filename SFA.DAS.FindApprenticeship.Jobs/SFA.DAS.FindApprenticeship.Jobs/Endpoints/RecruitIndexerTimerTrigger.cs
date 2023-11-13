@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -34,6 +35,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                 await _azureSearchIndexService.UploadDocuments(batchDocuments);
 
             }
+
+            // to test azure search with the 'vacancies' index:
+            //var document = liveVacancies.Vacancies.ToList()[0];
+            //log.LogInformation($"Vacancy Id = {document.VacancyId} and VacancyTitle = {document.VacancyTitle}");
+            //var vacanciesbatch = new List<ApprenticeAzureSearchDocument> { (ApprenticeAzureSearchDocument)document};
+            //await _azureSearchIndexService.CreateIndex("vacancies");
+            //await _azureSearchIndexService.UploadDocuments(vacanciesbatch);
         }
     }
 }

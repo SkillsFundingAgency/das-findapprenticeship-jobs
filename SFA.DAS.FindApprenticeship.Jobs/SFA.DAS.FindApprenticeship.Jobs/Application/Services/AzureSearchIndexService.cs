@@ -50,7 +50,7 @@ public class AzureSearchIndexService : IAzureSearchIndexService
 
     public async Task DeleteIndex(string indexName)
     {
-        var indexExists = await _adminIndexClient.GetIndexAsync(indexName);
+        var indexExists = await GetIndex(indexName);
         if (indexExists.Value != null)
         {
             await _adminIndexClient.DeleteIndexAsync(indexName);
@@ -60,5 +60,10 @@ public class AzureSearchIndexService : IAzureSearchIndexService
     public async Task UploadDocuments(IEnumerable<ApprenticeAzureSearchDocument> documents)
     {
         await _searchClient.MergeOrUploadDocumentsAsync(documents);
+    }
+
+    public async Task<Response<SearchIndex>> GetIndex(string indexName)
+    {
+        return await _adminIndexClient.GetIndexAsync(indexName);
     }
 }

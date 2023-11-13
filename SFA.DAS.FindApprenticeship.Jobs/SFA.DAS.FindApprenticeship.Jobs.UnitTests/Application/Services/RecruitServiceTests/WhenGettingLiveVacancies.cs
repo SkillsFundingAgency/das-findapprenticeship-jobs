@@ -8,7 +8,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services;
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.RecruitServiceTests;
 public class WhenGettingLiveVacancies
 {
     [Test, MoqAutoData]
