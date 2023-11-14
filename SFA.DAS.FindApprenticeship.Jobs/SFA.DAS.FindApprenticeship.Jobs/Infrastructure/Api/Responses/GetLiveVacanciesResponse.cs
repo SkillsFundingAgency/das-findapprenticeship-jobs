@@ -27,7 +27,7 @@ public class LiveVacancy
     public string ProgrammeType { get; set; } = null!;
     public DateTime StartDate { get; set; }
     public DateTime ClosingDate { get; set; }
-    public int? RouteId { get; set; }
+    public string Route { get; set; }
     public Wage Wage { get; set; } = null!;
 }
 
