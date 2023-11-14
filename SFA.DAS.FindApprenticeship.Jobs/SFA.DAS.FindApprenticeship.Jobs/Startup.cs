@@ -54,7 +54,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(new FunctionEnvironment(configuration["EnvironmentName"]));
 
         builder.Services.AddTransient<IRecruitService, RecruitService>();
-        builder.Services.AddTransient<IAzureSearchIndexService, AzureSearchIndexService>();
+        builder.Services.AddTransient<IAzureSearchHelper,  AzureSearchHelper>();
         builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
         builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>();

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Azure.Search.Documents.Indexes.Models;
 using Azure;
-using Azure.Search.Documents.Indexes.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-public interface IAzureSearchIndexService
+public interface IAzureSearchHelper
 {
     Task CreateIndex(string indexName);
     Task<Response<SearchIndex>> GetIndex(string indexName);

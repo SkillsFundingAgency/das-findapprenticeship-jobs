@@ -14,7 +14,7 @@ public class ApprenticeAzureSearchDocument
         {
             Description = source.Description,
             EmployerName = source.EmployerName,
-            HoursPerWeek = (long)source.Wage.WeeklyHours,
+            HoursPerWeek = (long)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
             PostedDate = source.LiveDate,
@@ -25,55 +25,58 @@ public class ApprenticeAzureSearchDocument
             Wage = new WageAzureSearchDocument() { WageAdditionalInformation = source.Wage.WageAdditionalInformation, WageAmount = (long)source.Wage.FixedWageYearlyAmount, WageType = source.Wage.WageType, WageUnit = source.Wage.DurationUnit, WorkingWeekDescription = source.Wage.WorkingWeekDescription },
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,
-            Location = GeographyPoint.Create(source.EmployerLocation.Latitude, source.EmployerLocation.Longitude),
+            Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
             // to test azure search with 'vacancies' index, use below:
             //NumberOfPositions = 2
         };
     }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string EmployerName { get; set; }
+    public string? EmployerName { get; set; }
 
     [SimpleField]
     public long HoursPerWeek { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string ProviderName { get; set; }
+    public string? ProviderName { get; set; }
 
     [SimpleField]
     public DateTimeOffset StartDate { get; set; }
+
     [SimpleField]
     public DateTimeOffset PostedDate { get; set; }
+
     [SimpleField]
     public DateTimeOffset ClosingDate { get; set; }
 
+    // needed only for use with 'vacancies' index
+    //[SimpleField]
+    //public long NumberOfPositions { get; set; }
+
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [SimpleField]
-    public long Ukprn { get; set; }
+    public long? Ukprn { get; set; }
 
     [SimpleField(IsKey = true, IsFilterable = true)]
-    public string VacancyReference { get; set; }
+    public string VacancyReference { get; set; } = null!;
 
     [SearchableField]
-    public CourseAzureSearchDocument Course { get; set; }
+    public CourseAzureSearchDocument? Course { get; set; }
 
     [SearchableField]
-    public AddressAzureSearchDocument Address { get; set; }
+    public AddressAzureSearchDocument? Address { get; set; }
 
     [SearchableField]
-    public WageAzureSearchDocument Wage { get; set; }
+    public WageAzureSearchDocument? Wage { get; set; }
 
     [System.Text.Json.Serialization.JsonConverter(typeof(MicrosoftSpatialGeoJsonConverter))]
     [SimpleField(IsSortable = true, IsFilterable = true)]
-    public GeographyPoint Location { get; set; }
-
-    [SimpleField]
-    public long NumberOfPositions { get; set; }
+    public GeographyPoint Location { get; set; } = null!;
 }
 
 public class CourseAzureSearchDocument
@@ -82,9 +85,7 @@ public class CourseAzureSearchDocument
     {
         return new CourseAzureSearchDocument
         {
-            // to test azure search with 'vacancies' index, use below:
-            //todo: add in once courses has been added to outer API
-            //Level = 4,
+            Level = source.Level,
             Title = source.ApprenticeshipTitle,
             LarsCode = (long)Convert.ToDouble(source.ProgrammeId)
         };
@@ -94,16 +95,15 @@ public class CourseAzureSearchDocument
     public long LarsCode { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
-    //todo: add in once courses has been added to outer API
-    //[SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    //public long Level { get; set; }
+    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public long Level { get; set; }
 }
 
 public class AddressAzureSearchDocument
 {
-    public static implicit operator AddressAzureSearchDocument(Address source)
+    public static implicit operator AddressAzureSearchDocument(Address? source)
     {
         return new AddressAzureSearchDocument
         {
@@ -116,19 +116,19 @@ public class AddressAzureSearchDocument
     }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string AddressLine1 { get; set; }
+    public string? AddressLine1 { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string AddressLine2 { get; set; }
+    public string? AddressLine2 { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string AddressLine3 { get; set; }
+    public string? AddressLine3 { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string AddressLine4 { get; set; }
+    public string? AddressLine4 { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string Postcode { get; set; }
+    public string? Postcode { get; set; }
 
 }
 
@@ -138,8 +138,7 @@ public class WageAzureSearchDocument
     {
         return new WageAzureSearchDocument
         {
-            // wage amount comes through as a string, can we ensure it is string in index? 
-            WageAmount = (long) source.FixedWageYearlyAmount,
+            WageAmount = (long?) source.FixedWageYearlyAmount,
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
             WageAdditionalInformation = source.WageAdditionalInformation,
@@ -150,13 +149,13 @@ public class WageAzureSearchDocument
     public string? WageAdditionalInformation { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string WageType { get; set; }
+    public string? WageType { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string WorkingWeekDescription { get; set; }
+    public string? WorkingWeekDescription { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string WageUnit { get; set; }
+    public string? WageUnit { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public long? WageAmount { get; set; }

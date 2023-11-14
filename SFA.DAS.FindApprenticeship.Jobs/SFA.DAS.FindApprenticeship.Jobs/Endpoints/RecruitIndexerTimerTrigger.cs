@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -12,13 +11,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
     public class RecruitIndexerTimerTrigger
     {
         private readonly IRecruitService _recruitService;
-        private readonly IAzureSearchIndexService _azureSearchIndexService;
+        private readonly IAzureSearchHelper _azureSearchHelperService;
         private const int PageNo = 1;
         private const int PageSize = 500;
-        public RecruitIndexerTimerTrigger(IRecruitService recruitService, IAzureSearchIndexService azureSearchIndexService)
+        public RecruitIndexerTimerTrigger(IRecruitService recruitService, IAzureSearchHelper azureSearchHelper)
         {
-            _recruitService = recruitService;   
-            _azureSearchIndexService = azureSearchIndexService;
+            _recruitService = recruitService;
+            _azureSearchHelperService = azureSearchHelper;
         }
 
         [FunctionName("RecruitIndexerTimerTrigger")]
@@ -29,19 +28,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
             var hasData = liveVacancies.Vacancies.Any();
             if (hasData)
             {
-                await _azureSearchIndexService.DeleteIndex("Apprenticeships");
-                await _azureSearchIndexService.CreateIndex("Apprenticeships");
+                await _azureSearchHelperService.DeleteIndex("apprenticeships");
+                await _azureSearchHelperService.CreateIndex("apprenticeships");
                 var batchDocuments = liveVacancies.Vacancies.ToList().Select(a => (ApprenticeAzureSearchDocument)a).ToList();
-                await _azureSearchIndexService.UploadDocuments(batchDocuments);
+                await _azureSearchHelperService.UploadDocuments(batchDocuments);
 
             }
 
             // to test azure search with the 'vacancies' index:
-            //var document = liveVacancies.Vacancies.ToList()[0];
-            //log.LogInformation($"Vacancy Id = {document.VacancyId} and VacancyTitle = {document.VacancyTitle}");
-            //var vacanciesbatch = new List<ApprenticeAzureSearchDocument> { (ApprenticeAzureSearchDocument)document};
-            //await _azureSearchIndexService.CreateIndex("vacancies");
-            //await _azureSearchIndexService.UploadDocuments(vacanciesbatch);
+            //    var document = liveVacancies.Vacancies.ToList()[0];
+            //    log.LogInformation($"Vacancy Id = {document.VacancyId} and VacancyTitle = {document.VacancyTitle}");
+            //    var vacanciesbatch = new List<ApprenticeAzureSearchDocument> { (ApprenticeAzureSearchDocument)document };
+            //    await _azureSearchHelperService.CreateIndex("vacancies");
+            //    await _azureSearchHelperService.UploadDocuments(vacanciesbatch);
         }
     }
 }
