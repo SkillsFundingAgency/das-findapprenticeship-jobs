@@ -33,12 +33,25 @@ public class WhenGettingIndex
         };
         azureSearchHelper.Setup(x => x.GetIndex(indexName)).ReturnsAsync(Response.FromValue(response, null!));
 
-        var result = await service.GetIndex(indexName);
+        var actual = await service.GetIndex(indexName);
 
         using (new AssertionScope())
         {
             azureSearchHelper.Verify(x => x.GetIndex(indexName), Times.Once);
-            result.Value.GetType().Should().Be(typeof(SearchIndex));
+            actual.Value.GetType().Should().Be(typeof(SearchIndex));
         }
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Api_Returns_An_Error(
+        string indexName,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        AzureSearchIndexService service)
+    {
+        azureSearchHelper.Setup(x => x.GetIndex(indexName)).ThrowsAsync(new RequestFailedException("test exception"));
+
+        Func<Task> actual = () => service.GetIndex(indexName);
+
+        await actual.Should().ThrowAsync<RequestFailedException>();
     }
 }

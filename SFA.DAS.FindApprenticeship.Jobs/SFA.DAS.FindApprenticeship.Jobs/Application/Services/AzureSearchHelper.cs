@@ -36,33 +36,62 @@ public class AzureSearchHelper : IAzureSearchHelper
 
     public async Task CreateIndex(string indexName)
     {
-        var fieldBuilder = new FieldBuilder();
-        var searchFields = fieldBuilder.Build(typeof(ApprenticeAzureSearchDocument));
+        try
+        {
+            var fieldBuilder = new FieldBuilder();
+            var searchFields = fieldBuilder.Build(typeof(ApprenticeAzureSearchDocument));
 
-        var definition = new SearchIndex(indexName, searchFields);
+            var definition = new SearchIndex(indexName, searchFields);
 
-        var suggester = new SearchSuggester("sg", new[] { "Title", "Course/Title", "Description" });
-        definition.Suggesters.Add(suggester);
+            var suggester = new SearchSuggester("sg", new[] { "Title", "Course/Title", "Description" });
+            definition.Suggesters.Add(suggester);
 
-        await _adminIndexClient.CreateOrUpdateIndexAsync(definition);
+            await _adminIndexClient.CreateOrUpdateIndexAsync(definition);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when creating index with name {indexName}", ex);
+        }
     }
 
     public async Task DeleteIndex(string indexName)
     {
-        var indexExists = await GetIndex(indexName);
-        if (indexExists.Value != null)
+        var index = await GetIndex(indexName);
+        
+        try
         {
-            await _adminIndexClient.DeleteIndexAsync(indexName);
+            if (index.Value != null)
+            {
+                await _adminIndexClient.DeleteIndexAsync(indexName);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when deleting index with name {indexName}", ex);
         }
     }
 
     public async Task UploadDocuments(IEnumerable<ApprenticeAzureSearchDocument> documents)
     {
-        await _searchClient.MergeOrUploadDocumentsAsync(documents);
+        try
+        {
+            await _searchClient.MergeOrUploadDocumentsAsync(documents);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when uploading documents to index", ex);
+        }
     }
 
     public async Task<Response<SearchIndex>> GetIndex(string indexName)
     {
-        return await _adminIndexClient.GetIndexAsync(indexName);
+        try
+        {
+            return await _adminIndexClient.GetIndexAsync(indexName);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when requesting index with name {indexName}", ex);
+        }
     }
 }
