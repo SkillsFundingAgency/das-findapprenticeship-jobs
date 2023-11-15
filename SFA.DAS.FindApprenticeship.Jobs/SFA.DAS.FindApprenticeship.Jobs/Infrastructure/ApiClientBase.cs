@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 public abstract class ApiClientBase
@@ -38,7 +38,8 @@ public abstract class ApiClientBase
         }
         else
         {
-            responseBody = JsonConvert.DeserializeObject<TResponse>(json);
+            responseBody = JsonSerializer.Deserialize<TResponse>
+                (json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
         var apiResponse = new ApiResponse<TResponse>(responseBody, response.StatusCode, errorContent);

@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Extensions.Http;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -54,11 +58,24 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(new FunctionEnvironment(configuration["EnvironmentName"]));
 
         builder.Services.AddTransient<IRecruitService, RecruitService>();
-        builder.Services.AddTransient<IAzureSearchHelper,  AzureSearchHelper>();
+        builder.Services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
-        builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>();
+        builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
+        (
+            options => options.Timeout = TimeSpan.FromMinutes(30)
+        )
+        .SetHandlerLifetime(TimeSpan.FromMinutes(10))
+        .AddPolicyHandler(HttpClientRetryPolicy());
 
         builder.Services.BuildServiceProvider();
+    }
+
+    private static IAsyncPolicy<HttpResponseMessage> HttpClientRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                retryAttempt)));
     }
 }
