@@ -13,6 +13,7 @@ public class ApprenticeAzureSearchDocument
         return new ApprenticeAzureSearchDocument
         {
             Description = source.Description,
+            Route = source.Route,
             EmployerName = source.EmployerName,
             HoursPerWeek = (long)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
@@ -33,6 +34,9 @@ public class ApprenticeAzureSearchDocument
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Description { get; set; }
+
+    [SearchableField(IsFilterable = true, IsSortable = false, IsFacetable = true)]
+    public string Route { get; set; } = null!;
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? EmployerName { get; set; }
