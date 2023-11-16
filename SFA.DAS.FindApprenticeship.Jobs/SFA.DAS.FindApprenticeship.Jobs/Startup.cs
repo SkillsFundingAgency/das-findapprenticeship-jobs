@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
@@ -15,60 +17,77 @@ using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.DependencyInjection;
 
-[assembly: FunctionsStartup(typeof(Startup))]
+[assembly: WebJobsStartup(typeof(Startup))]
+
 namespace SFA.DAS.FindApprenticeship.Jobs;
-public class Startup : FunctionsStartup
+public class Startup : IWebJobsStartup
 {
-    private IConfiguration _configuration;
-
-    public override void Configure(IFunctionsHostBuilder builder)
+    public void Configure(IWebJobsBuilder builder)
     {
-        builder.Services.AddHttpClient();
+        builder.AddExecutionContextBinding();
+        builder.AddDependencyInjection<ServiceProviderBuilder>();
+    }
+}
 
-        var serviceProvider = builder.Services.BuildServiceProvider();
-        var configuration = serviceProvider.GetService<IConfiguration>();
+public class ServiceProviderBuilder : IServiceProviderBuilder
+{
+    public ServiceCollection ServiceCollection { get; set; }
+
+    private readonly ILoggerFactory _loggerFactory;
+    public IConfiguration Configuration { get; }
+
+    public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
+    {
+        _loggerFactory = loggerFactory;
 
         var config = new ConfigurationBuilder()
             .AddConfiguration(configuration)
             .SetBasePath(Directory.GetCurrentDirectory())
-#if DEBUG 
+#if DEBUG
             .AddJsonFile("local.settings.json", true)
             .AddJsonFile("local.settings.Development.json", true)
 #endif
             .AddEnvironmentVariables();
 
-        if (!configuration["EnvironmentName"].Equals("DEV", System.StringComparison.CurrentCultureIgnoreCase))
+        if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             config.AddAzureTableStorage(options =>
-            {
-                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = configuration["EnvironmentName"];
-                options.PreFixConfigurationKeys = false;
-            }
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
             );
         }
 
-        _configuration = config.Build();
-        builder.Services.AddOptions();
-        builder.Services.Configure<FindApprenticeshipJobsConfiguration>(_configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
-        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
+        Configuration = config.Build();
+    }
 
-        builder.Services.AddSingleton(new FunctionEnvironment(configuration["EnvironmentName"]));
+    public IServiceProvider Build()
+    {
+        var services = ServiceCollection ?? new ServiceCollection();
+        services.AddHttpClient();
+        services.AddOptions();
 
-        builder.Services.AddTransient<IRecruitService, RecruitService>();
-        builder.Services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
-        builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
-        builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
-        builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
+        services.Configure<FindApprenticeshipJobsConfiguration>(Configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
+        services.AddSingleton(new FunctionEnvironment(Configuration["EnvironmentName"]));
+
+        services.AddTransient<IRecruitService, RecruitService>();
+        services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
+        services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
+        services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
+        services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
         (
             options => options.Timeout = TimeSpan.FromMinutes(30)
         )
         .SetHandlerLifetime(TimeSpan.FromMinutes(10))
         .AddPolicyHandler(HttpClientRetryPolicy());
 
-        builder.Services.BuildServiceProvider();
+        return services.BuildServiceProvider();
     }
 
     private static IAsyncPolicy<HttpResponseMessage> HttpClientRetryPolicy()
