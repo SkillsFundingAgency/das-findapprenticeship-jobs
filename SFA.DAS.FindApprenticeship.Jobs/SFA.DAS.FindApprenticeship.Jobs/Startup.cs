@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,15 +19,16 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.DependencyInjection;
 
-[assembly: WebJobsStartup(typeof(Startup))]
+[assembly: FunctionsStartup(typeof(Startup))]
 
 namespace SFA.DAS.FindApprenticeship.Jobs;
-public class Startup : IWebJobsStartup
+public class Startup : FunctionsStartup
 {
-    public void Configure(IWebJobsBuilder builder)
+    public override void Configure(IFunctionsHostBuilder builder)
     {
-        builder.AddExecutionContextBinding();
-        builder.AddDependencyInjection<ServiceProviderBuilder>();
+        var wbBuilder = builder.Services.AddWebJobs(x => { return; });
+        wbBuilder.AddExecutionContextBinding();
+        wbBuilder.AddDependencyInjection<ServiceProviderBuilder>();
     }
 }
 
@@ -76,9 +77,6 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
         services.AddSingleton(new FunctionEnvironment(Configuration["EnvironmentName"]));
 
-        services.AddTransient<IRecruitService, RecruitService>();
-        services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
-        services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
         services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
         (
@@ -86,6 +84,9 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         )
         .SetHandlerLifetime(TimeSpan.FromMinutes(10))
         .AddPolicyHandler(HttpClientRetryPolicy());
+        services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
+        services.AddTransient<IRecruitService, RecruitService>();
+        services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
 
         return services.BuildServiceProvider();
     }
