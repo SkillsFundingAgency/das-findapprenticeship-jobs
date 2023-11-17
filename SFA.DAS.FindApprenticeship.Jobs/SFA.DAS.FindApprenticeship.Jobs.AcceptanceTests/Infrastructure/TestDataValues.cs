@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.Infrastructure;
@@ -7,7 +8,7 @@ public class TestDataValues
 {
     public const int PageNo = 1;
     public const int PageSize = 3;
-
+    public static ApiResponse<GetLiveVacanciesApiResponse> LiveVacanciesApiResponse = new ApiResponse<GetLiveVacanciesApiResponse>(LiveVacancies, System.Net.HttpStatusCode.OK, "");
     public static GetLiveVacanciesApiResponse LiveVacancies = new GetLiveVacanciesApiResponse()
     {
         PageNo = PageNo,
