@@ -5,23 +5,17 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.DependencyInjection;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
     public class RecruitIndexerTimerTrigger
     {
-        private readonly IRecruitService _recruitService;
-        private readonly IAzureSearchHelper _azureSearchHelperService;
         private const int PageNo = 1;
         private const int PageSize = 500;
-        public RecruitIndexerTimerTrigger(IRecruitService recruitService, IAzureSearchHelper azureSearchHelper)
-        {
-            _recruitService = recruitService;
-            _azureSearchHelperService = azureSearchHelper;
-        }
 
         [FunctionName("RecruitIndexerTimerTrigger")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log, [Inject] IRecruitService _recruitService, [Inject] IAzureSearchHelper _azureSearchHelperService)
         {
             log.LogInformation($"Recruit Indexer function executed at: {DateTime.UtcNow}");
             var liveVacancies = await _recruitService.GetLiveVacancies(PageNo, PageSize);
