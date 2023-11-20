@@ -11,8 +11,10 @@ using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.FindApprenticeship.Jobs;
+using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 
@@ -38,7 +40,7 @@ public class Startup : FunctionsStartup
 #endif
             .AddEnvironmentVariables();
 
-        if (!configuration["EnvironmentName"].Equals("DEV", System.StringComparison.CurrentCultureIgnoreCase))
+        if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             config.AddAzureTableStorage(options =>
             {
@@ -61,6 +63,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
+        builder.Services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
         builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
         (
             options => options.Timeout = TimeSpan.FromMinutes(30)

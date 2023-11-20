@@ -80,7 +80,7 @@ public class ApprenticeAzureSearchDocument
 
     [System.Text.Json.Serialization.JsonConverter(typeof(MicrosoftSpatialGeoJsonConverter))]
     [SimpleField(IsSortable = true, IsFilterable = true)]
-    public GeographyPoint Location { get; set; } = null!;
+    public GeographyPoint? Location { get; set; }
 }
 
 public class CourseAzureSearchDocument
