@@ -31,7 +31,9 @@ public class AzureSearchHelper : IAzureSearchHelper
         var credential = new AzureKeyCredential(configuration.AzureSearchKey);
         var endpoint = new Uri(configuration.AzureSearchBaseUrl);
         _adminIndexClient = new SearchIndexClient(endpoint, credential, clientOptions);
-        _searchClient = new SearchClient(endpoint, "vacancies", credential, clientOptions);
+        _searchClient = new SearchClient(endpoint, "apprenticeships", credential, clientOptions);
+        // Use for 'vacancies' index:
+        //_searchClient = new SearchClient(endpoint, "vacancies", credential, clientOptions);
     }
 
     public async Task CreateIndex(string indexName)

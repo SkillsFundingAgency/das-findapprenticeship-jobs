@@ -27,7 +27,7 @@ public class ApprenticeAzureSearchDocument
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,
             Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
-            // to test azure search with 'vacancies' index, use below:
+            // Use for 'vacancies' index:
             //NumberOfPositions = 2
         };
     }
@@ -56,7 +56,7 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public DateTimeOffset ClosingDate { get; set; }
 
-    // needed only for 'vacancies' index
+    // Use for 'vacancies' index:
     //[SimpleField]
     //public long NumberOfPositions { get; set; }
 
