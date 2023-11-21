@@ -23,7 +23,7 @@ public class ApprenticeAzureSearchDocument
             Title = source.VacancyTitle,
             Ukprn = source.ProviderId,
             VacancyReference = $"VAC{source.VacancyId}",
-            Wage = new WageAzureSearchDocument() { WageAdditionalInformation = source.Wage.WageAdditionalInformation, WageAmount = (long)source.Wage.FixedWageYearlyAmount, WageType = source.Wage.WageType, WageUnit = source.Wage.DurationUnit, WorkingWeekDescription = source.Wage.WorkingWeekDescription },
+            Wage = (WageAzureSearchDocument) source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,
             Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
@@ -142,13 +142,14 @@ public class WageAzureSearchDocument
     {
         return new WageAzureSearchDocument
         {
-            WageAmount = (long?) source.FixedWageYearlyAmount,
+            WageAmount = (long?) source.FixedWageYearlyAmount ?? null,
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
             WageAdditionalInformation = source.WageAdditionalInformation,
             WorkingWeekDescription = source.WorkingWeekDescription
         };
     }
+
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? WageAdditionalInformation { get; set; }
 

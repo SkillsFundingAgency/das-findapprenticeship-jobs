@@ -45,8 +45,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
                     WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
                     WeeklyHours = 35,
                     WageType = "Competitive Salary",
-                    WageAdditionalInformation = "all about bonuses",
-                    FixedWageYearlyAmount = 25000
+                    WageAdditionalInformation = "all about bonuses"
                 }
             },
             new LiveVacancy()
@@ -115,8 +114,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
                     WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
                     WeeklyHours = 35,
                     WageType = "Competitive Salary",
-                    WageAdditionalInformation = "all about bonuses",
-                    FixedWageYearlyAmount = 25000
+                    WageAdditionalInformation = "all about bonuses"
                 }
             }
         };
