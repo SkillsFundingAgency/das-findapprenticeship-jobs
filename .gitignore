@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 
 SFA.DAS.FindApprenticeship.Jobs/.idea/.idea.SFA.DAS.FindApprenticeship.Jobs/.idea/
+
+SFA.DAS.FindApprenticeship.Jobs/SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests/Features/*.feature.cs
