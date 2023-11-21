@@ -23,7 +23,7 @@ public class ApprenticeAzureSearchDocument
             Title = source.VacancyTitle,
             Ukprn = source.ProviderId,
             VacancyReference = $"VAC{source.VacancyId}",
-            Wage = (WageAzureSearchDocument) source.Wage,
+            Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,
             Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
@@ -56,7 +56,7 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public DateTimeOffset ClosingDate { get; set; }
 
-    // needed only for use with 'vacancies' index
+    // needed only for 'vacancies' index
     //[SimpleField]
     //public long NumberOfPositions { get; set; }
 
@@ -142,7 +142,7 @@ public class WageAzureSearchDocument
     {
         return new WageAzureSearchDocument
         {
-            WageAmount = (long?) source.FixedWageYearlyAmount ?? null,
+            WageAmount = (long?)source.FixedWageYearlyAmount ?? null,
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
             WageAdditionalInformation = source.WageAdditionalInformation,
