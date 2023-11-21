@@ -16,7 +16,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         }
 
         [FunctionName("RecruitIndexerTimerTrigger")]
-        public async Task Run([TimerTrigger("0 */01 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"Recruit Indexer function executed at: {DateTime.UtcNow}");
             await _handler.Handle();
