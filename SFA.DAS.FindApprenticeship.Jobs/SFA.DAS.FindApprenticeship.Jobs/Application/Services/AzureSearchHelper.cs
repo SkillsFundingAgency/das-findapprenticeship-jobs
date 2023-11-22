@@ -117,8 +117,15 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public Task<SearchAlias> GetAlias(string aliasName)
+    public async Task<SearchAlias> GetAlias(string aliasName)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await _adminIndexClient.GetAliasAsync(aliasName);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
+        }
     }
 }
