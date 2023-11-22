@@ -7,5 +7,6 @@
         public string AzureSearchBaseUrl { get; set; }
         public string AzureSearchResource { get; set; }
         public string AzureSearchKey { get; set; }
+        public string NServiceBusConnectionString { get; set; }
     }
 }
