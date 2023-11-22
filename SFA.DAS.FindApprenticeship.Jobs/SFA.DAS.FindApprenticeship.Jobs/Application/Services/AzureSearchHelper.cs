@@ -31,7 +31,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         var credential = new AzureKeyCredential(configuration.AzureSearchKey);
         var endpoint = new Uri(configuration.AzureSearchBaseUrl);
         _adminIndexClient = new SearchIndexClient(endpoint, credential, clientOptions);
-        _searchClient = new SearchClient(endpoint, "vacancies", credential, clientOptions);
+        _searchClient = new SearchClient(endpoint, "apprenticeships", credential, clientOptions);
     }
 
     public async Task CreateIndex(string indexName)
@@ -93,5 +93,31 @@ public class AzureSearchHelper : IAzureSearchHelper
         {
             throw new RequestFailedException($"Failure returned when requesting index with name {indexName}", ex);
         }
+    }
+
+    public async Task<List<SearchIndex>> GetIndexes()
+    {
+        try
+        {
+            var result = new List<SearchIndex>();
+
+            var indexPageable = _adminIndexClient.GetIndexesAsync();
+
+            await foreach (var index in indexPageable)
+            {
+                result.Add(index);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when requesting indexes", ex);
+        }
+    }
+
+    public Task<SearchAlias> GetAlias(string aliasName)
+    {
+        throw new NotImplementedException();
     }
 }

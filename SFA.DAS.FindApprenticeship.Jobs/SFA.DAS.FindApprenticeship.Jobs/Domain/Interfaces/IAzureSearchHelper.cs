@@ -11,4 +11,7 @@ public interface IAzureSearchHelper
     Task<Response<SearchIndex>> GetIndex(string indexName);
     Task DeleteIndex(string indexName);
     Task UploadDocuments(IEnumerable<ApprenticeAzureSearchDocument> documents);
+    Task<List<SearchIndex>> GetIndexes();
+    Task<SearchAlias> GetAlias(string aliasName);
+
 }
