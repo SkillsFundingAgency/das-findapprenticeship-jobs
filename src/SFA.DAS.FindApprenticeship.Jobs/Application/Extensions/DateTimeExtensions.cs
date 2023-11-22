@@ -6,7 +6,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Extensions
     {
         public static TimeSpan RemoveSeconds(this TimeSpan source)
         {
-            return new TimeSpan(source.Days, source.Hours, source.Minutes);
+            return new TimeSpan(source.Days, source.Hours, source.Minutes, 0);
         }
     }
 }
