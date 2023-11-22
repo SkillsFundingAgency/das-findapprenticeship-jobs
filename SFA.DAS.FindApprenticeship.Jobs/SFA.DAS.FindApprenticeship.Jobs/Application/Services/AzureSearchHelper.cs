@@ -95,6 +95,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
+
     public async Task<List<SearchIndex>> GetIndexes()
     {
         try

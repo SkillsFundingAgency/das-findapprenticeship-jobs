@@ -16,7 +16,7 @@ public class AzureSearchIndexService
 
     public async Task CreateIndex(string indexName)
     {
-       await _azureSearchHelper.CreateIndex(indexName);
+        await _azureSearchHelper.CreateIndex(indexName);
     }
 
     public async Task DeleteIndex(string indexName)
