@@ -129,6 +129,10 @@ public class AzureSearchHelper : IAzureSearchHelper
         {
             return await _adminIndexClient.GetAliasAsync(aliasName);
         }
+        catch (RequestFailedException)
+        {
+            return null;
+        }
         catch (Exception ex)
         {
             throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
