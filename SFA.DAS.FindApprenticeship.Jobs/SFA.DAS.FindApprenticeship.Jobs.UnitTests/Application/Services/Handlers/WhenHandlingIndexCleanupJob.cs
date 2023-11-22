@@ -91,11 +91,6 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
             dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(DateTime.UtcNow);
 
-            var indexes = new List<SearchIndex>
-            {
-                new SearchIndex(indexName)
-            };
-
             azureSearchHelper.Setup(x => x.GetAlias("apprenticeships")).ReturnsAsync(() =>
                 new SearchAlias("apprenticeships", new[] { indexName }));
             
