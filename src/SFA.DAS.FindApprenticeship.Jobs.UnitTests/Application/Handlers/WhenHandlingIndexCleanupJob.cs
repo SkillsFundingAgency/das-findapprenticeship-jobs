@@ -7,7 +7,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handlers
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 {
     [TestFixture]
     public class WhenHandlingIndexCleanupJob
@@ -78,7 +78,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
-            
+
             await handler.Handle();
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
@@ -103,7 +103,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
             azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
                 .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
-            
+
             await handler.Handle();
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);

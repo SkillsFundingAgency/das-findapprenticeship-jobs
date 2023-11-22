@@ -9,7 +9,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handlers
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 {
     public class WhenHandlingRecruitIndexerJob
     {
