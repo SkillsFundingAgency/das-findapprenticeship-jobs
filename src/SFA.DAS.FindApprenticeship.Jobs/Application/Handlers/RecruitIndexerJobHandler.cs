@@ -11,9 +11,9 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
     private readonly IAzureSearchHelper _azureSearchHelperService;
     private const int PageNo = 1;
     private const int PageSize = 500;
-    private const string indexName = "apprenticeships";
+    //private const string indexName = "apprenticeships";
     // Use for 'vacancies' index:
-    //private const string indexName = "vacancies";
+    private const string indexName = "vacancies";
 
     public RecruitIndexerJobHandler(IRecruitService recruitService, IAzureSearchHelper azureSearchHelperService)
     {
@@ -32,12 +32,5 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
             var batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
             await _azureSearchHelperService.UploadDocuments(batchDocuments);
         }
-
-        // Use for 'vacancies' index:
-        //    var document = liveVacancies.Vacancies.ToList()[0];
-        //    log.LogInformation($"Vacancy Id = {document.VacancyId} and VacancyTitle = {document.VacancyTitle}");
-        //    var vacanciesbatch = new List<ApprenticeAzureSearchDocument> { (ApprenticeAzureSearchDocument)document };
-        //    await _azureSearchHelperService.CreateIndex("vacancies");
-        //    await _azureSearchHelperService.UploadDocuments(vacanciesbatch);
     }
 }
