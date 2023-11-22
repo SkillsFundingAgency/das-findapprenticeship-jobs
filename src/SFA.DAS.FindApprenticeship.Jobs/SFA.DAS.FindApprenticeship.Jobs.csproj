@@ -8,7 +8,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-		<PackageReference Include="Azure.Search.Documents" Version="11.4.0" />
+		<PackageReference Include="Azure.Search.Documents" Version="11.5.0" />
 		<PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Azure.Core.Spatial.NewtonsoftJson" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Spatial" Version="7.17.0" />
