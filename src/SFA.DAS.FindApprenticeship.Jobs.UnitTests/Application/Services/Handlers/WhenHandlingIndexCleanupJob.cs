@@ -3,6 +3,7 @@ using Azure.Search.Documents.Indexes.Models;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -21,9 +22,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
             var indexes = new List<SearchIndex>
             {
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(6, 0, 1)))),
+                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(6, 1, 0)))),
                 new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(7, 0, 0)))),
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(24, 0, 0))))
+                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(48, 0, 0))))
             };
 
             azureSearchHelper.Setup(x => x.GetIndexes())
@@ -37,17 +38,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
         }
 
         [Test, MoqAutoData]
-        public async Task Then_Indexes_Less_Than_6_Hours_Old_Are_Retained(
+        public async Task Then_Indexes_6_Hours_Old_Or_Less_Are_Retained(
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
             IndexCleanupJobHandler handler)
         {
-            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(DateTime.UtcNow);
+            var effectiveDate = DateTime.UtcNow;
+
+            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(effectiveDate);
 
             var indexes = new List<SearchIndex>
             {
-                new SearchIndex(GetIndexName(DateTime.UtcNow)),
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(6, 0, 0))))
+                new SearchIndex(GetIndexName(effectiveDate)),
+                new SearchIndex(GetIndexName(effectiveDate.Subtract(new TimeSpan(6, 0, 0))))
             };
 
             azureSearchHelper.Setup(x => x.GetIndexes())
@@ -81,6 +84,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }
 
+
         [Test, MoqAutoData]
         public async Task Then_The_Index_Currently_Aliased_Is_Retained_Irrespective_Of_Age(
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
@@ -91,8 +95,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
             dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(DateTime.UtcNow);
 
-            azureSearchHelper.Setup(x => x.GetAlias("apprenticeships")).ReturnsAsync(() =>
-                new SearchAlias("apprenticeships", new[] { indexName }));
+            azureSearchHelper.Setup(x => x.GetIndexes())
+                .ReturnsAsync(() => new List<SearchIndex>
+                {
+                    new SearchIndex(indexName),
+                });
+
+            azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+                .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
             
             await handler.Handle();
 
@@ -101,7 +111,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
         private string GetIndexName(DateTime date)
         {
-            return $"apprenticeships_{date:yyy-MM-ddTHH:mm}";
+            return $"{Constants.IndexPrefix}{date:yyy-MM-ddTHH:mm}";
         }
     }
 }
