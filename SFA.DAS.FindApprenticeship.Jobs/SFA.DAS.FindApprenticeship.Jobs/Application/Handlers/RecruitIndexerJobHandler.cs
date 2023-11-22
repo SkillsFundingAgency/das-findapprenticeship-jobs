@@ -32,12 +32,5 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
             var batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
             await _azureSearchHelperService.UploadDocuments(batchDocuments);
         }
-
-        // Use for 'vacancies' index:
-        //    var document = liveVacancies.Vacancies.ToList()[0];
-        //    log.LogInformation($"Vacancy Id = {document.VacancyId} and VacancyTitle = {document.VacancyTitle}");
-        //    var vacanciesbatch = new List<ApprenticeAzureSearchDocument> { (ApprenticeAzureSearchDocument)document };
-        //    await _azureSearchHelperService.CreateIndex("vacancies");
-        //    await _azureSearchHelperService.UploadDocuments(vacanciesbatch);
     }
 }
