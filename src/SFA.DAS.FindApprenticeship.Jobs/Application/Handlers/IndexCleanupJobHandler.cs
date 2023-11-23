@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Search.Documents.Indexes.Models;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Extensions;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
@@ -13,9 +14,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
     {
         private readonly IAzureSearchHelper _azureSearchHelperService;
         private readonly IDateTimeService _dateTimeService;
-        private readonly ILogger _logger;
+        private readonly ILogger<IndexCleanupJobHandler> _logger;
+        private readonly TimeSpan _indexDeletionAgeThreshold = new(0, 6, 0, 0);
 
-        public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService, ILogger logger)
+        public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService, ILogger<IndexCleanupJobHandler> logger)
         {
             _azureSearchHelperService = azureSearchHelperService;
             _dateTimeService = dateTimeService;
@@ -29,30 +31,46 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
 
             await Task.WhenAll(aliasTask, indexesTask);
 
-            var alias = aliasTask.Result;
             var indexes = indexesTask.Result;
+            var alias = aliasTask.Result;
 
-            foreach (var index in indexes.Where(x => x.Name.StartsWith($"{Domain.Constants.IndexPrefix}")))
+            var aliasTarget = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
+
+            foreach (var index in indexes.Where(IsApprenticeshipsIndex))
             {
-                if (alias != null && alias.Indexes.Contains(index.Name))
+                if (index.Name == aliasTarget)
                 {
                     _logger.LogInformation($"Skipping index {index.Name} as currently aliased");
                     continue;
                 }
 
-                var dateSuffix = index.Name.Substring(16);
-
-                if (DateTime.TryParse(dateSuffix, out var parsedDate))
+                if (IsDeletionCandidate(index))
                 {
-                    var age = _dateTimeService.GetCurrentDateTime().Subtract(parsedDate).RemoveSeconds();
-
-                    if (age > new TimeSpan(0, 6, 0, 0))
-                    {
-                        _logger.LogInformation($"Deleting index {index.Name}, age {age.ToHumanReadableString()}");
-                        await _azureSearchHelperService.DeleteIndex(index.Name);
-                    }
+                    _logger.LogInformation($"Deleting index {index.Name}");
+                    await _azureSearchHelperService.DeleteIndex(index.Name);
                 }
             }
+        }
+
+        private bool IsApprenticeshipsIndex(SearchIndex index)
+        {
+            return index.Name.StartsWith($"{Domain.Constants.IndexPrefix}");
+        }
+
+        private bool IsDeletionCandidate(SearchIndex index)
+        {
+            var dateSuffix = index.Name.Substring(Domain.Constants.IndexPrefix.Length);
+
+            if (!DateTime.TryParseExact(dateSuffix, Domain.Constants.IndexDateSuffixFormat,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                _logger.LogWarning($"Unable to parse date from index {index.Name}");
+                return false;
+            }
+
+            var age = _dateTimeService.GetCurrentDateTime().Subtract(parsedDate).RemoveSeconds();
+
+            return age > _indexDeletionAgeThreshold;
         }
     }
 }

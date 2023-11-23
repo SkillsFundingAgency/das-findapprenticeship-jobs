@@ -14,14 +14,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
 {
     private readonly SearchIndexClient _adminIndexClient;
-    private readonly SearchClient _searchClient;
-    //private const string indexName = "apprenticeships";
-    // Use for 'vacancies' index:
-    private const string indexName = "vacancies";
+    private readonly AzureKeyCredential _azureKeyCredential;
+    private readonly SearchClientOptions _clientOptions;
+    private readonly Uri _endpoint;
 
     public AzureSearchHelper(FindApprenticeshipJobsConfiguration configuration)
     {
-        var clientOptions = new SearchClientOptions
+        _clientOptions = new SearchClientOptions
         {
             Serializer = new JsonObjectSerializer(new System.Text.Json.JsonSerializerOptions
             {
@@ -32,12 +31,9 @@ public class AzureSearchHelper : IAzureSearchHelper
             })
         };
 
-        var credential = new AzureKeyCredential(configuration.AzureSearchKey);
-        var endpoint = new Uri(configuration.AzureSearchBaseUrl);
-        _adminIndexClient = new SearchIndexClient(endpoint, credential, clientOptions);
-        //_searchClient = new SearchClient(endpoint, "apprenticeships", credential, clientOptions);
-        // Use for 'vacancies' index:
-        _searchClient = new SearchClient(endpoint, indexName, credential, clientOptions);
+        _azureKeyCredential = new AzureKeyCredential(configuration.AzureSearchKey);
+        _endpoint = new Uri(configuration.AzureSearchBaseUrl);
+        _adminIndexClient = new SearchIndexClient(_endpoint, _azureKeyCredential, _clientOptions);
     }
 
     public async Task CreateIndex(string indexName)
@@ -77,11 +73,12 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task UploadDocuments(IEnumerable<ApprenticeAzureSearchDocument> documents)
+    public async Task UploadDocuments(string indexName, IEnumerable<ApprenticeAzureSearchDocument> documents)
     {
         try
         {
-            await _searchClient.MergeOrUploadDocumentsAsync(documents);
+            var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
+            await searchClient.MergeOrUploadDocumentsAsync(documents);
         }
         catch (Exception ex)
         {
@@ -138,4 +135,18 @@ public class AzureSearchHelper : IAzureSearchHelper
             throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
         }
     }
+
+    public async Task UpdateAlias(string aliasName, string indexName)
+    {
+        try
+        {
+            var myAlias = new SearchAlias(aliasName, indexName);
+            await _adminIndexClient.CreateOrUpdateAliasAsync(aliasName, myAlias);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when updating alias {aliasName} for index {indexName}", ex);
+        }
+    }
+
 }

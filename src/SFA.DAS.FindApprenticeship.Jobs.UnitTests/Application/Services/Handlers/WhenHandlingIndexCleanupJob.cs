@@ -111,7 +111,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
         private string GetIndexName(DateTime date)
         {
-            return $"{Constants.IndexPrefix}{date:yyy-MM-ddTHH:mm}";
+            return $"{Constants.IndexPrefix}{date.ToString(Constants.IndexDateSuffixFormat)}";
         }
     }
 }

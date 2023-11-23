@@ -24,9 +24,9 @@ public class AzureSearchIndexService
         await _azureSearchHelper.DeleteIndex(indexName);
     }
 
-    public async Task UploadDocuments(IEnumerable<ApprenticeAzureSearchDocument> documents)
+    public async Task UploadDocuments(string indexName, IEnumerable<ApprenticeAzureSearchDocument> documents)
     {
-        await _azureSearchHelper.UploadDocuments(documents);
+        await _azureSearchHelper.UploadDocuments(indexName,documents);
     }
 
     public async Task<Response<SearchIndex>> GetIndex(string indexName)

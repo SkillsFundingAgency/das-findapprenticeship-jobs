@@ -21,18 +21,16 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
         {
             liveVacanciesApiResponse.Vacancies = TestData.LiveVacancies;
             recruitService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(liveVacanciesApiResponse);
-            azureSearchHelper.Setup(x => x.DeleteIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
-            azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
+            azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
 
             await sut.Handle();
 
             using (new AssertionScope())
             {
                 recruitService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>()), Times.Once());
-                azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Once());
                 azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Once());
-                azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Once());
+                azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Once());
             }
         }
 
@@ -50,7 +48,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
             {
                 azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never());
                 azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Never());
-                azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Never());
+                azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Never());
             }
         }
     }

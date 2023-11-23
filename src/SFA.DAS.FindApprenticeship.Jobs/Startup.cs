@@ -65,6 +65,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
         builder.Services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
         builder.Services.AddTransient<IIndexCleanupJobHandler, IndexCleanupJobHandler>();
+        builder.Services.AddTransient<IDateTimeService, DateTimeService>();
         builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
         (
             options => options.Timeout = TimeSpan.FromMinutes(30)
