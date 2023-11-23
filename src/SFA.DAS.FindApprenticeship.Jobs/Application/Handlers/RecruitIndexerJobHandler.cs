@@ -11,7 +11,6 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
     private readonly IAzureSearchHelper _azureSearchHelperService;
     private const int PageSize = 500;
     //private const string indexName = "apprenticeships";
-    // Use for 'vacancies' index:
     private const string indexName = "vacancies";
 
     public RecruitIndexerJobHandler(IRecruitService recruitService, IAzureSearchHelper azureSearchHelperService)
