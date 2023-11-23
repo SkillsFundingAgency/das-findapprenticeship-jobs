@@ -22,6 +22,7 @@ public class AzureSearchApiClient : ApiClientBase, IAzureSearchApiClient
 
     protected override async Task AddAuthenticationHeader(HttpRequestMessage httpRequestMessage)
     {
+        //TODO: Add Managed Identity rather than API Key
         var token = await _azureClientCredentialHelper.GetAccessTokenAsync(_configuration.AzureSearchResource);
         httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         httpRequestMessage.Headers.Add("api-key", _configuration.AzureSearchKey);
