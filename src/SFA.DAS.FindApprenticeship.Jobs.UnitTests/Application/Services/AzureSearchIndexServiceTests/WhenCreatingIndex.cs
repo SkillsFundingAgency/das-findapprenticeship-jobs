@@ -16,7 +16,7 @@ public class WhenCreatingIndex
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         AzureSearchIndexService service)
     {
-        azureSearchHelper.Setup(x => x.CreateIndex(indexName)).Returns(Task.FromResult(true));
+        azureSearchHelper.Setup(x => x.CreateIndex(indexName)).Returns(Task.CompletedTask);
 
         await service.CreateIndex(indexName);
 
