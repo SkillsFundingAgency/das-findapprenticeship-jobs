@@ -9,7 +9,6 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
 {
     private readonly IRecruitService _recruitService;
     private readonly IAzureSearchHelper _azureSearchHelperService;
-    private const int PageNo = 1;
     private const int PageSize = 500;
     //private const string indexName = "apprenticeships";
     // Use for 'vacancies' index:
@@ -23,14 +22,27 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
 
     public async Task Handle()
     {
-        var liveVacancies = await _recruitService.GetLiveVacancies(PageNo, PageSize);
-        var hasData = liveVacancies != null && liveVacancies.Vacancies.Any();
-        if (hasData)
+        await _azureSearchHelperService.DeleteIndex(indexName);
+        await _azureSearchHelperService.CreateIndex(indexName);
+
+        var pageNo = 1;
+        var totalPages = 100;
+
+        while (pageNo <= totalPages)
         {
-            await _azureSearchHelperService.DeleteIndex(indexName);
-            await _azureSearchHelperService.CreateIndex(indexName);
-            var batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
-            await _azureSearchHelperService.UploadDocuments(batchDocuments);
+            var liveVacancies = await _recruitService.GetLiveVacancies(pageNo, PageSize);
+
+            if (liveVacancies != null && liveVacancies.Vacancies.Any())
+            {
+                totalPages = liveVacancies.TotalPages;
+                var batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
+                await _azureSearchHelperService.UploadDocuments(batchDocuments);
+                pageNo++;
+            }
+            else
+            {
+                break;
+            }
         }
     }
 }
