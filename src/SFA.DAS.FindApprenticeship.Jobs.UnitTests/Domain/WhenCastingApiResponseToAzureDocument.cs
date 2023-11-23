@@ -32,6 +32,7 @@ public class WhenCastingApiResponseToAzureDocument
             AssertCourseIsMapped(apprenticeAzureSearchDocument, source);
             AssertAddressIsMapped(apprenticeAzureSearchDocument, source);
             apprenticeAzureSearchDocument.Location.Should().NotBeNull();
+            apprenticeAzureSearchDocument.NumberOfPositions.Should().Be(source.NumberOfPositions);
         }
     }
 
