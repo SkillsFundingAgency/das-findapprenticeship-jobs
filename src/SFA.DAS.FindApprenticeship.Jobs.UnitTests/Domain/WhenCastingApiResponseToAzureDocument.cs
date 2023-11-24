@@ -32,10 +32,11 @@ public class WhenCastingApiResponseToAzureDocument
             AssertCourseIsMapped(apprenticeAzureSearchDocument, source);
             AssertAddressIsMapped(apprenticeAzureSearchDocument, source);
             apprenticeAzureSearchDocument.Location.Should().NotBeNull();
+            apprenticeAzureSearchDocument.NumberOfPositions.Should().Be(source.NumberOfPositions);
         }
     }
 
-    public void AssertWageIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
+    private static void AssertWageIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
     {
         apprenticeAzureSearchDocument.Wage.WageAdditionalInformation.Should().BeEquivalentTo(source.Wage.WageAdditionalInformation);
         apprenticeAzureSearchDocument.Wage.WageAmount.Should().Be((long)source.Wage.FixedWageYearlyAmount);
@@ -43,14 +44,14 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Wage.WorkingWeekDescription.Should().BeEquivalentTo(source.Wage.WorkingWeekDescription);
     }
 
-    public void AssertCourseIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
+    private static void AssertCourseIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
     {
         apprenticeAzureSearchDocument.Course.Level.Should().Be(source.Level);
         apprenticeAzureSearchDocument.Course.LarsCode.Should().Be((long)Convert.ToDouble(source.ProgrammeId));
         apprenticeAzureSearchDocument.Course.Title.Should().BeEquivalentTo(source.ApprenticeshipTitle);
     }
 
-    public void AssertAddressIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
+    private static void AssertAddressIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
     {
         apprenticeAzureSearchDocument.Address.AddressLine1.Should().BeEquivalentTo(source.EmployerLocation.AddressLine1);
         apprenticeAzureSearchDocument.Address.AddressLine2.Should().BeEquivalentTo(source.EmployerLocation.AddressLine2);

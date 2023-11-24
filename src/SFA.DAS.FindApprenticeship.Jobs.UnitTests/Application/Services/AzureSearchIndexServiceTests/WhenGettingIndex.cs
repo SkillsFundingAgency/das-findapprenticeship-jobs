@@ -42,7 +42,7 @@ public class WhenGettingIndex
     }
 
     [Test, MoqAutoData]
-    public async Task Then_The_Api_Returns_An_Error(
+    public async Task And_The_Api_Returns_An_Error_Then_An_Exception_Is_Thrown(
         string indexName,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         AzureSearchIndexService service)

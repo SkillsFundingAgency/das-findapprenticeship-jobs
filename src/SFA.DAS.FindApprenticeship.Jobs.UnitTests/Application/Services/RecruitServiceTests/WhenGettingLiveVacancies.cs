@@ -1,5 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
@@ -13,17 +14,26 @@ public class WhenGettingLiveVacancies
 {
     [Test, MoqAutoData]
     public async Task Then_The_Api_Is_Called_And_Live_Vacancies_Returned(
+        int pageSize,
+        int pageNo,
         ApiResponse<GetLiveVacanciesApiResponse> response,
         [Frozen] Mock<IRecruitApiClient> apiClient,
         RecruitService service)
     {
+        response.Body.PageNo = pageNo;
+        response.Body.PageSize = pageSize;
         apiClient.Setup(x =>
         x.Get<GetLiveVacanciesApiResponse>(
-            It.Is<GetLiveVacanciesRequest>(c => c.GetUrl.Contains($"livevacancies?pageSize={It.IsAny<int>()}&pageNo={It.IsAny<int>()}"))))
+            It.Is<GetLiveVacanciesRequest>(c => c.GetUrl.Contains($"livevacancies?pageSize={pageSize}&pageNo={pageNo}"))))
             .ReturnsAsync(response);
 
-        var actual = await service.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>());
+        var actual = await service.GetLiveVacancies(pageNo, pageSize);
 
-        actual.Should().BeEquivalentTo(response.Body);
+        using (new AssertionScope())
+        {
+            actual.Should().BeEquivalentTo(response.Body);
+            actual.PageSize.Should().Be(pageSize);
+            actual.PageNo.Should().Be(pageNo);
+        }
     }
 }

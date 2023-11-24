@@ -16,6 +16,7 @@ public class LiveVacancy
 {
     public Guid VacancyId { get; set; }
     public string VacancyTitle { get; set; } = null!;
+    public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
     public Address? EmployerLocation { get; set; }

@@ -27,8 +27,7 @@ public class ApprenticeAzureSearchDocument
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,
             Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
-            // Use for 'vacancies' index:
-            NumberOfPositions = 2
+            NumberOfPositions = source.NumberOfPositions
         };
     }
 
@@ -56,7 +55,6 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public DateTimeOffset ClosingDate { get; set; }
 
-    // Use for 'vacancies' index:
     [SimpleField]
     public long NumberOfPositions { get; set; }
 

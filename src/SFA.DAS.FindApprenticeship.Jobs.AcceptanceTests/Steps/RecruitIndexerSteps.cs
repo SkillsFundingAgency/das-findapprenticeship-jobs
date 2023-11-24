@@ -44,6 +44,6 @@ public class RecruitIndexerSteps
 
         azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Once());
         azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Once());
-        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Once());
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Once());
     }
 }

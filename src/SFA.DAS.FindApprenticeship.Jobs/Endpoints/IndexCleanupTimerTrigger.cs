@@ -16,7 +16,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         }
 
         [FunctionName("IndexCleanupTimerTrigger")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"IndexCleanupTimerTrigger function executed at: {DateTime.UtcNow}");
             await _handler.Handle();
