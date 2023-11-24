@@ -15,6 +15,7 @@ public class AzureSearchHelper : IAzureSearchHelper
 {
     private readonly SearchIndexClient _adminIndexClient;
     private readonly AzureKeyCredential _azureKeyCredential;
+
     private readonly SearchClientOptions _clientOptions;
     private readonly Uri _endpoint;
 
@@ -133,6 +134,18 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
+        }
+    }
+
+    public async Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string vacancyReference)
+    {
+        try
+        {
+            return await _searchClient.GetDocumentAsync<ApprenticeAzureSearchDocument>(vacancyReference);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when requesting document {vacancyReference}", ex);
         }
     }
 

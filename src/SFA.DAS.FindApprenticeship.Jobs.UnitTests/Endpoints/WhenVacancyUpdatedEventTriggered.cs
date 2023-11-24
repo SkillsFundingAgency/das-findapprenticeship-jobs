@@ -11,10 +11,11 @@ public class WhenVacancyUpdatedEventTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Message_Will_Be_Handled(
+        ILogger<VacancyUpdatedEvent> logger,
         VacancyUpdatedEvent message,
         Mock<IVacancyUpdatedHandler> handler)
     {
-        await HandleVacancyUpdatedEvent.Run(message, handler.Object, It.IsAny<ILogger<VacancyUpdatedEvent>>());
+        await HandleVacancyUpdatedEvent.Run(message, handler.Object, logger);
 
         handler.Verify(x => x.Handle(It.IsAny<VacancyUpdatedEvent>()), Times.Once());
     }

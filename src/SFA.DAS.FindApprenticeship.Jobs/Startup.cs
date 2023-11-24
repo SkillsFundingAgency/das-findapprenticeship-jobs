@@ -4,7 +4,9 @@ using System.Net.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NServiceBus;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.Api.Common.Infrastructure;
@@ -16,6 +18,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.ServiceCollectionExtensions;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -73,7 +76,22 @@ public class Startup : FunctionsStartup
         .SetHandlerLifetime(TimeSpan.FromMinutes(10))
         .AddPolicyHandler(HttpClientRetryPolicy());
 
-        builder.Services.BuildServiceProvider();
+        var logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger(GetType().AssemblyQualifiedName);
+        if (_configuration["NServiceBusConnectionString"] == "UseDevelopmentStorage=true")
+        {
+            builder.Services.AddNServiceBus(logger, (options) =>
+            {
+                options.EndpointConfiguration = (endpoint) =>
+                {
+                    endpoint.UseTransport<LearningTransport>().StorageDirectory(_configuration.GetValue("UseLearningEndpointStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"")));
+                    return endpoint;
+                };
+            });
+        }
+        else
+        {
+            builder.Services.AddNServiceBus(logger);
+        }
     }
 
     private static IAsyncPolicy<HttpResponseMessage> HttpClientRetryPolicy()
