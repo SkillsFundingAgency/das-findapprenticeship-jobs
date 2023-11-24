@@ -14,5 +14,5 @@ public interface IAzureSearchHelper
     Task<List<SearchIndex>> GetIndexes();
     Task<SearchAlias> GetAlias(string aliasName);
     Task UpdateAlias(string aliasName, string indexName);
-    Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string vacancyReference);
+    Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string indexName, string vacancyReference);
 }

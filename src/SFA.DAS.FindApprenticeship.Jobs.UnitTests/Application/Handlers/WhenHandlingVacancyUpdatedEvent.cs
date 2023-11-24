@@ -19,11 +19,11 @@ public class WhenHandlingVacancyUpdatedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
-        azureSearchHelper.Setup(x => x.GetDocument($"VAC{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
+        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), $"VAC{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
 
         await sut.Handle(vacancyUpdatedEvent);
 
-        azureSearchHelper.Verify(x => x.GetDocument($"VAC{vacancyUpdatedEvent.VacancyReference}"), Times.Once());
+        azureSearchHelper.Verify(x => x.GetDocument(It.IsAny<string>(), $"VAC{vacancyUpdatedEvent.VacancyReference}"), Times.Once());
     }
 
     [Test, MoqAutoData]
@@ -35,7 +35,7 @@ public class WhenHandlingVacancyUpdatedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
-        azureSearchHelper.Setup(x => x.GetDocument(document.Value.VacancyReference)).ReturnsAsync(document);
+        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), document.Value.VacancyReference)).ReturnsAsync(document);
         recruitService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyId)).ReturnsAsync(liveVacancy);
 
         await sut.Handle(vacancyUpdatedEvent);

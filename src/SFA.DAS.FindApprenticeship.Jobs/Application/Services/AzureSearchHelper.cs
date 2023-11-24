@@ -137,11 +137,12 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string vacancyReference)
+    public async Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string indexName, string vacancyReference)
     {
         try
         {
-            return await _searchClient.GetDocumentAsync<ApprenticeAzureSearchDocument>(vacancyReference);
+            var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
+            return await searchClient.GetDocumentAsync<ApprenticeAzureSearchDocument>(vacancyReference);
         }
         catch (Exception ex)
         {
