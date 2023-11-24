@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+SFA.DAS.FindApprenticeship.Jobs/.idea/.idea.SFA.DAS.FindApprenticeship.Jobs/.idea/
+
+/src/SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests/Features*.feature.cs
