@@ -24,11 +24,11 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
     {
         var indexName = $"{Constants.IndexPrefix}{_dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
 
-        await _azureSearchHelperService.DeleteIndex(indexName);
         await _azureSearchHelperService.CreateIndex(indexName);
 
         var pageNo = 1;
         var totalPages = 100;
+        var updateAlias = false;
 
         while (pageNo <= totalPages)
         {
@@ -40,6 +40,7 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
                 var batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
                 await _azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
                 pageNo++;
+                updateAlias = true;
             }
             else
             {
@@ -47,6 +48,9 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
             }
         }
 
-        await _azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
+        if (updateAlias)
+        {
+            await _azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
+        }
     }
 }

@@ -3,6 +3,7 @@ using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
@@ -17,21 +18,28 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
             GetLiveVacanciesApiResponse liveVacanciesApiResponse,
             [Frozen] Mock<IRecruitService> recruitService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+            [Frozen] Mock<IDateTimeService> dateTimeService,
+            DateTime currentDateTime,
             RecruitIndexerJobHandler sut)
         {
+            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
+
+            var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
+
             liveVacanciesApiResponse.Vacancies = TestData.LiveVacancies;
             recruitService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(liveVacanciesApiResponse);
             azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
+            azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);
 
             await sut.Handle();
 
             using (new AssertionScope())
             {
                 recruitService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(liveVacanciesApiResponse.TotalPages));
-                azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Once());
-                azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Once());
-                azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(liveVacanciesApiResponse.TotalPages));
+                azureSearchHelper.Verify(x => x.CreateIndex(expectedIndexName), Times.Once());
+                azureSearchHelper.Verify(x => x.UploadDocuments(expectedIndexName, It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(liveVacanciesApiResponse.TotalPages));
+                azureSearchHelper.Verify(x => x.UpdateAlias(Constants.AliasName, expectedIndexName), Times.Once);
             }
         }
 
@@ -47,9 +55,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Handler
 
             using (new AssertionScope())
             {
-                azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Once());
                 azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Once());
                 azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Never());
+                azureSearchHelper.Verify(x => x.UpdateAlias(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
         }
     }
