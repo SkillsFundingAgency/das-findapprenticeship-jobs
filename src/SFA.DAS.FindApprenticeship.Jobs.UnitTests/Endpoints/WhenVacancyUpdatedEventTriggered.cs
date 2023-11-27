@@ -17,6 +17,6 @@ public class WhenVacancyUpdatedEventTriggered
     {
         await HandleVacancyUpdatedEvent.Run(message, handler.Object, logger);
 
-        handler.Verify(x => x.Handle(It.IsAny<VacancyUpdatedEvent>()), Times.Once());
+        handler.Verify(x => x.Handle(It.Is<VacancyUpdatedEvent>(x => x.VacancyId == message.VacancyId)), Times.Once());
     }
 }

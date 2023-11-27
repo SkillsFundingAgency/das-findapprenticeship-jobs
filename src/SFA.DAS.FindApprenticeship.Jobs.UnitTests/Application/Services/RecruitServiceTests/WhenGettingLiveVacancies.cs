@@ -24,7 +24,7 @@ public class WhenGettingLiveVacancies
         response.Body.PageSize = pageSize;
         apiClient.Setup(x =>
         x.Get<GetLiveVacanciesApiResponse>(
-            It.Is<GetLiveVacanciesApiRequest>(c => c.GetUrl.Contains($"livevacancies?pageSize={It.IsAny<int>()}&pageNo={It.IsAny<int>()}"))))
+            It.Is<GetLiveVacanciesApiRequest>(c => c.GetUrl.Contains($"livevacancies?pageSize={pageSize}&pageNo={pageNo}"))))
             .ReturnsAsync(response);
 
         var actual = await service.GetLiveVacancies(pageNo, pageSize);
