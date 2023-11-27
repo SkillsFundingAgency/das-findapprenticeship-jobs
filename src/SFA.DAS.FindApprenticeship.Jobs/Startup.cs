@@ -83,6 +83,7 @@ public class Startup : FunctionsStartup
             {
                 options.EndpointConfiguration = (endpoint) =>
                 {
+                    //TODO: add message
                     endpoint.UseTransport<LearningTransport>().StorageDirectory(_configuration.GetValue("UseLearningEndpointStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"")));
                     return endpoint;
                 };
