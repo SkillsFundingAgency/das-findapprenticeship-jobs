@@ -12,7 +12,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.Recruit
 public class WhenGettingLiveVacancy
 {
     [Test, MoqAutoData]
-    public async Task Then_The_Api_Is_Called_A_LiveVacancy_Is_Returned(
+    public async Task Then_The_Api_Is_Called_And_A_LiveVacancy_Is_Returned(
     ApiResponse<GetLiveVacancyApiResponse> response,
     [Frozen] Mock<IRecruitApiClient> apiClient,
     RecruitService service)
