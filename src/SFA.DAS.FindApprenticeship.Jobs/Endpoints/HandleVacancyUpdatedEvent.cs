@@ -11,11 +11,18 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
     public class HandleVacancyUpdatedEvent
     {
+        private readonly IVacancyUpdatedHandler _vacancyUpdatedHandler;
+
+        public HandleVacancyUpdatedEvent(IVacancyUpdatedHandler vacancyUpdatedHandler)
+        {
+            _vacancyUpdatedHandler = vacancyUpdatedHandler;
+        }
+
         [FunctionName("HandleVacancyUpdatedEvent")]
-        public static async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyUpdated)]VacancyUpdatedEvent message, IVacancyUpdatedHandler handler, ILogger<VacancyUpdatedEvent> log)
+        public async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyUpdated)]VacancyUpdatedEvent message, ILogger log)
         {
             log.LogInformation($"NServiceBus VacancyUpdated trigger function executed at {DateTime.Now}");
-            await handler.Handle(message);
+            await _vacancyUpdatedHandler.Handle(message);
             log.LogInformation($"NServiceBus VacancyUpdated trigger function finished at {DateTime.Now}");
 
         }

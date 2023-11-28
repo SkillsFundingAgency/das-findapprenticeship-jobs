@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoFixture.NUnit3;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
@@ -13,9 +14,10 @@ public class WhenVacancyUpdatedEventTriggered
     public async Task Then_The_Message_Will_Be_Handled(
         ILogger<VacancyUpdatedEvent> logger,
         VacancyUpdatedEvent message,
-        Mock<IVacancyUpdatedHandler> handler)
+        [Frozen] Mock<IVacancyUpdatedHandler> handler,
+        HandleVacancyUpdatedEvent sut)
     {
-        await HandleVacancyUpdatedEvent.Run(message, handler.Object, logger);
+        await sut.Run(message, logger);
 
         handler.Verify(x => x.Handle(It.Is<VacancyUpdatedEvent>(x => x.VacancyId == message.VacancyId)), Times.Once());
     }
