@@ -1,6 +1,5 @@
 ﻿namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-public class QueueNames
+public static class QueueNames
 {
-    //TODO: add vacancy update queue name
-    public const string VacancyUpdated = "";
+    public const string VacancyUpdated = "vacancy-updated-queue";
 }
