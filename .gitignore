@@ -351,4 +351,5 @@ MigrationBackup/
 
 SFA.DAS.FindApprenticeship.Jobs/.idea/.idea.SFA.DAS.FindApprenticeship.Jobs/.idea/
 
-/src/SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests/Features/*.feature.cs
+SFA.DAS.FindApprenticeship.Jobs/SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests/Features/*.feature.cs
+*.subscription
