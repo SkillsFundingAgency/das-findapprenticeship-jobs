@@ -14,17 +14,15 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
     {
         private readonly IAzureSearchHelper _azureSearchHelperService;
         private readonly IDateTimeService _dateTimeService;
-        private readonly ILogger<IndexCleanupJobHandler> _logger;
         private readonly TimeSpan _indexDeletionAgeThreshold = new(0, 6, 0, 0);
 
-        public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService, ILogger<IndexCleanupJobHandler> logger)
+        public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService)
         {
             _azureSearchHelperService = azureSearchHelperService;
             _dateTimeService = dateTimeService;
-            _logger = logger;
         }
 
-        public async Task Handle()
+        public async Task Handle(ILogger log)
         {
             var aliasTask = _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
             var indexesTask = _azureSearchHelperService.GetIndexes();
@@ -40,13 +38,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
             {
                 if (index.Name == aliasTarget)
                 {
-                    _logger.LogInformation($"Skipping index {index.Name} as currently aliased");
+                    log.LogInformation($"Skipping index {index.Name} as currently aliased");
                     continue;
                 }
 
-                if (IsDeletionCandidate(index))
+                if (IsDeletionCandidate(index, log))
                 {
-                    _logger.LogInformation($"Deleting index {index.Name}");
+                    log.LogInformation($"Deleting index {index.Name}");
                     await _azureSearchHelperService.DeleteIndex(index.Name);
                 }
             }
@@ -57,14 +55,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
             return index.Name.StartsWith($"{Domain.Constants.IndexPrefix}");
         }
 
-        private bool IsDeletionCandidate(SearchIndex index)
+        private bool IsDeletionCandidate(SearchIndex index, ILogger log)
         {
             var dateSuffix = index.Name.Substring(Domain.Constants.IndexPrefix.Length);
 
             if (!DateTime.TryParseExact(dateSuffix, Domain.Constants.IndexDateSuffixFormat,
                     CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
             {
-                _logger.LogWarning($"Unable to parse date from index {index.Name}");
+                log.LogWarning($"Unable to parse date from index {index.Name}");
                 return false;
             }
 

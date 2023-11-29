@@ -12,13 +12,13 @@ public class WhenVacancyUpdatedEventTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Message_Will_Be_Handled(
-        ILogger<VacancyUpdatedEvent> logger,
         VacancyUpdatedEvent message,
+        ILogger log,
         [Frozen] Mock<IVacancyUpdatedHandler> handler,
         HandleVacancyUpdatedEvent sut)
     {
-        await sut.Run(message, logger);
+        await sut.Run(message, log);
 
-        handler.Verify(x => x.Handle(It.Is<VacancyUpdatedEvent>(x => x.VacancyId == message.VacancyId)), Times.Once());
+        handler.Verify(x => x.Handle(It.Is<VacancyUpdatedEvent>(x => x.VacancyId == message.VacancyId), log), Times.Once());
     }
 }

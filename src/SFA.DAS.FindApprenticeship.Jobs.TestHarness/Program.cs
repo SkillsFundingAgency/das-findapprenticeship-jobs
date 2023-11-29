@@ -30,7 +30,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.TestHarness
                 endpointConfiguration
                     .UseTransport<LearningTransport>()
                     .Transactions(TransportTransactionMode.ReceiveOnly)
-                    .StorageDirectory(@"src\SFA.DAS.FindApprenticeship.Jobs.TestConsole\.learningtransport");
+                    .StorageDirectory(Path.Combine(Path.GetTempPath(),
+                    ".learningtransport"));
             }
 
             var endpoint = await Endpoint.Start(endpointConfiguration);

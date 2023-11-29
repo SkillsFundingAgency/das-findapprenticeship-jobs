@@ -91,7 +91,7 @@ public class Startup : FunctionsStartup
                 {
                     endpoint.UseTransport<LearningTransport>()
                         .StorageDirectory(_configuration.GetValue("UseLearningEndpointStorageDirectory", 
-                        Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\SFA.DAS.FindApprenticeship.Jobs.TestConsole\.learningtransport")));
+                        Path.Combine(Path.GetTempPath(), ".learningtransport")));
                     return endpoint;
                 };
             });

@@ -23,9 +23,9 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
         _logger = logger;
     }
 
-    public async Task Handle(VacancyUpdatedEvent vacancyUpdatedEvent)
+    public async Task Handle(VacancyUpdatedEvent vacancyUpdatedEvent, ILogger log)
     {
-        _logger.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
+        log.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
 
         //TODO: uncomment when FAI-1020 is done
         //TODO: will need to get the alias and use that to get the index, so that the document can be fetched.

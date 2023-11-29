@@ -19,7 +19,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         public async Task Run([TimerTrigger("* */60 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"IndexCleanupTimerTrigger function executed at: {DateTime.UtcNow}");
-            await _handler.Handle();
+            await _handler.Handle(log);
         }
     }
 }
