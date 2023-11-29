@@ -15,7 +15,6 @@ public class AzureSearchHelper : IAzureSearchHelper
 {
     private readonly SearchIndexClient _adminIndexClient;
     private readonly AzureKeyCredential _azureKeyCredential;
-
     private readonly SearchClientOptions _clientOptions;
     private readonly Uri _endpoint;
 
