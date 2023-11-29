@@ -1,7 +1,7 @@
-﻿Feature: Recruit indexer job
-
-When recruit indexer job is triggered
-Then the azure search apprenticeships index is updated
+﻿#Feature: Recruit indexer job
+#
+#When recruit indexer job is triggered
+#Then the azure search apprenticeships index is updated
 
 #@MockApiClient
 #Scenario: Live vacancies are retrieved
