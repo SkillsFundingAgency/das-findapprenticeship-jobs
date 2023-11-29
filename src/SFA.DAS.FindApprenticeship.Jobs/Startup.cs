@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.ServiceCollectionExtensions;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
+using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.FindApprenticeship.Jobs;
@@ -71,6 +73,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
         builder.Services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
         builder.Services.AddTransient<IIndexCleanupJobHandler, IndexCleanupJobHandler>();
+        builder.Services.AddTransient<IVacancyUpdatedHandler, VacancyUpdatedHandler>();
         builder.Services.AddTransient<IDateTimeService, DateTimeService>();
         builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
         (
@@ -80,7 +83,7 @@ public class Startup : FunctionsStartup
         .AddPolicyHandler(HttpClientRetryPolicy());
 
         var logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger(GetType().AssemblyQualifiedName);
-        if (_configuration["NServiceBusConnectionString"] == "UseDevelopmentStorage=true")
+        if (_configuration["NServiceBusConnectionString"] == "UseLearningEndpoint=true")
         {
             builder.Services.AddNServiceBus(logger, (options) =>
             {
@@ -97,6 +100,10 @@ public class Startup : FunctionsStartup
         {
             builder.Services.AddNServiceBus(logger);
         }
+
+        var webBuilder = builder.Services.AddWebJobs(_ => { });
+        webBuilder.AddExecutionContextBinding();
+        webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
     }
 
     private static IAsyncPolicy<HttpResponseMessage> HttpClientRetryPolicy()
