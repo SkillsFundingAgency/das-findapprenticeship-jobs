@@ -24,8 +24,16 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         {
             log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.UtcNow}");
             var message = JsonSerializer.Deserialize<VacancyUpdatedEvent>(req.Content.ReadAsStream());
-            await _vacancyUpdatedHandler.Handle(message, log);
-            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+
+            if (message == null || message.VacancyReference == null)
+            {
+                log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function found empty request at {DateTime.UtcNow}");
+            }
+            else
+            {
+                await _vacancyUpdatedHandler.Handle(message, log);
+                log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+            }
         }
     }
 }
