@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.FindApprenticeship.Jobs.Domain;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
@@ -14,13 +11,11 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
     private readonly IAzureSearchHelper _azureSearchHelperService;
     private readonly IRecruitService _recruitService;
     private readonly IDateTimeService _dateTimeService;
-    private readonly ILogger<VacancyUpdatedHandler> _logger;
-    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService, IDateTimeService dateTimeService, ILogger<VacancyUpdatedHandler> logger)
+    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService, IDateTimeService dateTimeService)
     {
         _azureSearchHelperService = azureSearchHelper;
         _recruitService = recruitService;
         _dateTimeService = dateTimeService;
-        _logger = logger;
     }
 
     public async Task Handle(VacancyUpdatedEvent vacancyUpdatedEvent, ILogger log)
