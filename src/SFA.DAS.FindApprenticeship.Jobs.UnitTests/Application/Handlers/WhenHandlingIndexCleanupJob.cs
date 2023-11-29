@@ -1,5 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using Azure.Search.Documents.Indexes.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
@@ -14,6 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
     {
         [Test, MoqAutoData]
         public async Task Then_Indexes_Older_Than_6_Hours_Are_Deleted(
+            ILogger log,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
             IndexCleanupJobHandler handler)
@@ -30,7 +32,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
 
-            await handler.Handle();
+            await handler.Handle(log);
 
             azureSearchHelper.Verify(x => x.DeleteIndex(indexes[0].Name), Times.Once);
             azureSearchHelper.Verify(x => x.DeleteIndex(indexes[1].Name), Times.Once);
@@ -39,6 +41,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
         [Test, MoqAutoData]
         public async Task Then_Indexes_6_Hours_Old_Or_Less_Are_Retained(
+            ILogger log,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
             IndexCleanupJobHandler handler)
@@ -56,13 +59,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
 
-            await handler.Handle();
+            await handler.Handle(log);
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }
 
         [Test, MoqAutoData]
         public async Task Then_Indexes_Not_Conforming_To_Name_Convention_Are_Retained(
+            ILogger log,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
             IndexCleanupJobHandler handler)
@@ -79,7 +83,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
 
-            await handler.Handle();
+            await handler.Handle(log);
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }
@@ -87,6 +91,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
         [Test, MoqAutoData]
         public async Task Then_The_Index_Currently_Aliased_Is_Retained_Irrespective_Of_Age(
+            ILogger log,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
             IndexCleanupJobHandler handler)
@@ -104,7 +109,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
                 .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 
-            await handler.Handle();
+            await handler.Handle(log);
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }

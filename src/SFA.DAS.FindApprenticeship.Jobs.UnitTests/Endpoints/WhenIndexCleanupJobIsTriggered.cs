@@ -13,13 +13,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
     {
         [Test, MoqAutoData]
         public async Task Then_Index_Cleanup_Is_Invoked(
-            ILogger logger,
+            ILogger log,
             [Frozen] Mock<IIndexCleanupJobHandler> handler,
             IndexCleanupTimerTrigger sut)
         {
-            await sut.Run(It.IsAny<TimerInfo>(), logger);
+            await sut.Run(It.IsAny<TimerInfo>(), log);
 
-            handler.Verify(x => x.Handle(), Times.Once());
+            handler.Verify(x => x.Handle(log), Times.Once());
         }
     }
 }
