@@ -28,7 +28,7 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
         _logger.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
 
         //TODO: uncomment when FAI-1020 is done
-        //var indexName = $"{Constants.IndexPrefix}{_dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
+        //TODO: will need to get the alias and use that to get the index, so that the document can be fetched.
         //var vacancyReference = $"VAC{vacancyUpdatedEvent.VacancyReference}";
         //var document = await _azureSearchHelperService.GetDocument(indexName, vacancyReference);
 
