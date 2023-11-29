@@ -26,11 +26,16 @@ public class AzureSearchIndexService
 
     public async Task UploadDocuments(string indexName, IEnumerable<ApprenticeAzureSearchDocument> documents)
     {
-        await _azureSearchHelper.UploadDocuments(indexName,documents);
+        await _azureSearchHelper.UploadDocuments(indexName, documents);
     }
 
     public async Task<Response<SearchIndex>> GetIndex(string indexName)
     {
         return await _azureSearchHelper.GetIndex(indexName);
+    }
+
+    public async Task DeleteDocument(string indexName, string vacancyReference)
+    {
+        await _azureSearchHelper.DeleteDocument(indexName, vacancyReference);
     }
 }

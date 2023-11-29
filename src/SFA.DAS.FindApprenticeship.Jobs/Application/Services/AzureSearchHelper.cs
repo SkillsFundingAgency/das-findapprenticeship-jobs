@@ -162,4 +162,16 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
+    public async Task DeleteDocument(string indexName, string vacancyReference)
+    {
+        try
+        {
+            var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
+            await searchClient.DeleteDocumentsAsync(vacancyReference);
+        }
+        catch (Exception ex)
+        {
+            throw new RequestFailedException($"Failure returned when deleting document with reference {vacancyReference}", ex);
+        }
+    }
 }
