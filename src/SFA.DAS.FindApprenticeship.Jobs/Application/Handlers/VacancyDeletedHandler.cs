@@ -9,13 +9,11 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class VacancyDeletedHandler : IVacancyDeletedHandler
 {
     private readonly IAzureSearchHelper _azureSearchHelperService;
-    private readonly ILogger<VacancyUpdatedHandler> _logger;
-    public VacancyDeletedHandler(IAzureSearchHelper azureSearchHelper, ILogger<VacancyUpdatedHandler> logger)
+    public VacancyDeletedHandler(IAzureSearchHelper azureSearchHelper)
     {
         _azureSearchHelperService = azureSearchHelper;
-        _logger = logger;
     }
-    public async Task Handle(VacancyDeletedEvent vacancyDeletedEvent)
+    public async Task Handle(VacancyDeletedEvent vacancyDeletedEvent, ILogger log)
     {
         var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
         var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
@@ -26,7 +24,7 @@ public class VacancyDeletedHandler : IVacancyDeletedHandler
         }
         else
         {
-            _logger.LogInformation($"Index {indexName} not found so document VAC{vacancyDeletedEvent.VacancyId} has not been deleted");
+            log.LogInformation($"Index {indexName} not found so document VAC{vacancyDeletedEvent.VacancyId} has not been deleted");
         }
     }
 }

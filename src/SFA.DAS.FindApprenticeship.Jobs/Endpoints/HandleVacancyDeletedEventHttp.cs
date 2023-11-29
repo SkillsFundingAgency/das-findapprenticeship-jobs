@@ -24,7 +24,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         {
             log.LogInformation($"HandleVacancyDeletedEvent HTTP trigger function executed at {DateTime.Now}");
             var command = JsonSerializer.Deserialize<VacancyDeletedEvent>(req.Content.ReadAsStream());
-            await _vacancyDeletedHandler.Handle(command);
+            await _vacancyDeletedHandler.Handle(command, log);
             log.LogInformation($"HandleVacancyDeletedEvent HTTP trigger function finished at {DateTime.Now}");
         }
     }

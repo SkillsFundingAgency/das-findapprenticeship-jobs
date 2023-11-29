@@ -22,7 +22,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         public async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyDeleted)]VacancyDeletedEvent command, ILogger log)
         {
             log.LogInformation($"NServiceBus VacancyDeleted trigger function executed at {DateTime.Now}");
-            await _vacancyDeletedHandler.Handle(command);
+            await _vacancyDeletedHandler.Handle(command, log);
             log.LogInformation($"NServiceBus VacancyDeleted trigger function finished at {DateTime.Now}");
         }
     }

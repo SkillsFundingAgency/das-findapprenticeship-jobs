@@ -12,13 +12,13 @@ public class WhenVacancyDeletedEventTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Command_Will_Be_Handled(
-    ILogger<VacancyDeletedEvent> logger,
+    ILogger log,
     VacancyDeletedEvent command,
     [Frozen] Mock<IVacancyDeletedHandler> handler,
     HandleVacancyDeletedEvent sut)
     {
-        await sut.Run(command, logger);
+        await sut.Run(command, log);
 
-        handler.Verify(x => x.Handle(It.Is<VacancyDeletedEvent>(x => x.VacancyId == command.VacancyId)), Times.Once());
+        handler.Verify(x => x.Handle(It.Is<VacancyDeletedEvent>(x => x.VacancyId == command.VacancyId), log), Times.Once());
     }
 }
