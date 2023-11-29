@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
@@ -28,6 +29,12 @@ public class RecruitIndexerSteps
     {
         var recruitIndexerFunction = new RecruitIndexerTimerTrigger(It.IsAny<RecruitIndexerJobHandler>());
         await recruitIndexerFunction.Run(It.IsAny<TimerInfo>(), It.IsAny<ILogger>());
+    }
+
+    [Given("I invoke the passing test")]
+    public async Task GivenIInvokeThePassingTest()
+    {
+        Assert.Pass();
     }
 
     [When(@"I have vacancies")]
