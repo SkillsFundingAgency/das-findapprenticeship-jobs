@@ -48,13 +48,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.TestHarness
 
                 if (key.Key == ConsoleKey.D1)
                 {
-                    for (var i = 0; i < 1000; i++)
-                    {
-                        var vacancyId = Guid.NewGuid();
-                        await endpoint.Publish(new VacancyUpdatedEvent() { VacancyId = vacancyId, VacancyReference = 36, UpdateKind = LiveUpdateKind.StartDate });
-
-                        Console.WriteLine("Published event...");
-                    }
+                    var vacancyId = Guid.NewGuid();
+                    await endpoint.Publish(new VacancyUpdatedEvent() { VacancyId = vacancyId, VacancyReference = 36, UpdateKind = LiveUpdateKind.StartDate });
                 }
                 else
                 {
