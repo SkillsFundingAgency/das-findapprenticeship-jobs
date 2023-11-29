@@ -21,9 +21,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         [FunctionName("HandleVacancyUpdatedEvent")]
         public async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyUpdated)]VacancyUpdatedEvent message, ILogger log)
         {
-            log.LogInformation($"NServiceBus VacancyUpdated trigger function executed at {DateTime.Now}");
+            log.LogInformation($"NServiceBus VacancyUpdated trigger function executed at {DateTime.UtcNow}");
             await _vacancyUpdatedHandler.Handle(message, log);
-            log.LogInformation($"NServiceBus VacancyUpdated trigger function finished at {DateTime.Now}");
+            log.LogInformation($"NServiceBus VacancyUpdated trigger function finished at {DateTime.UtcNow}");
 
         }
     }

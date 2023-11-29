@@ -22,10 +22,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         [FunctionName("HandleVacancyUpdatedEventHttp")]
         public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
         {
-            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.Now}");
+            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.UtcNow}");
             var message = JsonSerializer.Deserialize<VacancyUpdatedEvent>(req.Content.ReadAsStream());
             await _vacancyUpdatedHandler.Handle(message, log);
-            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.Now}");
+            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
         }
     }
 }
