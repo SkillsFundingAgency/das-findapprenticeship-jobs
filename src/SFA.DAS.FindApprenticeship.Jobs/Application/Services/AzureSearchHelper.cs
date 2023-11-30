@@ -167,7 +167,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         try
         {
             var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
-            await searchClient.DeleteDocumentsAsync(vacancyReference);
+            await searchClient.DeleteDocumentsAsync("VacancyReference", new []{ vacancyReference });
         }
         catch (Exception ex)
         {
