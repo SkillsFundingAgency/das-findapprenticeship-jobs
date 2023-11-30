@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.DateTimeService
@@ -10,8 +11,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.DateTim
         public void Then_The_Expected_Result_Is_Returned(Jobs.Application.Services.DateTimeService sut)
         {
             var result = sut.GetCurrentDateTime();
-            var difference = result.Subtract(DateTime.UtcNow);
-            Assert.That(difference.TotalMilliseconds, Is.LessThan(1));
+            result.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(5));
         }
     }
 }
