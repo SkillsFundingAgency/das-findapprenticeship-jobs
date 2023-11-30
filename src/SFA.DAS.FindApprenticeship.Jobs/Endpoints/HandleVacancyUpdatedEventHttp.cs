@@ -23,17 +23,20 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
         {
             log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.UtcNow}");
-            var message = JsonSerializer.Deserialize<VacancyUpdatedEvent>(req.Content.ReadAsStream());
 
-            if (message == null || message.VacancyReference == null)
+            var command = await JsonSerializer.DeserializeAsync<VacancyUpdatedEvent>(
+                await req.Content.ReadAsStreamAsync(),
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (command == null || command.VacancyId == Guid.Empty)
             {
-                log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function found empty request at {DateTime.UtcNow}");
+                throw new ArgumentException(
+                    $"HandleVacancyUpdatedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
+                    nameof(req));
             }
-            else
-            {
-                await _vacancyUpdatedHandler.Handle(message, log);
-                log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
-            }
+
+            await _vacancyUpdatedHandler.Handle(command, log);
+            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
         }
     }
 }
