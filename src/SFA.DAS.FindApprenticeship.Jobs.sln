@@ -9,7 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{531FA087
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.FindApprenticeship.Jobs.UnitTests", "SFA.DAS.FindApprenticeship.Jobs.UnitTests\SFA.DAS.FindApprenticeship.Jobs.UnitTests.csproj", "{97F300DF-6FF2-42C7-9140-BE29351278E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests", "SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests\SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.csproj", "{371EABF2-CA55-4812-84E2-9C021ED2697F}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests", "SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests\SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.csproj", "{371EABF2-CA55-4812-84E2-9C021ED2697F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.FindApprenticeship.Jobs.TestHarness", "SFA.DAS.FindApprenticeship.Jobs.TestHarness\SFA.DAS.FindApprenticeship.Jobs.TestHarness.csproj", "{513EFF28-76C5-460B-BD97-EBD4A6322D91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{371EABF2-CA55-4812-84E2-9C021ED2697F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{371EABF2-CA55-4812-84E2-9C021ED2697F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{371EABF2-CA55-4812-84E2-9C021ED2697F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{513EFF28-76C5-460B-BD97-EBD4A6322D91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{513EFF28-76C5-460B-BD97-EBD4A6322D91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{513EFF28-76C5-460B-BD97-EBD4A6322D91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{513EFF28-76C5-460B-BD97-EBD4A6322D91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{97F300DF-6FF2-42C7-9140-BE29351278E3} = {531FA087-C2C4-422E-B8DD-D4E31BC75360}
 		{371EABF2-CA55-4812-84E2-9C021ED2697F} = {531FA087-C2C4-422E-B8DD-D4E31BC75360}
+		{513EFF28-76C5-460B-BD97-EBD4A6322D91} = {531FA087-C2C4-422E-B8DD-D4E31BC75360}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C83F13F8-1893-4C7A-A703-F9749691359B}

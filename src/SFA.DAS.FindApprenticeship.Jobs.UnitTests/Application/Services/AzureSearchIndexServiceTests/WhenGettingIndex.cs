@@ -16,7 +16,6 @@ public class WhenGettingIndex
     public async Task Then_The_Api_Is_Called_And_The_Index_Is_Fetched(
         CorsOptions corsOptions,
         string defaultScoringProfile,
-        SearchResourceEncryptionKey encryptionKey,
         ETag eTag,
         ClassicSimilarity similarity,
         string indexName,
@@ -27,7 +26,7 @@ public class WhenGettingIndex
         {
             CorsOptions = corsOptions,
             DefaultScoringProfile = defaultScoringProfile,
-            EncryptionKey = encryptionKey,
+            EncryptionKey = new SearchResourceEncryptionKey(new Uri("https://test.com"),"test","test"),
             ETag = eTag,
             Similarity = similarity
         };

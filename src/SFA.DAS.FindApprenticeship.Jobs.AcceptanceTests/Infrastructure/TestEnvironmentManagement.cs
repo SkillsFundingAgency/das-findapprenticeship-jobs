@@ -33,7 +33,7 @@ public class TestEnvironmentManagement
     public void Start()
     {
         _mockApiClient = new Mock<IApiClient>();
-        _mockApiClient.Setup(x => x.Get<GetLiveVacanciesApiResponse>(It.IsAny<GetLiveVacanciesRequest>())).ReturnsAsync(TestDataValues.LiveVacanciesApiResponse);
+        _mockApiClient.Setup(x => x.Get<GetLiveVacanciesApiResponse>(It.IsAny<GetLiveVacanciesApiRequest>())).ReturnsAsync(TestDataValues.LiveVacanciesApiResponse);
         _mockAzureSearchHelper = new Mock<IAzureSearchHelper>();
         _mockAzureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>())).Returns(It.IsAny<Task<Response<SearchIndex>>>());
         _mockAzureSearchHelper.Setup(x => x.DeleteIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
