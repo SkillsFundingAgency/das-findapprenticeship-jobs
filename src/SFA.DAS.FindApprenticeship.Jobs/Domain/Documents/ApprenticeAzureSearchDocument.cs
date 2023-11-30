@@ -22,7 +22,7 @@ public class ApprenticeAzureSearchDocument
             ClosingDate = source.ClosingDate,
             Title = source.VacancyTitle,
             Ukprn = source.ProviderId,
-            VacancyReference = $"VAC{source.VacancyId}",
+            VacancyReference = $"VAC{source.VacancyReference}",
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.EmployerLocation,

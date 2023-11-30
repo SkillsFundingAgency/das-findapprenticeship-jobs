@@ -10,33 +10,33 @@ using System.Text.Json;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyDeletedEventHttp
+    public class HandleVacancyApprovedEventHttp
     {
-        private readonly IVacancyDeletedHandler _vacancyDeletedHandler;
+        private readonly IVacancyApprovedHandler _vacancyApprovedHandler;
 
-        public HandleVacancyDeletedEventHttp(IVacancyDeletedHandler vacancyDeletedHandler)
+        public HandleVacancyApprovedEventHttp(IVacancyApprovedHandler vacancyApprovedHandler)
         {
-            _vacancyDeletedHandler = vacancyDeletedHandler;
+            _vacancyApprovedHandler = vacancyApprovedHandler;
         }
 
-        [FunctionName("HandleVacancyDeletedEventHttp")]
+        [FunctionName("HandleVacancyApprovedEventHttp")]
         public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
         {
-            log.LogInformation($"HandleVacancyDeletedEvent HTTP trigger function executed at {DateTime.UtcNow}");
+            log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function executed at {DateTime.UtcNow}");
 
-            var command = await JsonSerializer.DeserializeAsync<VacancyDeletedEvent>(
+            var command = await JsonSerializer.DeserializeAsync<VacancyApprovedEvent>(
                 await req.Content.ReadAsStreamAsync(),
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             if (command == null || command.VacancyId == Guid.Empty)
             {
                 throw new ArgumentException(
-                    $"HandleVacancyDeletedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
+                    $"HandleVacancyApprovedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
                     nameof(req));
             }
 
-            await _vacancyDeletedHandler.Handle(command, log);
-            log.LogInformation($"HandleVacancyDeletedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+            await _vacancyApprovedHandler.Handle(command, log);
+            log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function finished at {DateTime.UtcNow}");
         }
     }
 }

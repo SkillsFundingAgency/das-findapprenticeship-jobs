@@ -20,9 +20,9 @@ public class RecruitService : IRecruitService
         return liveVacancies.Body;
     }
 
-    public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(Guid vacancyId)
+    public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(long vacancyReference)
     {
-        var liveVacancy = await _apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyId));
+        var liveVacancy = await _apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference));
         return liveVacancy.Body;
     }
 }

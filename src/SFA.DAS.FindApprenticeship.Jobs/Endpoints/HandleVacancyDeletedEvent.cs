@@ -19,11 +19,11 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         }
 
         [FunctionName("HandleVacancyDeletedEvent")]
-        public async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyDeleted)]VacancyDeletedEvent command, ILogger log)
+        public async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyDeleted)] VacancyDeletedEvent command, ILogger log)
         {
-            log.LogInformation($"NServiceBus VacancyDeleted trigger function executed at {DateTime.Now}");
+            log.LogInformation($"NServiceBus VacancyDeleted trigger function executed at {DateTime.UtcNow}");
             await _vacancyDeletedHandler.Handle(command, log);
-            log.LogInformation($"NServiceBus VacancyDeleted trigger function finished at {DateTime.Now}");
+            log.LogInformation($"NServiceBus VacancyDeleted trigger function finished at {DateTime.UtcNow}");
         }
     }
 }

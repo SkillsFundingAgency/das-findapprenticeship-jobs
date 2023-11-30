@@ -1,15 +1,14 @@
-﻿using System;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 public class GetLiveVacancyApiRequest : IGetApiRequest
 {
-    private readonly Guid _vacancyId;
+    private readonly long _vacancyRef;
 
-    public GetLiveVacancyApiRequest(Guid vacancyId)
+    public GetLiveVacancyApiRequest(long vacancyRef)
     {
-        _vacancyId = vacancyId;
+        _vacancyRef = vacancyRef;
     }
 
-    public string GetUrl => $"livevacancy?vacancyId={_vacancyId}";
+    public string GetUrl => $"livevacancy?vacancyRef={_vacancyRef}";
 }
