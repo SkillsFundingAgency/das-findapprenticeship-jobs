@@ -7,10 +7,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Infrastructure.Api.Requests;
 public class WhenBuildingGetLiveVacancyApiRequest
 {
     [Test, AutoData]
-    public void Then_The_Url_Is_Correctly_Built(Guid vacancyId)
+    public void Then_The_Url_Is_Correctly_Built(long vacancyReference)
     {
-        var actual = new GetLiveVacancyApiRequest(vacancyId);
+        var actual = new GetLiveVacancyApiRequest(vacancyReference);
 
-        actual.GetUrl.Should().Be($"livevacancy?vacancyId={vacancyId}");
+        actual.GetUrl.Should().Be($"livevacancy?vacancyRef={vacancyReference}");
     }
 }

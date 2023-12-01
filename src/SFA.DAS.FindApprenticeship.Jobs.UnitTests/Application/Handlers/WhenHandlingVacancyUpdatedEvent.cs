@@ -1,6 +1,5 @@
 ﻿//using AutoFixture.NUnit3;
 //using Azure;
-//using FluentAssertions.Execution;
 //using Microsoft.Extensions.Logging;
 //using Moq;
 //using NUnit.Framework;
@@ -17,6 +16,7 @@
 //    //TODO: uncomment once FAI-1020 is done
 //    [Test, MoqAutoData]
 //    public async Task Then_The_Vacancy_Is_Fetched_From_The_Index(
+//        ILogger log,
 //        VacancyUpdatedEvent vacancyUpdatedEvent,
 //        Response<ApprenticeAzureSearchDocument> document,
 //        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
@@ -24,13 +24,14 @@
 //    {
 //        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), $"VAC{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
 
-//        await sut.Handle(vacancyUpdatedEvent);
+//        await sut.Handle(vacancyUpdatedEvent, log);
 
 //        azureSearchHelper.Verify(x => x.GetDocument(It.IsAny<string>(), $"VAC{vacancyUpdatedEvent.VacancyReference}"), Times.Once());
 //    }
 
 //    [Test, MoqAutoData]
 //    public async Task Then_The_Updated_Vacancy_Is_Fetched_From_The_Api(
+//        ILogger log,
 //        VacancyUpdatedEvent vacancyUpdatedEvent,
 //        Response<ApprenticeAzureSearchDocument> document,
 //        Response<GetLiveVacancyApiResponse> liveVacancy,
@@ -39,10 +40,10 @@
 //        VacancyUpdatedHandler sut)
 //    {
 //        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), document.Value.VacancyReference)).ReturnsAsync(document);
-//        recruitService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyId)).ReturnsAsync(liveVacancy);
+//        recruitService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
 
-//        await sut.Handle(vacancyUpdatedEvent);
+//        await sut.Handle(vacancyUpdatedEvent, log);
 
-//        recruitService.Verify(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyId), Times.Once());
+//        recruitService.Verify(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference), Times.Once());
 //    }
 //}

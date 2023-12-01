@@ -19,10 +19,10 @@ public class WhenGettingLiveVacancy
     {
         apiClient.Setup(x =>
         x.Get<GetLiveVacancyApiResponse>(
-            It.Is<GetLiveVacancyApiRequest>(c => c.GetUrl.Contains($"livevacancy?vacancyId={response.Body.LiveVacancy.VacancyId}"))))
+            It.Is<GetLiveVacancyApiRequest>(c => c.GetUrl.Contains($"livevacancy?vacancyRef={response.Body.LiveVacancy.VacancyReference}"))))
             .ReturnsAsync(response);
 
-        var actual = await service.GetLiveVacancy(response.Body.LiveVacancy.VacancyId);
+        var actual = await service.GetLiveVacancy(response.Body.LiveVacancy.VacancyReference);
 
         actual.Should().BeEquivalentTo(response.Body);
     }
