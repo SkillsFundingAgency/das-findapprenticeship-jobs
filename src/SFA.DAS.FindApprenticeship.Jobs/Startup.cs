@@ -75,6 +75,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IIndexCleanupJobHandler, IndexCleanupJobHandler>();
         builder.Services.AddTransient<IVacancyUpdatedHandler, VacancyUpdatedHandler>();
         builder.Services.AddTransient<IVacancyDeletedHandler, VacancyDeletedHandler>();
+        builder.Services.AddTransient<IVacancyApprovedHandler, VacancyApprovedHandler>();
         builder.Services.AddTransient<IDateTimeService, DateTimeService>();
         builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
         (
