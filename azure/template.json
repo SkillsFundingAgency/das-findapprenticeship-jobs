@@ -382,14 +382,6 @@
         "FunctionAppName": {
             "type": "string",
             "value": "[variables('functionAppName')]"
-        },
-        "azureSearchName": {
-            "type": "string",
-            "value": "[variables('azureSearchName')]"
-        },
-        "azureSearchPrimaryKey": {
-            "type": "string",
-            "value": "[reference('exploreCareersSearch').outputs.azureSearchPrimaryKey.value]"
         }
     }
 }
