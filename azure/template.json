@@ -352,6 +352,26 @@
             "dependsOn": [
                 "[concat(variables('functionAppName'), '-', parameters('utcValue'))]"
             ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat(variables('apiAppServiceName'), '-azure-search-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "[concat(variables('deploymentUrlBase'),'azure-search.json')]",
+                "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                "azureSearchName": {
+                  "value": "[variables('azureSearchName')]"
+                },
+                "azureSearchSku": {
+                  "value": "standard"
+                }
+              }
+            }
         }
     ],
     "outputs": {
@@ -362,6 +382,14 @@
         "FunctionAppName": {
             "type": "string",
             "value": "[variables('functionAppName')]"
+        },
+        "azureSearchName": {
+            "type": "string",
+            "value": "[variables('azureSearchName')]"
+        },
+        "azureSearchPrimaryKey": {
+            "type": "string",
+            "value": "[reference('exploreCareersSearch').outputs.azureSearchPrimaryKey.value]"
         }
     }
 }
