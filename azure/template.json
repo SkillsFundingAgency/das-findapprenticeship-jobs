@@ -91,7 +91,7 @@
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
-        "configNames": "SFA.DAS.FindApprenticeship.Jobs"
+        "configNames": "SFA.DAS.FindApprenticeship.Jobs",
         "azureSearchName": "[concat(variables('resourceNamePrefix'), '-azs')]"
     },
     "resources": [
