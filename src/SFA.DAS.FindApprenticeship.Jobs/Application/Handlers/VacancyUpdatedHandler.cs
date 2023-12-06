@@ -24,23 +24,29 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
     {
         log.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
 
-        //var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
-        //var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
+        var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
+        var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
 
-        //var vacancyReference = $"VAC{vacancyUpdatedEvent.VacancyReference}";
-        //var document = await _azureSearchHelperService.GetDocument(indexName, vacancyReference);
-        //var updatedVacancy = await _recruitService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference);
+        if (string.IsNullOrWhiteSpace(indexName))
+        {
+            log.LogWarning($"Unable to update vacancy reference {vacancyUpdatedEvent.VacancyReference} - no index is aliased");
+            return;
+        }
 
-        //if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.ClosingDate))
-        //{
-        //    document.Value.ClosingDate = updatedVacancy.LiveVacancy.ClosingDate;
-        //}
-        //if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.StartDate))
-        //{
-        //    document.Value.StartDate = updatedVacancy.LiveVacancy.StartDate;
-        //}
+        var vacancyReference = $"VAC{vacancyUpdatedEvent.VacancyReference}";
+        var document = await _azureSearchHelperService.GetDocument(indexName, vacancyReference);
+        var updatedVacancy = await _recruitService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference);
 
-        //var uploadBatch = Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document);
-        //await _azureSearchHelperService.UploadDocuments(indexName, uploadBatch);
+        if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.ClosingDate))
+        {
+            document.Value.ClosingDate = updatedVacancy.ClosingDate;
+        }
+        if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.StartDate))
+        {
+            document.Value.StartDate = updatedVacancy.StartDate;
+        }
+
+        var uploadBatch = Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document);
+        await _azureSearchHelperService.UploadDocuments(indexName, uploadBatch);
     }
 }
