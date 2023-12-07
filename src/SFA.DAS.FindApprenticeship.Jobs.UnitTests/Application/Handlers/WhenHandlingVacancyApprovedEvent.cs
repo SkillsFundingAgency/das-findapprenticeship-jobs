@@ -1,96 +1,47 @@
-﻿//using AutoFixture.NUnit3;
-//using Azure;
-//using Azure.Search.Documents.Indexes.Models;
-//using Microsoft.Extensions.Logging;
-//using Moq;
-//using NUnit.Framework;
-//using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-//using SFA.DAS.FindApprenticeship.Jobs.Domain;
-//using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
-//using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-//using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
-//using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
-//using SFA.DAS.Testing.AutoFixture;
+﻿using AutoFixture.NUnit3;
+using Azure;
+using Azure.Search.Documents.Indexes.Models;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
+using SFA.DAS.Testing.AutoFixture;
 
-//namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
-//public class WhenHandlingVacancyApprovedEvent
-//{
-//    [Test, MoqAutoData]
-//    public async Task Then_The_Vacancy_Is_Fetched_From_The_Api(
-//        string aliasName,
-//        SearchAlias searchAlias,
-//        VacancyApprovedEvent vacancyApprovedEvent,
-//        Response<GetLiveVacancyApiResponse> liveVacancy,
-//        ILogger log,
-//        [Frozen] Mock<IRecruitService> recruitService,
-//        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-//        VacancyApprovedHandler sut)
-//    {
-//        liveVacancy.Value.LiveVacancy = TestData.LiveVacancies[0];
-//        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
-//        azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
-//        azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
 
-//        await sut.Handle(vacancyApprovedEvent, log);
+[TestFixture]
+public class WhenHandlingVacancyApprovedEvent
+{
+    [Test, MoqAutoData]
+    public async Task Then_The_Vacancy_Is_Uploaded_To_The_Index(
+        ILogger log,
+        VacancyApprovedEvent vacancyApprovedEvent,
+        string indexName,
+        int programmeId,
+        Response<ApprenticeAzureSearchDocument> document,
+        Response<GetLiveVacancyApiResponse> liveVacancy,
+        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        VacancyApprovedHandler sut)
+    {
+        liveVacancy.Value.ProgrammeId = programmeId.ToString();
+        liveVacancy.Value.ProgrammeType = "Standard";
 
-//        recruitService.Verify(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference), Times.Once);
-//    }
+        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
+        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 
-//    [Test, MoqAutoData]
-//    public async Task Then_The_Alias_Is_Fetched(
-//        SearchAlias searchAlias,
-//        VacancyApprovedEvent vacancyApprovedEvent,
-//        Response<GetLiveVacancyApiResponse> liveVacancy,
-//        ILogger log,
-//        [Frozen] Mock<IRecruitService> recruitService,
-//        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-//        VacancyApprovedHandler sut)
-//    {
-//        liveVacancy.Value.LiveVacancy = TestData.LiveVacancies[0];
-//        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
-//        azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(searchAlias);
-//        azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
+        await sut.Handle(vacancyApprovedEvent, log);
 
-//        await sut.Handle(vacancyApprovedEvent, log);
-
-//        azureSearchHelper.Verify(x => x.GetAlias(Constants.AliasName), Times.Once);
-//    }
-
-//    [Test, MoqAutoData]
-//    public async Task And_Vacancy_Is_Not_Null_And_IndexName_Is_Not_Null_Then_Vacancy_Is_Uploaded_To_Index(
-//        string aliasName,
-//        SearchAlias searchAlias,
-//        VacancyApprovedEvent vacancyApprovedEvent,
-//        Response<GetLiveVacancyApiResponse> liveVacancy,
-//        ILogger log,
-//        [Frozen] Mock<IRecruitService> recruitService,
-//        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-//        VacancyApprovedHandler sut)
-//    {
-//        liveVacancy.Value.LiveVacancy = TestData.LiveVacancies[0];
-//        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
-//        azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
-//        azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
-
-//        await sut.Handle(vacancyApprovedEvent, log);
-
-//        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()), Times.Once);
-//    }
-
-//    [Test, MoqAutoData]
-//    public async Task And_Vacancy_Is_Null_Then_Vacancy_Is_Not_Uploaded(string aliasName,
-//        SearchAlias searchAlias,
-//        VacancyApprovedEvent vacancyApprovedEvent,
-//        ILogger log,
-//        [Frozen] Mock<IRecruitService> recruitService,
-//        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-//        VacancyApprovedHandler sut)
-//    {
-//        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(() => null);
-//        azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
-
-//        await sut.Handle(vacancyApprovedEvent, log);
-
-//        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()), Times.Never);
-//    }
-//}
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
+                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d =>
+                    d.Single().VacancyReference == liveVacancy.Value.VacancyReference.ToString())),
+            Times.Once());
+    }
+}
