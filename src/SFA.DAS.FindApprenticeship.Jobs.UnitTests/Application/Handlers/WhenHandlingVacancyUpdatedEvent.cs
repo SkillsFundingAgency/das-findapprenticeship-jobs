@@ -47,17 +47,17 @@ public class WhenHandlingVacancyUpdatedEvent
             Times.Once());
     }
 
-    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, GetLiveVacancyApiResponse liveVacancyValue, LiveUpdateKind kind)
+    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, LiveVacancy liveVacancy, LiveUpdateKind updateKind)
     {
         var updatedDocument = updatedDocuments.Single();
 
-        var expectedStartDate = (kind.HasFlag(LiveUpdateKind.StartDate)
-            ? liveVacancyValue.StartDate
-            : originalDocument.StartDate);
+        var expectedStartDate = updateKind.HasFlag(LiveUpdateKind.StartDate)
+            ? liveVacancy.StartDate
+            : originalDocument.StartDate;
 
-        var expectedClosingDate = (kind.HasFlag(LiveUpdateKind.ClosingDate)
-            ? liveVacancyValue.ClosingDate
-            : originalDocument.ClosingDate);
+        var expectedClosingDate = updateKind.HasFlag(LiveUpdateKind.ClosingDate)
+            ? liveVacancy.ClosingDate
+            : originalDocument.ClosingDate;
 
         return updatedDocument.StartDate == expectedStartDate && updatedDocument.ClosingDate == expectedClosingDate;
     }
