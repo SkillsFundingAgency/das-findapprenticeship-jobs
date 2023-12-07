@@ -10,5 +10,5 @@ public class GetLiveVacancyApiRequest : IGetApiRequest
         _vacancyReference = vacancyReference;
     }
 
-    public string GetUrl => $"livevacancy?vacancyRef={_vacancyReference}";
+    public string GetUrl => $"livevacancies/{_vacancyReference}";
 }

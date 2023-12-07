@@ -4,6 +4,8 @@ using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Infrastructure.Api.Requests;
+
+[TestFixture]
 public class WhenBuildingGetLiveVacancyApiRequest
 {
     [Test, AutoData]
@@ -11,6 +13,6 @@ public class WhenBuildingGetLiveVacancyApiRequest
     {
         var actual = new GetLiveVacancyApiRequest(vacancyReference);
 
-        actual.GetUrl.Should().Be($"livevacancy?vacancyRef={vacancyReference}");
+        actual.GetUrl.Should().Be($"livevacancies/{vacancyReference}");
     }
 }
