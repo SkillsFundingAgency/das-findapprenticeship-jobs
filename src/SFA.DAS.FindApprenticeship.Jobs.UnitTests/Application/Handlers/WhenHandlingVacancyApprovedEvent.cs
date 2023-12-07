@@ -41,7 +41,7 @@ public class WhenHandlingVacancyApprovedEvent
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
                 It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d =>
-                    d.Single().VacancyReference == liveVacancy.Value.VacancyReference.ToString())),
+                    d.Single().VacancyReference == $"VAC{liveVacancy.Value.VacancyReference}")),
             Times.Once());
     }
 }
