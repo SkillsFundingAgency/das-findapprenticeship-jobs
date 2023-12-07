@@ -28,7 +28,7 @@ public class VacancyApprovedHandler : IVacancyApprovedHandler
         var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
         var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
 
-        if (approvedVacancy != null && approvedVacancy != null && !string.IsNullOrEmpty(indexName))
+        if (approvedVacancy != null && !string.IsNullOrEmpty(indexName))
         {
             var document = (ApprenticeAzureSearchDocument)approvedVacancy;
             await _azureSearchHelperService.UploadDocuments(indexName, Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document));

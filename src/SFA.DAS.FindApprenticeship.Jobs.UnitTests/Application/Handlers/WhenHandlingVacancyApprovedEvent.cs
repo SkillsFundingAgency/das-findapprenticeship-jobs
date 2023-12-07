@@ -44,4 +44,20 @@ public class WhenHandlingVacancyApprovedEvent
                     d.Single().VacancyReference == $"VAC{liveVacancy.Value.VacancyReference}")),
             Times.Once());
     }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Event_Is_Ignored_If_No_Index_Is_Currently_Aliased(
+        ILogger log,
+        VacancyApprovedEvent vacancyApprovedEvent,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        VacancyApprovedHandler sut)
+    {
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => null);
+
+        await sut.Handle(vacancyApprovedEvent, log);
+
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()),
+            Times.Never());
+    }
 }
