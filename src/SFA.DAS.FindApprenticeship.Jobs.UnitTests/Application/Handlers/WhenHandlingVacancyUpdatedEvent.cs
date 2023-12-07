@@ -47,7 +47,7 @@ public class WhenHandlingVacancyUpdatedEvent
             Times.Once());
     }
 
-    private bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, GetLiveVacancyApiResponse liveVacancyValue, LiveUpdateKind kind)
+    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, GetLiveVacancyApiResponse liveVacancyValue, LiveUpdateKind kind)
     {
         var updatedDocument = updatedDocuments.Single();
 
