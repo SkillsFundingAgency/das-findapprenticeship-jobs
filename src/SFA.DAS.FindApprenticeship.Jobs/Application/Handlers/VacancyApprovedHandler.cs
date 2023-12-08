@@ -23,20 +23,19 @@ public class VacancyApprovedHandler : IVacancyApprovedHandler
     {
         log.LogInformation($"Vacancy Approved Event handler invoked at {DateTime.UtcNow}");
 
-        //TODO: uncomment when FAI-1020 is done
-        //var approvedVacancy = await _recruitService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference);
+        var approvedVacancy = await _recruitService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference);
 
-        //var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
-        //var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
+        var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
+        var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
 
-        //if (approvedVacancy != null && approvedVacancy.LiveVacancy != null && !string.IsNullOrEmpty(indexName))
-        //{
-        //    var document = (ApprenticeAzureSearchDocument)approvedVacancy.LiveVacancy;
-        //    await _azureSearchHelperService.UploadDocuments(indexName, Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document));
-        //}
-        //else
-        //{
-        //    log.LogInformation($"Handle VacancyApprovedEvent failed with indexName {indexName} and vacancyId {vacancyApprovedEvent.VacancyId}");
-        //}
+        if (approvedVacancy != null && !string.IsNullOrEmpty(indexName))
+        {
+            var document = (ApprenticeAzureSearchDocument)approvedVacancy;
+            await _azureSearchHelperService.UploadDocuments(indexName, Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document));
+        }
+        else
+        {
+            log.LogInformation($"Handle VacancyApprovedEvent failed with indexName {indexName} and vacancyId {vacancyApprovedEvent.VacancyId}");
+        }
     }
 }
