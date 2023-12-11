@@ -24,7 +24,7 @@ public class TestDataValues
                     VacancyTitle = "Vacancy 1",
                     ApprenticeshipTitle = "Apprenticeship title 1",
                     Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
-                    EmployerLocation = new Address
+                    Address = new Address
                     {
                         AddressLine1 = "White Hart House High Street",
                         AddressLine2 = "Limpsfield",
@@ -57,7 +57,7 @@ public class TestDataValues
                     VacancyTitle = "Vacancy 2",
                     ApprenticeshipTitle = "Apprenticeship title 2",
                     Description = "<ul>\r\n<li>Advance Mathematics</li>\r\n<li>Computer Modelling</li>\r\n<li>Speech Recognition</li>\r\n</ul>\r\n<p>5day a week training</p>",
-                    EmployerLocation = new Address
+                    Address = new Address
                     {
                         AddressLine1 = "White Hart House High Street",
                         AddressLine2 = "Limpsfield",
@@ -91,7 +91,7 @@ public class TestDataValues
                     VacancyTitle = "Vacancy 3",
                     ApprenticeshipTitle = "Apprenticeship title 3",
                     Description = "<p>Write a few sentences about the apprenticeship to attract applicants. This information will appear under your advert title when applicants look through a list of adverts - make it stand out.</p>",
-                    EmployerLocation = new Address
+                    Address = new Address
                     {
                         AddressLine1 = "White Hart House High Street",
                         AddressLine2 = "Limpsfield",
