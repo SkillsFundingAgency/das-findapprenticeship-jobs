@@ -20,7 +20,7 @@ public class LiveVacancy
     public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
-    public Address? EmployerLocation { get; set; }
+    public Address? Address { get; set; }
     public string? EmployerName { get; set; }
     public long? ProviderId { get; set; }
     public string? ProviderName { get; set; }

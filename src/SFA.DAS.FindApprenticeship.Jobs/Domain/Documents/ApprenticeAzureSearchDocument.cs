@@ -25,8 +25,8 @@ public class ApprenticeAzureSearchDocument
             VacancyReference = $"VAC{source.VacancyReference}",
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
-            Address = (AddressAzureSearchDocument)source.EmployerLocation,
-            Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
+            Address = (AddressAzureSearchDocument)source.Address,
+            Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
             NumberOfPositions = source.NumberOfPositions
         };
     }
