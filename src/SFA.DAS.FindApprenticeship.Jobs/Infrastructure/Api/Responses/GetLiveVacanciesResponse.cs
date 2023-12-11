@@ -16,7 +16,7 @@ public class LiveVacancy
 {
     public Guid VacancyId { get; set; }
     public long VacancyReference { get; set; }
-    public string VacancyTitle { get; set; } = null!;
+    public string Title { get; set; } = null!;
     public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
@@ -25,7 +25,7 @@ public class LiveVacancy
     public long? Ukprn { get; set; }
     public string? ProviderName { get; set; }
     public DateTime LiveDate { get; set; }
-    public string? ProgrammeId { get; set; }
+    public int? StandardLarsCode { get; set; }
     public string? ProgrammeType { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime ClosingDate { get; set; }

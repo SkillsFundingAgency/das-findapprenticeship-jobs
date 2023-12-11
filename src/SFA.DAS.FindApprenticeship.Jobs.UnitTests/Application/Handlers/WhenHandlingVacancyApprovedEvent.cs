@@ -29,7 +29,7 @@ public class WhenHandlingVacancyApprovedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyApprovedHandler sut)
     {
-        liveVacancy.Value.ProgrammeId = programmeId.ToString();
+        liveVacancy.Value.StandardLarsCode = programmeId;
         liveVacancy.Value.ProgrammeType = "Standard";
 
         recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
