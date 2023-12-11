@@ -9,10 +9,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Domain;
 public class WhenCastingApiResponseToAzureDocument
 {
     [Test, MoqAutoData]
-    public void Then_Fields_Are_Mapped()
+    public void Then_Fields_Are_Mapped(LiveVacancy source)
     {
-        var source = TestData.LiveVacancies.First();
-
         var apprenticeAzureSearchDocument = (ApprenticeAzureSearchDocument)source;
 
         using (new AssertionScope())
@@ -33,6 +31,21 @@ public class WhenCastingApiResponseToAzureDocument
             AssertAddressIsMapped(apprenticeAzureSearchDocument, source);
             apprenticeAzureSearchDocument.Location.Should().NotBeNull();
             apprenticeAzureSearchDocument.NumberOfPositions.Should().Be(source.NumberOfPositions);
+            apprenticeAzureSearchDocument.LongDescription.Should().Be(source.LongDescription);
+            apprenticeAzureSearchDocument.OutcomeDescription.Should().Be(source.OutcomeDescription);
+            apprenticeAzureSearchDocument.TrainingDescription.Should().Be(source.TrainingDescription);
+            apprenticeAzureSearchDocument.Skills.Should().BeEquivalentTo(source.Skills);
+            apprenticeAzureSearchDocument.ThingsToConsider.Should().Be(source.ThingsToConsider);
+            apprenticeAzureSearchDocument.Id.Should().Be(source.Id);
+            apprenticeAzureSearchDocument.AnonymousEmployerName.Should().Be(source.AnonymousEmployerName);
+            apprenticeAzureSearchDocument.IsDisabilityConfident.Should().Be(source.IsDisabilityConfident);
+            apprenticeAzureSearchDocument.IsEmployerAnonymous.Should().Be(source.IsEmployerAnonymous);
+            apprenticeAzureSearchDocument.IsRecruitVacancy.Should().Be(source.IsRecruitVacancy);
+            apprenticeAzureSearchDocument.VacancyLocationType.Should().Be(source.VacancyLocationType);
+            apprenticeAzureSearchDocument.EmployerWebsiteUrl.Should().Be(source.EmployerWebsiteUrl);
+            apprenticeAzureSearchDocument.EmployerContactPhone.Should().Be(source.EmployerContactPhone);
+            apprenticeAzureSearchDocument.EmployerContactEmail.Should().Be(source.EmployerContactEmail);
+            apprenticeAzureSearchDocument.EmployerContactName.Should().Be(source.EmployerContactName);
         }
     }
 
