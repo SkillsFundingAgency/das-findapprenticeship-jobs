@@ -53,10 +53,10 @@ public class WhenCastingApiResponseToAzureDocument
 
     private static void AssertAddressIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
     {
-        apprenticeAzureSearchDocument.Address.AddressLine1.Should().BeEquivalentTo(source.EmployerLocation.AddressLine1);
-        apprenticeAzureSearchDocument.Address.AddressLine2.Should().BeEquivalentTo(source.EmployerLocation.AddressLine2);
-        apprenticeAzureSearchDocument.Address.AddressLine3.Should().BeEquivalentTo(source.EmployerLocation.AddressLine3);
-        apprenticeAzureSearchDocument.Address.AddressLine4.Should().BeEquivalentTo(source.EmployerLocation.AddressLine4);
-        apprenticeAzureSearchDocument.Address.Postcode.Should().BeEquivalentTo(source.EmployerLocation.Postcode);
+        apprenticeAzureSearchDocument.Address.AddressLine1.Should().BeEquivalentTo(source.Address.AddressLine1);
+        apprenticeAzureSearchDocument.Address.AddressLine2.Should().BeEquivalentTo(source.Address.AddressLine2);
+        apprenticeAzureSearchDocument.Address.AddressLine3.Should().BeEquivalentTo(source.Address.AddressLine3);
+        apprenticeAzureSearchDocument.Address.AddressLine4.Should().BeEquivalentTo(source.Address.AddressLine4);
+        apprenticeAzureSearchDocument.Address.Postcode.Should().BeEquivalentTo(source.Address.Postcode);
     }
 }
