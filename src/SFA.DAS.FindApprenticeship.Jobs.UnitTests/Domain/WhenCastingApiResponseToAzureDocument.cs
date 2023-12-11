@@ -25,7 +25,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.StartDate.Should().Be(source.StartDate);
             apprenticeAzureSearchDocument.PostedDate.Should().Be(source.LiveDate);
             apprenticeAzureSearchDocument.ClosingDate.Should().Be(source.ClosingDate);
-            apprenticeAzureSearchDocument.Title.Should().BeEquivalentTo(source.VacancyTitle);
+            apprenticeAzureSearchDocument.Title.Should().BeEquivalentTo(source.Title);
             apprenticeAzureSearchDocument.Ukprn.Should().Be(source.Ukprn);
             apprenticeAzureSearchDocument.VacancyReference.Should().Be($"VAC{source.VacancyReference}");
             AssertWageIsMapped(apprenticeAzureSearchDocument, source);
@@ -47,7 +47,7 @@ public class WhenCastingApiResponseToAzureDocument
     private static void AssertCourseIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
     {
         apprenticeAzureSearchDocument.Course.Level.Should().Be(source.Level);
-        apprenticeAzureSearchDocument.Course.LarsCode.Should().Be((long)Convert.ToDouble(source.ProgrammeId));
+        apprenticeAzureSearchDocument.Course.LarsCode.Should().Be(source.StandardLarsCode);
         apprenticeAzureSearchDocument.Course.Title.Should().BeEquivalentTo(source.ApprenticeshipTitle);
     }
 

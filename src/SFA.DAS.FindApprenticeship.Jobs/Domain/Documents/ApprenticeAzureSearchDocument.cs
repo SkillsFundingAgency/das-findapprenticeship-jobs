@@ -20,7 +20,7 @@ public class ApprenticeAzureSearchDocument
             StartDate = source.StartDate,
             PostedDate = source.LiveDate,
             ClosingDate = source.ClosingDate,
-            Title = source.VacancyTitle,
+            Title = source.Title,
             Ukprn = source.Ukprn,
             VacancyReference = $"VAC{source.VacancyReference}",
             Wage = (WageAzureSearchDocument)source.Wage,
@@ -89,12 +89,12 @@ public class CourseAzureSearchDocument
         {
             Level = source.Level,
             Title = source.ApprenticeshipTitle,
-            LarsCode = (long)Convert.ToDouble(source.ProgrammeId)
+            LarsCode = source.StandardLarsCode
         };
     }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public long LarsCode { get; set; }
+    public int? LarsCode { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Title { get; set; }
