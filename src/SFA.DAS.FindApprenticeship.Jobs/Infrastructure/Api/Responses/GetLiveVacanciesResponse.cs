@@ -32,6 +32,41 @@ public class LiveVacancy
     public string Route { get; set; } = null!;
     public int Level { get; set; }
     public Wage? Wage { get; set; }
+    public string LongDescription { get; set; }
+    public string OutcomeDescription { get; set; }
+    public string TrainingDescription { get; set; }
+    public IEnumerable<string> Skills { get; set; }
+    //qualifications here
+    public string ThingsToConsider { get; set; }
+    public string Id { get; set; }
+    public bool IsDisabilityConfident { get; set; }
+    public bool IsEmployerAnonymous { get; set; }
+    public string AnonymousEmployerName { get; set; }
+    public bool IsRecruitVacancy { get; set; }
+    public string VacancyLocationType { get; set; }
+    public string EmployerDescription { get; set; }
+    public string EmployerWebsiteUrl { get; set; }
+    public string EmployerContactPhone { get; set; }
+    public string EmployerContactEmail { get; set; }
+    public string EmployerContactName { get; set; }
+
+    //...
+
+    public IEnumerable<Qualification> Qualifications { get; set; } //parser error - reinstate and fix the weighting
+    //public string Category { get; set; } //not wanted, remove from outer
+    //public string CategoryCode { get; set; } //not wanted, remove from outer
+    public bool IsPositiveAboutDisability { get; set; } //can this come out?
+    
+    //public string SubCategory { get; set; }; //not wanted, remove from outer
+    //public string SubCategoryCode { get; set; } //not wanted, remove from outer
+    //also remove programmeType from outer
+    
+    //public long WageAmountLowerBand { get; set; } //remove these 3 in outer
+    //public long WageAmountUpperBand { get; set; }//remove
+    //public int ExpectedDuration { get; set; }//removed
+    //public int Distance { get; set; } //remove
+    //public int Score { get; set; }
+
 }
 
 public class Address
@@ -55,4 +90,18 @@ public class Wage
     public string? WageType { get; set; }
     public decimal WeeklyHours { get; set; }
     public string? WorkingWeekDescription { get; set; }
+}
+
+public class Qualification
+{
+    public string? QualificationType { get; set; }
+    public string? Subject { get; set; }
+    public string? Grade { get; set; } 
+    //public QualificationWeighting? Weighting { get; set; } add this back in
+}
+
+public enum QualificationWeighting
+{
+    Essential,
+    Desired
 }

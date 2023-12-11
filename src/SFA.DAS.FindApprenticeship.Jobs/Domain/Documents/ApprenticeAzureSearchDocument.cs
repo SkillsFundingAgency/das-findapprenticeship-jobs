@@ -1,6 +1,8 @@
 ﻿#nullable enable
 using Azure.Search.Documents.Indexes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Spatial;
 using Azure.Core.Serialization;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
@@ -27,7 +29,24 @@ public class ApprenticeAzureSearchDocument
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.Address,
             Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
-            NumberOfPositions = source.NumberOfPositions
+            NumberOfPositions = source.NumberOfPositions,
+            LongDescription = source.LongDescription,
+            TrainingDescription = source.TrainingDescription,
+            OutcomeDescription = source.OutcomeDescription,
+            Skills = source.Skills.ToList(),
+            //...
+            ThingsToConsider = source.ThingsToConsider,
+            Id = source.Id,
+            AnonymousEmployerName = source.AnonymousEmployerName,
+            IsDisabilityConfident = source.IsDisabilityConfident,
+            IsEmployerAnonymous = source.IsEmployerAnonymous,
+            IsRecruitVacancy = source.IsRecruitVacancy,
+            VacancyLocationType = source.VacancyLocationType,
+            EmployerContactEmail = source.EmployerContactEmail,
+            EmployerContactName = source.EmployerContactName,
+            EmployerContactPhone = source.EmployerContactPhone,
+            EmployerDescription = source.EmployerDescription,
+            EmployerWebsiteUrl = source.EmployerWebsiteUrl
         };
     }
 
@@ -79,6 +98,54 @@ public class ApprenticeAzureSearchDocument
     [System.Text.Json.Serialization.JsonConverter(typeof(MicrosoftSpatialGeoJsonConverter))]
     [SimpleField(IsSortable = true, IsFilterable = true)]
     public GeographyPoint? Location { get; set; }
+
+    [SearchableField]
+    public string LongDescription { get; set; }
+
+    [SearchableField]
+    public string OutcomeDescription { get; set; }
+
+    [SearchableField]
+    public string TrainingDescription { get; set; }
+
+    [SearchableField]
+    public List<string> Skills { get; set; }
+
+    [SearchableField]
+    public string ThingsToConsider { get; set; }
+
+    [SearchableField]
+    public string Id { get; set; }
+
+    [SearchableField]
+    public string AnonymousEmployerName { get; set; }
+
+    [SearchableField]
+    public bool IsDisabilityConfident { get; set; }
+    
+    [SearchableField]
+    public bool IsEmployerAnonymous { get; set; }
+
+    [SearchableField]
+    public bool IsRecruitVacancy { get; set; }
+
+    [SearchableField]
+    public string VacancyLocationType { get; set; }
+    
+    [SearchableField]
+    public string EmployerDescription { get; set; }
+
+    [SearchableField]
+    public string EmployerWebsiteUrl { get; set; }
+
+    [SearchableField]
+    public string EmployerContactPhone { get; set; }
+
+    [SearchableField]
+    public string EmployerContactEmail { get; set; }
+
+    [SearchableField]
+    public string EmployerContactName { get; set; }
 }
 
 public class CourseAzureSearchDocument
