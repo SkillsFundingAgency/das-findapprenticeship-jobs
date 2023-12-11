@@ -114,37 +114,37 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public string ThingsToConsider { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public string Id { get; set; }
 
-    [SearchableField]
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string AnonymousEmployerName { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public bool IsDisabilityConfident { get; set; }
     
-    [SearchableField]
+    [SimpleField]
     public bool IsEmployerAnonymous { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public bool IsRecruitVacancy { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public string VacancyLocationType { get; set; }
     
     [SearchableField]
     public string EmployerDescription { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public string EmployerWebsiteUrl { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public string EmployerContactPhone { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public string EmployerContactEmail { get; set; }
 
-    [SearchableField]
+    [SimpleField]
     public string EmployerContactName { get; set; }
 }
 
