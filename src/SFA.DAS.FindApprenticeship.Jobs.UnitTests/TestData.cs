@@ -20,7 +20,7 @@ public static class TestData
                     Longitude = 0.014037
                 },
                 EmployerName = "Dashkat Consulting Limited",
-                ProviderId = 10000528,
+                Ukprn = 10000528,
                 ProviderName = "BARKING AND DAGENHAM COLLEGE",
                 LiveDate = new DateTime(2023, 10, 05),
                 ProgrammeId = "91",
@@ -55,7 +55,7 @@ public static class TestData
                     Longitude = 0.014037
                 },
                 EmployerName = "Dashkat Consulting Limited",
-                ProviderId = 10001309,
+                Ukprn = 10001309,
                 ProviderName = "COVENTRY AND WARWICKSHIRE CHAMBERS OF COMMERCE TRAINING LIMITED",
                 LiveDate = new DateTime(2023, 10, 15),
                 ProgrammeId = "561",
@@ -90,7 +90,7 @@ public static class TestData
                     Longitude = 0.014037
                 },
                 EmployerName = "Dashkat Consulting Limited",
-                ProviderId = 10000528,
+                Ukprn = 10000528,
                 ProviderName = "COVENTRY AND WARWICKSHIRE CHAMBERS OF COMMERCE TRAINING LIMITED",
                 LiveDate = new DateTime(2023, 10, 15),
                 ProgrammeId = "160",

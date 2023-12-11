@@ -22,7 +22,7 @@ public class LiveVacancy
     public string? Description { get; set; }
     public Address? Address { get; set; }
     public string? EmployerName { get; set; }
-    public long? ProviderId { get; set; }
+    public long? Ukprn { get; set; }
     public string? ProviderName { get; set; }
     public DateTime LiveDate { get; set; }
     public string? ProgrammeId { get; set; }

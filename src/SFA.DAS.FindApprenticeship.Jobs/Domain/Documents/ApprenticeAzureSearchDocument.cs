@@ -21,7 +21,7 @@ public class ApprenticeAzureSearchDocument
             PostedDate = source.LiveDate,
             ClosingDate = source.ClosingDate,
             Title = source.VacancyTitle,
-            Ukprn = source.ProviderId,
+            Ukprn = source.Ukprn,
             VacancyReference = $"VAC{source.VacancyReference}",
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
