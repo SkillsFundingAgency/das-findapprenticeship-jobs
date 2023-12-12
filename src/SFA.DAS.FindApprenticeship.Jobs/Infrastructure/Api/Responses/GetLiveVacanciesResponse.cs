@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Collections.Generic;
 using System;
+using System.Text.Json.Serialization;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetLiveVacanciesApiResponse
@@ -26,7 +27,6 @@ public class LiveVacancy
     public string? ProviderName { get; set; }
     public DateTime LiveDate { get; set; }
     public int? StandardLarsCode { get; set; }
-    public string? ProgrammeType { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime ClosingDate { get; set; }
     public string Route { get; set; } = null!;
@@ -36,7 +36,7 @@ public class LiveVacancy
     public string OutcomeDescription { get; set; }
     public string TrainingDescription { get; set; }
     public IEnumerable<string> Skills { get; set; }
-    //qualifications here
+    public IEnumerable<Qualification> Qualifications { get; set; }
     public string ThingsToConsider { get; set; }
     public string Id { get; set; }
     public bool IsDisabilityConfident { get; set; }
@@ -49,24 +49,7 @@ public class LiveVacancy
     public string EmployerContactPhone { get; set; }
     public string EmployerContactEmail { get; set; }
     public string EmployerContactName { get; set; }
-
-    //...
-
-    public IEnumerable<Qualification> Qualifications { get; set; } //parser error - reinstate and fix the weighting
-    //public string Category { get; set; } //not wanted, remove from outer
-    //public string CategoryCode { get; set; } //not wanted, remove from outer
-    public bool IsPositiveAboutDisability { get; set; } //can this come out?
-    
-    //public string SubCategory { get; set; }; //not wanted, remove from outer
-    //public string SubCategoryCode { get; set; } //not wanted, remove from outer
-    //also remove programmeType from outer
-    
-    //public long WageAmountLowerBand { get; set; } //remove these 3 in outer
-    //public long WageAmountUpperBand { get; set; }//remove
-    //public int ExpectedDuration { get; set; }//removed
-    //public int Distance { get; set; } //remove
-    //public int Score { get; set; }
-
+    public bool IsPositiveAboutDisability { get; set; }
 }
 
 public class Address
@@ -96,8 +79,9 @@ public class Qualification
 {
     public string? QualificationType { get; set; }
     public string? Subject { get; set; }
-    public string? Grade { get; set; } 
-    //public QualificationWeighting? Weighting { get; set; } add this back in
+    public string? Grade { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public QualificationWeighting? Weighting { get; set; }
 }
 
 public enum QualificationWeighting
