@@ -21,7 +21,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.HoursPerWeek.Should().Be((long)source.Wage.WeeklyHours);
             apprenticeAzureSearchDocument.ProviderName.Should().BeEquivalentTo(source.ProviderName);
             apprenticeAzureSearchDocument.StartDate.Should().Be(source.StartDate);
-            apprenticeAzureSearchDocument.PostedDate.Should().Be(source.LiveDate);
+            apprenticeAzureSearchDocument.LiveDate.Should().Be(source.LiveDate);
             apprenticeAzureSearchDocument.ClosingDate.Should().Be(source.ClosingDate);
             apprenticeAzureSearchDocument.Title.Should().BeEquivalentTo(source.Title);
             apprenticeAzureSearchDocument.Ukprn.Should().Be(source.Ukprn);
@@ -39,6 +39,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.Id.Should().Be(source.Id);
             apprenticeAzureSearchDocument.AnonymousEmployerName.Should().Be(source.AnonymousEmployerName);
             apprenticeAzureSearchDocument.IsDisabilityConfident.Should().Be(source.IsDisabilityConfident);
+            apprenticeAzureSearchDocument.IsPositiveAboutDisability.Should().Be(source.IsPositiveAboutDisability);
             apprenticeAzureSearchDocument.IsEmployerAnonymous.Should().Be(source.IsEmployerAnonymous);
             apprenticeAzureSearchDocument.IsRecruitVacancy.Should().Be(source.IsRecruitVacancy);
             apprenticeAzureSearchDocument.VacancyLocationType.Should().Be(source.VacancyLocationType);
@@ -46,6 +47,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.EmployerContactPhone.Should().Be(source.EmployerContactPhone);
             apprenticeAzureSearchDocument.EmployerContactEmail.Should().Be(source.EmployerContactEmail);
             apprenticeAzureSearchDocument.EmployerContactName.Should().Be(source.EmployerContactName);
+            AssetQualificationsAreMapped(apprenticeAzureSearchDocument, source);
         }
     }
 
@@ -71,5 +73,12 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Address.AddressLine3.Should().BeEquivalentTo(source.Address.AddressLine3);
         apprenticeAzureSearchDocument.Address.AddressLine4.Should().BeEquivalentTo(source.Address.AddressLine4);
         apprenticeAzureSearchDocument.Address.Postcode.Should().BeEquivalentTo(source.Address.Postcode);
+    }
+
+    private static void AssetQualificationsAreMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
+    {
+        apprenticeAzureSearchDocument.Qualifications.Should().BeEquivalentTo(source.Qualifications,
+            opt =>
+                opt.Excluding(x => x.Weighting));
     }
 }

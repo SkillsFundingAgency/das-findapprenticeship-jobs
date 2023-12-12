@@ -30,7 +30,6 @@ public class WhenHandlingVacancyApprovedEvent
         VacancyApprovedHandler sut)
     {
         liveVacancy.Value.StandardLarsCode = programmeId;
-        liveVacancy.Value.ProgrammeType = "Standard";
 
         recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);

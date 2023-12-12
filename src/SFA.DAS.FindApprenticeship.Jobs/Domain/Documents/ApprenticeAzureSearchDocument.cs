@@ -20,7 +20,7 @@ public class ApprenticeAzureSearchDocument
             HoursPerWeek = (long)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
-            PostedDate = source.LiveDate,
+            LiveDate = source.LiveDate,
             ClosingDate = source.ClosingDate,
             Title = source.Title,
             Ukprn = source.Ukprn,
@@ -34,11 +34,11 @@ public class ApprenticeAzureSearchDocument
             TrainingDescription = source.TrainingDescription,
             OutcomeDescription = source.OutcomeDescription,
             Skills = source.Skills.ToList(),
-            //...
             ThingsToConsider = source.ThingsToConsider,
             Id = source.Id,
             AnonymousEmployerName = source.AnonymousEmployerName,
             IsDisabilityConfident = source.IsDisabilityConfident,
+            IsPositiveAboutDisability = source.IsPositiveAboutDisability,
             IsEmployerAnonymous = source.IsEmployerAnonymous,
             IsRecruitVacancy = source.IsRecruitVacancy,
             VacancyLocationType = source.VacancyLocationType,
@@ -46,7 +46,8 @@ public class ApprenticeAzureSearchDocument
             EmployerContactName = source.EmployerContactName,
             EmployerContactPhone = source.EmployerContactPhone,
             EmployerDescription = source.EmployerDescription,
-            EmployerWebsiteUrl = source.EmployerWebsiteUrl
+            EmployerWebsiteUrl = source.EmployerWebsiteUrl,
+            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList()
         };
     }
 
@@ -69,7 +70,7 @@ public class ApprenticeAzureSearchDocument
     public DateTimeOffset StartDate { get; set; }
 
     [SimpleField]
-    public DateTimeOffset PostedDate { get; set; }
+    public DateTimeOffset LiveDate { get; set; }
 
     [SimpleField]
     public DateTimeOffset ClosingDate { get; set; }
@@ -111,6 +112,9 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public List<string> Skills { get; set; }
 
+    [SimpleField]
+    public List<QualificationAzureSearchDocument> Qualifications { get; set; }
+
     [SearchableField]
     public string ThingsToConsider { get; set; }
 
@@ -122,7 +126,10 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public bool IsDisabilityConfident { get; set; }
-    
+
+    [SimpleField]
+    public bool IsPositiveAboutDisability { get; set; }
+
     [SimpleField]
     public bool IsEmployerAnonymous { get; set; }
 
@@ -229,4 +236,30 @@ public class WageAzureSearchDocument
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public long? WageAmount { get; set; }
+}
+
+public class QualificationAzureSearchDocument
+{
+    public static implicit operator QualificationAzureSearchDocument(Qualification source)
+    {
+        return new QualificationAzureSearchDocument
+        {
+            QualificationType = source.QualificationType,
+            Grade = source.Grade,
+            Subject = source.Subject,
+            Weighting = source.Weighting.ToString()
+        };
+    }
+
+    [SimpleField]
+    public string? QualificationType { get; set; }
+
+    [SimpleField]
+    public string? Subject { get; set; }
+
+    [SimpleField]
+    public string? Grade { get; set; }
+    
+    [SimpleField]
+    public string? Weighting { get; set; }
 }
