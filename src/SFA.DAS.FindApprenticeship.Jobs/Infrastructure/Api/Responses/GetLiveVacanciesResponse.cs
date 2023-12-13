@@ -25,7 +25,7 @@ public class LiveVacancy
     public string? EmployerName { get; set; }
     public long? Ukprn { get; set; }
     public string? ProviderName { get; set; }
-    public DateTime LiveDate { get; set; }
+    public DateTime PostedDate { get; set; }
     public int? StandardLarsCode { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime ClosingDate { get; set; }

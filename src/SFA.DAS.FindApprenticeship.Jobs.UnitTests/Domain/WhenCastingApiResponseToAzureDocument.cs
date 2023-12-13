@@ -21,7 +21,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.HoursPerWeek.Should().Be((long)source.Wage.WeeklyHours);
             apprenticeAzureSearchDocument.ProviderName.Should().BeEquivalentTo(source.ProviderName);
             apprenticeAzureSearchDocument.StartDate.Should().Be(source.StartDate);
-            apprenticeAzureSearchDocument.LiveDate.Should().Be(source.LiveDate);
+            apprenticeAzureSearchDocument.PostedDate.Should().Be(source.PostedDate);
             apprenticeAzureSearchDocument.ClosingDate.Should().Be(source.ClosingDate);
             apprenticeAzureSearchDocument.Title.Should().BeEquivalentTo(source.Title);
             apprenticeAzureSearchDocument.Ukprn.Should().Be(source.Ukprn);
