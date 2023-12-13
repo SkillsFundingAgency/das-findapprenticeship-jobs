@@ -20,7 +20,7 @@ public class ApprenticeAzureSearchDocument
             HoursPerWeek = (long)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
-            LiveDate = source.LiveDate,
+            PostedDate = source.PostedDate,
             ClosingDate = source.ClosingDate,
             Title = source.Title,
             Ukprn = source.Ukprn,
@@ -69,8 +69,8 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public DateTimeOffset StartDate { get; set; }
 
-    [SimpleField]
-    public DateTimeOffset LiveDate { get; set; }
+    [SimpleField(IsSortable = true)]
+    public DateTimeOffset PostedDate { get; set; }
 
     [SimpleField]
     public DateTimeOffset ClosingDate { get; set; }
