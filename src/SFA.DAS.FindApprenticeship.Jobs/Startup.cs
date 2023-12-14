@@ -105,11 +105,6 @@ public class Startup : FunctionsStartup
             builder.Services.AddNServiceBus(logger);
         }
 
-        builder.Services.Configure<JsonSerializerOptions>(jsonSerializerOptions =>
-        {
-            jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
-
         var webBuilder = builder.Services.AddWebJobs(_ => { });
         webBuilder.AddExecutionContextBinding();
         webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());

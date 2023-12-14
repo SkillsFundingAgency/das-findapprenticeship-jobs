@@ -101,28 +101,27 @@ public class ApprenticeAzureSearchDocument
     public GeographyPoint? Location { get; set; }
 
     [SearchableField]
-    public string LongDescription { get; set; }
+    public string? LongDescription { get; set; }
 
     [SearchableField]
-    public string OutcomeDescription { get; set; }
+    public string? OutcomeDescription { get; set; }
 
     [SearchableField]
-    public string TrainingDescription { get; set; }
+    public string? TrainingDescription { get; set; }
 
-    [SearchableField]
-    public List<string> Skills { get; set; }
+    [SearchableField] public List<string> Skills { get; set; } = null!;
 
     [SimpleField]
-    public List<QualificationAzureSearchDocument> Qualifications { get; set; }
+    public List<QualificationAzureSearchDocument> Qualifications { get; set; } = null!;
 
     [SearchableField]
-    public string ThingsToConsider { get; set; }
+    public string? ThingsToConsider { get; set; }
 
     [SimpleField]
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public string AnonymousEmployerName { get; set; }
+    public string? AnonymousEmployerName { get; set; }
 
     [SimpleField]
     public bool IsDisabilityConfident { get; set; }
@@ -137,22 +136,22 @@ public class ApprenticeAzureSearchDocument
     public bool IsRecruitVacancy { get; set; }
 
     [SimpleField]
-    public string VacancyLocationType { get; set; }
+    public string? VacancyLocationType { get; set; }
     
     [SearchableField]
-    public string EmployerDescription { get; set; }
+    public string? EmployerDescription { get; set; }
 
     [SimpleField]
-    public string EmployerWebsiteUrl { get; set; }
+    public string? EmployerWebsiteUrl { get; set; }
 
     [SimpleField]
-    public string EmployerContactPhone { get; set; }
+    public string? EmployerContactPhone { get; set; }
 
     [SimpleField]
-    public string EmployerContactEmail { get; set; }
+    public string? EmployerContactEmail { get; set; }
 
     [SimpleField]
-    public string EmployerContactName { get; set; }
+    public string? EmployerContactName { get; set; }
 }
 
 public class CourseAzureSearchDocument
