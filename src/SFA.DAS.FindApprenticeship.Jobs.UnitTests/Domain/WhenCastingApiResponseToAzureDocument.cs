@@ -64,6 +64,7 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Course.Level.Should().Be(source.Level);
         apprenticeAzureSearchDocument.Course.LarsCode.Should().Be(source.StandardLarsCode);
         apprenticeAzureSearchDocument.Course.Title.Should().BeEquivalentTo(source.ApprenticeshipTitle);
+        apprenticeAzureSearchDocument.Course.RouteCode.Should().Be(source.RouteCode);
     }
 
     private static void AssertAddressIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
@@ -73,6 +74,9 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Address.AddressLine3.Should().BeEquivalentTo(source.Address.AddressLine3);
         apprenticeAzureSearchDocument.Address.AddressLine4.Should().BeEquivalentTo(source.Address.AddressLine4);
         apprenticeAzureSearchDocument.Address.Postcode.Should().BeEquivalentTo(source.Address.Postcode);
+        apprenticeAzureSearchDocument.Address.Latitude.Should().Be(source.Address.Latitude);
+        apprenticeAzureSearchDocument.Address.Longitude.Should().Be(source.Address.Longitude);
+
     }
 
     private static void AssetQualificationsAreMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)

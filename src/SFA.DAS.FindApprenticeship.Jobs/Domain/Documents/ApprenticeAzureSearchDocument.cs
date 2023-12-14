@@ -163,7 +163,8 @@ public class CourseAzureSearchDocument
         {
             Level = source.Level,
             Title = source.ApprenticeshipTitle,
-            LarsCode = source.StandardLarsCode
+            LarsCode = source.StandardLarsCode,
+            RouteCode = source.RouteCode
         };
     }
 
@@ -175,6 +176,9 @@ public class CourseAzureSearchDocument
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public long Level { get; set; }
+
+    [SimpleField]
+    public int RouteCode { get; set; }
 }
 
 public class AddressAzureSearchDocument
@@ -187,7 +191,9 @@ public class AddressAzureSearchDocument
             AddressLine2 = source.AddressLine2,
             AddressLine3 = source.AddressLine3,
             AddressLine4 = source.AddressLine4,
-            Postcode = source.Postcode
+            Postcode = source.Postcode,
+            Longitude = source.Longitude,
+            Latitude = source.Latitude
         };
     }
 
@@ -205,6 +211,12 @@ public class AddressAzureSearchDocument
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Postcode { get; set; }
+
+    [SimpleField]
+    public double Latitude { get; set; }
+
+    [SimpleField]
+    public double Longitude { get; set; }
 
 }
 

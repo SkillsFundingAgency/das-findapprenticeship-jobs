@@ -29,6 +29,7 @@ public class LiveVacancy
     public int? StandardLarsCode { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime ClosingDate { get; set; }
+    public int RouteCode { get; set; }
     public string Route { get; set; } = null!;
     public int Level { get; set; }
     public Wage? Wage { get; set; }
