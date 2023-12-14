@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using System.Collections.Generic;
 using System;
-using System.Text.Json.Serialization;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetLiveVacanciesApiResponse
@@ -21,7 +20,7 @@ public class LiveVacancy
     public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
-    public Address? Address { get; set; }
+    public Address Address { get; set; } = null!;
     public string? EmployerName { get; set; }
     public long? Ukprn { get; set; }
     public string? ProviderName { get; set; }
@@ -32,24 +31,24 @@ public class LiveVacancy
     public int RouteCode { get; set; }
     public string Route { get; set; } = null!;
     public int Level { get; set; }
-    public Wage? Wage { get; set; }
-    public string LongDescription { get; set; }
-    public string OutcomeDescription { get; set; }
-    public string TrainingDescription { get; set; }
-    public IEnumerable<string> Skills { get; set; }
-    public IEnumerable<Qualification> Qualifications { get; set; }
-    public string ThingsToConsider { get; set; }
+    public Wage Wage { get; set; } = null!;
+    public string? LongDescription { get; set; }
+    public string? OutcomeDescription { get; set; }
+    public string? TrainingDescription { get; set; }
+    public IEnumerable<string> Skills { get; set; } = null!;
+    public IEnumerable<Qualification> Qualifications { get; set; } = null!;
+    public string? ThingsToConsider { get; set; }
     public string Id { get; set; }
     public bool IsDisabilityConfident { get; set; }
     public bool IsEmployerAnonymous { get; set; }
-    public string AnonymousEmployerName { get; set; }
+    public string? AnonymousEmployerName { get; set; }
     public bool IsRecruitVacancy { get; set; }
-    public string VacancyLocationType { get; set; }
-    public string EmployerDescription { get; set; }
-    public string EmployerWebsiteUrl { get; set; }
-    public string EmployerContactPhone { get; set; }
-    public string EmployerContactEmail { get; set; }
-    public string EmployerContactName { get; set; }
+    public string? VacancyLocationType { get; set; }
+    public string? EmployerDescription { get; set; }
+    public string? EmployerWebsiteUrl { get; set; }
+    public string? EmployerContactPhone { get; set; }
+    public string? EmployerContactEmail { get; set; }
+    public string? EmployerContactName { get; set; }
     public bool IsPositiveAboutDisability { get; set; }
 }
 
@@ -78,15 +77,8 @@ public class Wage
 
 public class Qualification
 {
-    public string? QualificationType { get; set; }
-    public string? Subject { get; set; }
-    public string? Grade { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public QualificationWeighting? Weighting { get; set; }
-}
-
-public enum QualificationWeighting
-{
-    Essential,
-    Desired
+    public string QualificationType { get; set; } = null!;
+    public string Subject { get; set; } = null!;
+    public string Grade { get; set; } = null!;
+    public string Weighting { get; set; } = null!;
 }
