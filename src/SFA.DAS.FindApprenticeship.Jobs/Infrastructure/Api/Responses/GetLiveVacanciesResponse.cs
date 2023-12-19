@@ -22,7 +22,7 @@ public class LiveVacancy
     public string? Description { get; set; }
     public Address Address { get; set; } = null!;
     public string? EmployerName { get; set; }
-    public long? Ukprn { get; set; }
+    public long Ukprn { get; set; }
     public string? ProviderName { get; set; }
     public DateTime PostedDate { get; set; }
     public int? StandardLarsCode { get; set; }
@@ -73,6 +73,11 @@ public class Wage
     public string? WageType { get; set; }
     public decimal WeeklyHours { get; set; }
     public string? WorkingWeekDescription { get; set; }
+    public decimal? ApprenticeMinimumWage { get; set; }
+    public decimal? Under18NationalMinimumWage { get; set; }
+    public decimal? Between18AndUnder21NationalMinimumWage { get; set; }
+    public decimal? Between21AndUnder25NationalMinimumWage { get; set; }
+    public decimal? Over25NationalMinimumWage { get; set; }
 }
 
 public class Qualification

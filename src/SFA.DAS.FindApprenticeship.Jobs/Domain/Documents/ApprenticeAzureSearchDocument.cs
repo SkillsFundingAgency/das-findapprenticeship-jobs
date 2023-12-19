@@ -23,7 +23,7 @@ public class ApprenticeAzureSearchDocument
             PostedDate = source.PostedDate,
             ClosingDate = source.ClosingDate,
             Title = source.Title,
-            Ukprn = source.Ukprn,
+            Ukprn = source.Ukprn.ToString(),
             VacancyReference = $"VAC{source.VacancyReference}",
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
@@ -81,11 +81,14 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Title { get; set; }
 
-    [SimpleField]
-    public long? Ukprn { get; set; }
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string Ukprn { get; set; }
 
-    [SimpleField(IsKey = true, IsFilterable = true)]
+    [SimpleField(IsFilterable = true)]
     public string VacancyReference { get; set; } = null!;
+
+    [SimpleField(IsKey = true)]
+    public string Id { get; set; } = null!;
 
     [SearchableField]
     public CourseAzureSearchDocument? Course { get; set; }
@@ -116,9 +119,6 @@ public class ApprenticeAzureSearchDocument
 
     [SearchableField]
     public string? ThingsToConsider { get; set; }
-
-    [SimpleField]
-    public string Id { get; set; } = null!;
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? AnonymousEmployerName { get; set; }
@@ -229,7 +229,12 @@ public class WageAzureSearchDocument
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
             WageAdditionalInformation = source.WageAdditionalInformation,
-            WorkingWeekDescription = source.WorkingWeekDescription
+            WorkingWeekDescription = source.WorkingWeekDescription,
+            ApprenticeMinimumWage = (double) (source.ApprenticeMinimumWage ?? 0),
+            Under18NationalMinimumWage = (double)(source.Under18NationalMinimumWage ?? 0),
+            Between18AndUnder21NationalMinimumWage = (double)(source.Between18AndUnder21NationalMinimumWage ?? 0),
+            Between21AndUnder25NationalMinimumWage = (double)(source.Between21AndUnder25NationalMinimumWage ?? 0),
+            Over25NationalMinimumWage = (double)(source.Over25NationalMinimumWage ?? 0)
         };
     }
 
@@ -247,6 +252,21 @@ public class WageAzureSearchDocument
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public long? WageAmount { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double ApprenticeMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Under18NationalMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Between18AndUnder21NationalMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Between21AndUnder25NationalMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Over25NationalMinimumWage { get; set; }
 }
 
 public class QualificationAzureSearchDocument
@@ -258,7 +278,7 @@ public class QualificationAzureSearchDocument
             QualificationType = source.QualificationType,
             Grade = source.Grade,
             Subject = source.Subject,
-            Weighting = source.Weighting.ToString()
+            Weighting = source.Weighting
         };
     }
 
