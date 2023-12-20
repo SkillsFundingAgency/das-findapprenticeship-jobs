@@ -57,8 +57,7 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Wage.WageAmount.Should().Be((long)source.Wage.FixedWageYearlyAmount);
         apprenticeAzureSearchDocument.Wage.WageType.Should().BeEquivalentTo(source.Wage.WageType);
         apprenticeAzureSearchDocument.Wage.WorkingWeekDescription.Should().BeEquivalentTo(source.Wage.WorkingWeekDescription);
-
-        
+        apprenticeAzureSearchDocument.Wage.Duration.Should().Be(source.Wage.Duration);
     }
 
     private static void AssertCourseIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)

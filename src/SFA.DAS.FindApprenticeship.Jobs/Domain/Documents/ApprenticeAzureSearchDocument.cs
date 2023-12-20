@@ -228,6 +228,7 @@ public class WageAzureSearchDocument
             WageAmount = (long?)source.FixedWageYearlyAmount ?? null,
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
+            Duration = source.Duration,
             WageAdditionalInformation = source.WageAdditionalInformation,
             WorkingWeekDescription = source.WorkingWeekDescription,
             ApprenticeMinimumWage = (double) (source.ApprenticeMinimumWage ?? 0),
@@ -246,6 +247,9 @@ public class WageAzureSearchDocument
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? WorkingWeekDescription { get; set; }
+
+    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public int Duration { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? WageUnit { get; set; }
