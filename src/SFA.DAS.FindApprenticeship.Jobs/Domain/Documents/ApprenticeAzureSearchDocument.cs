@@ -17,6 +17,11 @@ public class ApprenticeAzureSearchDocument
             Description = source.Description,
             Route = source.Route,
             EmployerName = source.EmployerName,
+            ApprenticeshipLevel = source.ApprenticeshipLevel,
+            ApplicationMethod = source.ApplicationMethod,
+            ApplicationUrl = source.ApplicationUrl,
+            AccountPublicHashedId = source.AccountPublicHashedId,
+            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
             HoursPerWeek = (long)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
@@ -59,6 +64,21 @@ public class ApprenticeAzureSearchDocument
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? EmployerName { get; set; }
+
+    [SimpleField(IsFilterable = true)]
+    public string AccountPublicHashedId { get; set; } = null!;
+
+    [SimpleField(IsFilterable = true)]
+    public string AccountLegalEntityPublicHashedId { get; set; } = null!;
+
+    [SimpleField(IsFilterable = true)]
+    public string ApprenticeshipLevel { get; set; } = null!;
+
+    [SimpleField]
+    public string ApplicationMethod { get; set; } = null!;
+
+    [SimpleField]
+    public string? ApplicationUrl { get; set; }
 
     [SimpleField]
     public long HoursPerWeek { get; set; }

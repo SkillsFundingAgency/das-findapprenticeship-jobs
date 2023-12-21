@@ -22,6 +22,11 @@ public class LiveVacancy
     public string? Description { get; set; }
     public Address Address { get; set; } = null!;
     public string? EmployerName { get; set; }
+    public string ApprenticeshipLevel { get; set; } = null!;
+    public string ApplicationMethod { get; set; } = null!;
+    public string? ApplicationUrl { get; set; }
+    public string AccountPublicHashedId { get; set; } = null!;
+    public string AccountLegalEntityPublicHashedId { get; set; } = null!;
     public long Ukprn { get; set; }
     public string? ProviderName { get; set; }
     public DateTime PostedDate { get; set; }
