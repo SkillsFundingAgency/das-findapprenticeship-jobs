@@ -31,6 +31,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.Title.Should().BeEquivalentTo(source.Title);
             apprenticeAzureSearchDocument.Ukprn.Should().Be(source.Ukprn.ToString());
             apprenticeAzureSearchDocument.VacancyReference.Should().Be($"VAC{source.VacancyReference}");
+            apprenticeAzureSearchDocument.WageText.Should().Be(source.Wage.WageText);
             AssertWageIsMapped(apprenticeAzureSearchDocument, source);
             AssertCourseIsMapped(apprenticeAzureSearchDocument, source);
             AssertAddressIsMapped(apprenticeAzureSearchDocument, source);

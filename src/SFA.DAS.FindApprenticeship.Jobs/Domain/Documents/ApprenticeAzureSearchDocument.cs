@@ -30,6 +30,7 @@ public class ApprenticeAzureSearchDocument
             Title = source.Title,
             Ukprn = source.Ukprn.ToString(),
             VacancyReference = $"VAC{source.VacancyReference}",
+            WageText = source.Wage.WageText,
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.Address,
@@ -118,6 +119,9 @@ public class ApprenticeAzureSearchDocument
 
     [SearchableField]
     public WageAzureSearchDocument? Wage { get; set; }
+
+    [SimpleField]
+    public string WageText { get; set; }
 
     [System.Text.Json.Serialization.JsonConverter(typeof(MicrosoftSpatialGeoJsonConverter))]
     [SimpleField(IsSortable = true, IsFilterable = true)]
