@@ -87,13 +87,13 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? ProviderName { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsSortable = true)]
     public DateTimeOffset StartDate { get; set; }
 
     [SimpleField(IsSortable = true)]
     public DateTimeOffset PostedDate { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsSortable = true)]
     public DateTimeOffset ClosingDate { get; set; }
 
     [SimpleField]
@@ -136,7 +136,8 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public string? TrainingDescription { get; set; }
 
-    [SearchableField] public List<string> Skills { get; set; } = null!;
+    [SearchableField] 
+    public List<string> Skills { get; set; } = null!;
 
     [SimpleField]
     public List<QualificationAzureSearchDocument> Qualifications { get; set; } = null!;
