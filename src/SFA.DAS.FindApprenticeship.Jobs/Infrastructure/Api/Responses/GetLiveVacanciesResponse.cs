@@ -43,7 +43,7 @@ public class LiveVacancy
     public IEnumerable<string> Skills { get; set; } = null!;
     public IEnumerable<Qualification> Qualifications { get; set; } = null!;
     public string? ThingsToConsider { get; set; }
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
     public bool IsDisabilityConfident { get; set; }
     public bool IsEmployerAnonymous { get; set; }
     public string? AnonymousEmployerName { get; set; }
