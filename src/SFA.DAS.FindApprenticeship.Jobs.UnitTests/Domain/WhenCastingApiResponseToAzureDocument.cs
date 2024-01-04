@@ -68,7 +68,7 @@ public class WhenCastingApiResponseToAzureDocument
 
     private static void AssertCourseIsMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
     {
-        apprenticeAzureSearchDocument.Course.Level.Should().Be(source.Level);
+        apprenticeAzureSearchDocument.Course.Level.Should().Be(source.Level.ToString());
         apprenticeAzureSearchDocument.Course.LarsCode.Should().Be(source.StandardLarsCode);
         apprenticeAzureSearchDocument.Course.Title.Should().BeEquivalentTo(source.ApprenticeshipTitle);
         apprenticeAzureSearchDocument.Course.RouteCode.Should().Be(source.RouteCode);
