@@ -185,7 +185,7 @@ public class CourseAzureSearchDocument
     {
         return new CourseAzureSearchDocument
         {
-            Level = source.Level,
+            Level = source.Level.ToString(),
             Title = source.ApprenticeshipTitle,
             LarsCode = source.StandardLarsCode,
             RouteCode = source.RouteCode
@@ -199,7 +199,7 @@ public class CourseAzureSearchDocument
     public string? Title { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public long Level { get; set; }
+    public string Level { get; set; }
 
     [SimpleField]
     public int RouteCode { get; set; }
