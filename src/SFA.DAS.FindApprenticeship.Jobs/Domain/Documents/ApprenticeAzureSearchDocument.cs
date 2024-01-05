@@ -148,10 +148,10 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? AnonymousEmployerName { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsFilterable = true)]
     public bool IsDisabilityConfident { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsFilterable = true)]
     public bool IsPositiveAboutDisability { get; set; }
 
     [SimpleField]
