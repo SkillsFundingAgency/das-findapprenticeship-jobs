@@ -15,7 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
     {
         [Test, MoqAutoData]
         public async Task Then_The_LiveVacancies_Are_Retrieved_And_Index_Is_Created(
-            GetLiveVacanciesApiResponse liveVacanciesApiResponse,
+            List<LiveVacancy> liveVacancies,
             [Frozen] Mock<IRecruitService> recruitService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -26,7 +26,16 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
             var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
 
-            liveVacanciesApiResponse.Vacancies = TestData.LiveVacancies;
+            var liveVacanciesApiResponse = new GetLiveVacanciesApiResponse
+            {
+                Vacancies = liveVacancies,
+                PageNo = 1,
+                PageSize = liveVacancies.Count,
+                TotalLiveVacancies = liveVacancies.Count,
+                TotalLiveVacanciesReturned = liveVacancies.Count,
+                TotalPages = 1
+            };
+
             recruitService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(liveVacanciesApiResponse);
             azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);

@@ -21,10 +21,10 @@ public class TestDataValues
                 new LiveVacancy()
                 {
                     VacancyId =Guid.NewGuid(),
-                    VacancyTitle = "Vacancy 1",
+                    Title = "Vacancy 1",
                     ApprenticeshipTitle = "Apprenticeship title 1",
                     Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
-                    EmployerLocation = new Address
+                    Address = new Address
                     {
                         AddressLine1 = "White Hart House High Street",
                         AddressLine2 = "Limpsfield",
@@ -33,11 +33,10 @@ public class TestDataValues
                         Longitude = 0.014037
                     },
                     EmployerName = "Dashkat Consulting Limited",
-                    ProviderId = 10000528,
+                    Ukprn = 10000528,
                     ProviderName = "BARKING AND DAGENHAM COLLEGE",
-                    LiveDate = new DateTime(2023, 10, 05),
-                    ProgrammeId = "91",
-                    ProgrammeType = "Standard",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
                     StartDate = new DateTime(2025, 02, 01),
                     ClosingDate = new DateTime(2025, 01, 01),
                     Route = "",
@@ -54,10 +53,10 @@ public class TestDataValues
                 new LiveVacancy()
                 {
                     VacancyId = Guid.NewGuid(),
-                    VacancyTitle = "Vacancy 2",
+                    Title = "Vacancy 2",
                     ApprenticeshipTitle = "Apprenticeship title 2",
                     Description = "<ul>\r\n<li>Advance Mathematics</li>\r\n<li>Computer Modelling</li>\r\n<li>Speech Recognition</li>\r\n</ul>\r\n<p>5day a week training</p>",
-                    EmployerLocation = new Address
+                    Address = new Address
                     {
                         AddressLine1 = "White Hart House High Street",
                         AddressLine2 = "Limpsfield",
@@ -66,11 +65,10 @@ public class TestDataValues
                         Longitude = 0.014037
                     },
                     EmployerName = "Dashkat Consulting Limited",
-                    ProviderId = 10001309,
+                    Ukprn = 10001309,
                     ProviderName = "COVENTRY AND WARWICKSHIRE CHAMBERS OF COMMERCE TRAINING LIMITED",
-                    LiveDate = new DateTime(2023, 10, 15),
-                    ProgrammeId = "561",
-                    ProgrammeType = "Standard",
+                    PostedDate = new DateTime(2023, 10, 15),
+                    StandardLarsCode = 561,
                     StartDate = new DateTime(2025, 05, 11),
                     ClosingDate = new DateTime(2025, 02, 01),
                     Route = "",
@@ -88,10 +86,10 @@ public class TestDataValues
                 new LiveVacancy()
                 {
                     VacancyId = Guid.NewGuid(),
-                    VacancyTitle = "Vacancy 3",
+                    Title = "Vacancy 3",
                     ApprenticeshipTitle = "Apprenticeship title 3",
                     Description = "<p>Write a few sentences about the apprenticeship to attract applicants. This information will appear under your advert title when applicants look through a list of adverts - make it stand out.</p>",
-                    EmployerLocation = new Address
+                    Address = new Address
                     {
                         AddressLine1 = "White Hart House High Street",
                         AddressLine2 = "Limpsfield",
@@ -100,11 +98,10 @@ public class TestDataValues
                         Longitude = 0.014037
                     },
                     EmployerName = "Dashkat Consulting Limited",
-                    ProviderId = 10000528,
+                    Ukprn = 10000528,
                     ProviderName = "COVENTRY AND WARWICKSHIRE CHAMBERS OF COMMERCE TRAINING LIMITED",
-                    LiveDate = new DateTime(2023, 10, 15),
-                    ProgrammeId = "160",
-                    ProgrammeType = "Standard",
+                    PostedDate = new DateTime(2023, 10, 15),
+                    StandardLarsCode = 160,
                     StartDate = new DateTime(2025, 01, 01),
                     ClosingDate = new DateTime(2024, 11, 01),
                     Route = "",

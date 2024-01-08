@@ -1,6 +1,8 @@
 ﻿#nullable enable
 using Azure.Search.Documents.Indexes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Spatial;
 using Azure.Core.Serialization;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
@@ -15,19 +17,43 @@ public class ApprenticeAzureSearchDocument
             Description = source.Description,
             Route = source.Route,
             EmployerName = source.EmployerName,
+            ApprenticeshipLevel = source.ApprenticeshipLevel,
+            ApplicationMethod = source.ApplicationMethod,
+            ApplicationUrl = source.ApplicationUrl,
+            AccountPublicHashedId = source.AccountPublicHashedId,
+            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
             HoursPerWeek = (long)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
-            PostedDate = source.LiveDate,
+            PostedDate = source.PostedDate,
             ClosingDate = source.ClosingDate,
-            Title = source.VacancyTitle,
-            Ukprn = source.ProviderId,
+            Title = source.Title,
+            Ukprn = source.Ukprn.ToString(),
             VacancyReference = $"VAC{source.VacancyReference}",
+            WageText = source.Wage.WageText,
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
-            Address = (AddressAzureSearchDocument)source.EmployerLocation,
-            Location = GeographyPoint.Create(source.EmployerLocation!.Latitude, source.EmployerLocation!.Longitude),
-            NumberOfPositions = source.NumberOfPositions
+            Address = (AddressAzureSearchDocument)source.Address,
+            Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
+            NumberOfPositions = source.NumberOfPositions,
+            LongDescription = source.LongDescription,
+            TrainingDescription = source.TrainingDescription,
+            OutcomeDescription = source.OutcomeDescription,
+            Skills = source.Skills.ToList(),
+            ThingsToConsider = source.ThingsToConsider,
+            Id = source.Id,
+            AnonymousEmployerName = source.AnonymousEmployerName,
+            IsDisabilityConfident = source.IsDisabilityConfident,
+            IsPositiveAboutDisability = source.IsPositiveAboutDisability,
+            IsEmployerAnonymous = source.IsEmployerAnonymous,
+            IsRecruitVacancy = source.IsRecruitVacancy,
+            VacancyLocationType = source.VacancyLocationType,
+            EmployerContactEmail = source.EmployerContactEmail,
+            EmployerContactName = source.EmployerContactName,
+            EmployerContactPhone = source.EmployerContactPhone,
+            EmployerDescription = source.EmployerDescription,
+            EmployerWebsiteUrl = source.EmployerWebsiteUrl,
+            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList()
         };
     }
 
@@ -40,19 +66,34 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? EmployerName { get; set; }
 
+    [SimpleField(IsFilterable = true)]
+    public string AccountPublicHashedId { get; set; } = null!;
+
+    [SimpleField(IsFilterable = true)]
+    public string AccountLegalEntityPublicHashedId { get; set; } = null!;
+
+    [SimpleField(IsFilterable = true)]
+    public string ApprenticeshipLevel { get; set; } = null!;
+
+    [SimpleField]
+    public string ApplicationMethod { get; set; } = null!;
+
+    [SimpleField]
+    public string? ApplicationUrl { get; set; }
+
     [SimpleField]
     public long HoursPerWeek { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? ProviderName { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsSortable = true)]
     public DateTimeOffset StartDate { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsSortable = true)]
     public DateTimeOffset PostedDate { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsSortable = true)]
     public DateTimeOffset ClosingDate { get; set; }
 
     [SimpleField]
@@ -61,11 +102,14 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Title { get; set; }
 
-    [SimpleField]
-    public long? Ukprn { get; set; }
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string Ukprn { get; set; }
 
-    [SimpleField(IsKey = true, IsFilterable = true)]
+    [SimpleField(IsFilterable = true)]
     public string VacancyReference { get; set; } = null!;
+
+    [SimpleField(IsKey = true)]
+    public string Id { get; set; } = null!;
 
     [SearchableField]
     public CourseAzureSearchDocument? Course { get; set; }
@@ -76,9 +120,63 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public WageAzureSearchDocument? Wage { get; set; }
 
+    [SimpleField]
+    public string WageText { get; set; }
+
     [System.Text.Json.Serialization.JsonConverter(typeof(MicrosoftSpatialGeoJsonConverter))]
     [SimpleField(IsSortable = true, IsFilterable = true)]
     public GeographyPoint? Location { get; set; }
+
+    [SearchableField]
+    public string? LongDescription { get; set; }
+
+    [SearchableField]
+    public string? OutcomeDescription { get; set; }
+
+    [SearchableField]
+    public string? TrainingDescription { get; set; }
+
+    [SearchableField] 
+    public List<string> Skills { get; set; } = null!;
+
+    [SimpleField]
+    public List<QualificationAzureSearchDocument> Qualifications { get; set; } = null!;
+
+    [SearchableField]
+    public string? ThingsToConsider { get; set; }
+
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string? AnonymousEmployerName { get; set; }
+
+    [SimpleField(IsFilterable = true)]
+    public bool IsDisabilityConfident { get; set; }
+
+    [SimpleField(IsFilterable = true)]
+    public bool IsPositiveAboutDisability { get; set; }
+
+    [SimpleField]
+    public bool IsEmployerAnonymous { get; set; }
+
+    [SimpleField]
+    public bool IsRecruitVacancy { get; set; }
+
+    [SimpleField]
+    public string? VacancyLocationType { get; set; }
+    
+    [SearchableField]
+    public string? EmployerDescription { get; set; }
+
+    [SimpleField]
+    public string? EmployerWebsiteUrl { get; set; }
+
+    [SimpleField]
+    public string? EmployerContactPhone { get; set; }
+
+    [SimpleField]
+    public string? EmployerContactEmail { get; set; }
+
+    [SimpleField]
+    public string? EmployerContactName { get; set; }
 }
 
 public class CourseAzureSearchDocument
@@ -87,20 +185,24 @@ public class CourseAzureSearchDocument
     {
         return new CourseAzureSearchDocument
         {
-            Level = source.Level,
+            Level = source.Level.ToString(),
             Title = source.ApprenticeshipTitle,
-            LarsCode = (long)Convert.ToDouble(source.ProgrammeId)
+            LarsCode = source.StandardLarsCode,
+            RouteCode = source.RouteCode
         };
     }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public long LarsCode { get; set; }
+    public int? LarsCode { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Title { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
-    public long Level { get; set; }
+    public string Level { get; set; }
+
+    [SimpleField]
+    public int RouteCode { get; set; }
 }
 
 public class AddressAzureSearchDocument
@@ -113,7 +215,9 @@ public class AddressAzureSearchDocument
             AddressLine2 = source.AddressLine2,
             AddressLine3 = source.AddressLine3,
             AddressLine4 = source.AddressLine4,
-            Postcode = source.Postcode
+            Postcode = source.Postcode,
+            Longitude = source.Longitude,
+            Latitude = source.Latitude
         };
     }
 
@@ -132,6 +236,12 @@ public class AddressAzureSearchDocument
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Postcode { get; set; }
 
+    [SimpleField]
+    public double Latitude { get; set; }
+
+    [SimpleField]
+    public double Longitude { get; set; }
+
 }
 
 public class WageAzureSearchDocument
@@ -143,8 +253,14 @@ public class WageAzureSearchDocument
             WageAmount = (long?)source.FixedWageYearlyAmount ?? null,
             WageType = source.WageType,
             WageUnit = source.DurationUnit,
+            Duration = source.Duration,
             WageAdditionalInformation = source.WageAdditionalInformation,
-            WorkingWeekDescription = source.WorkingWeekDescription
+            WorkingWeekDescription = source.WorkingWeekDescription,
+            ApprenticeMinimumWage = (double) (source.ApprenticeMinimumWage ?? 0),
+            Under18NationalMinimumWage = (double)(source.Under18NationalMinimumWage ?? 0),
+            Between18AndUnder21NationalMinimumWage = (double)(source.Between18AndUnder21NationalMinimumWage ?? 0),
+            Between21AndUnder25NationalMinimumWage = (double)(source.Between21AndUnder25NationalMinimumWage ?? 0),
+            Over25NationalMinimumWage = (double)(source.Over25NationalMinimumWage ?? 0)
         };
     }
 
@@ -158,8 +274,52 @@ public class WageAzureSearchDocument
     public string? WorkingWeekDescription { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public int Duration { get; set; }
+
+    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? WageUnit { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public long? WageAmount { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double ApprenticeMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Under18NationalMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Between18AndUnder21NationalMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Between21AndUnder25NationalMinimumWage { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public double Over25NationalMinimumWage { get; set; }
+}
+
+public class QualificationAzureSearchDocument
+{
+    public static implicit operator QualificationAzureSearchDocument(Qualification source)
+    {
+        return new QualificationAzureSearchDocument
+        {
+            QualificationType = source.QualificationType,
+            Grade = source.Grade,
+            Subject = source.Subject,
+            Weighting = source.Weighting
+        };
+    }
+
+    [SimpleField]
+    public string? QualificationType { get; set; }
+
+    [SimpleField]
+    public string? Subject { get; set; }
+
+    [SimpleField]
+    public string? Grade { get; set; }
+    
+    [SimpleField]
+    public string? Weighting { get; set; }
 }

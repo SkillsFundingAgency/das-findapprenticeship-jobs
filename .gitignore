@@ -353,3 +353,5 @@ SFA.DAS.FindApprenticeship.Jobs/.idea/.idea.SFA.DAS.FindApprenticeship.Jobs/.ide
 
 /src/SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests/Features/*.feature.cs
 *.subscription
+
+src/.idea/.idea.SFA.DAS.FindApprenticeship.Jobs/.idea/
