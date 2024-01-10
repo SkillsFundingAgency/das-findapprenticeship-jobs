@@ -105,7 +105,7 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string Ukprn { get; set; }
 
-    [SimpleField(IsFilterable = true)]
+    [SimpleField(IsFilterable = true, IsSortable = true)]
     public string VacancyReference { get; set; } = null!;
 
     [SimpleField(IsKey = true)]
