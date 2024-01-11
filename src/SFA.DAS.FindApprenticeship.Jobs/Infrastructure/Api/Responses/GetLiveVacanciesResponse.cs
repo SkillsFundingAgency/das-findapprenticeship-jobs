@@ -55,6 +55,7 @@ public class LiveVacancy
     public string? EmployerContactEmail { get; set; }
     public string? EmployerContactName { get; set; }
     public bool IsPositiveAboutDisability { get; set; }
+    public string TypicalJobTitles { get; set; } = null!;
 }
 
 public class Address
