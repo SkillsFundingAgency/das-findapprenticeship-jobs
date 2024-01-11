@@ -20,7 +20,7 @@ public class VacancyDeletedHandler : IVacancyDeletedHandler
 
         if (!string.IsNullOrEmpty(indexName))
         {
-            await _azureSearchHelperService.DeleteDocument(indexName, $"VAC{vacancyDeletedEvent.VacancyId}");
+            await _azureSearchHelperService.DeleteDocument(indexName, $"{vacancyDeletedEvent.VacancyId}");
         }
         else
         {

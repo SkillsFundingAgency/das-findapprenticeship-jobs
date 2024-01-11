@@ -33,9 +33,15 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
             return;
         }
 
-        var vacancyReference = $"VAC{vacancyUpdatedEvent.VacancyReference}";
+        var vacancyReference = $"{vacancyUpdatedEvent.VacancyReference}";
         var document = await _azureSearchHelperService.GetDocument(indexName, vacancyReference);
         var updatedVacancy = await _recruitService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference);
+
+        if (updatedVacancy == null)
+        {
+            log.LogInformation($"Unable to update vacancy reference {vacancyUpdatedEvent.VacancyReference} - vacancy not found");
+            return;
+        }
 
         if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.ClosingDate))
         {
