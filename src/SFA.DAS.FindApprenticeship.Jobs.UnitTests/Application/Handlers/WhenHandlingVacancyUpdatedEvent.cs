@@ -36,7 +36,7 @@ public class WhenHandlingVacancyUpdatedEvent
         var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
 
         recruitService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
-        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
+        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 

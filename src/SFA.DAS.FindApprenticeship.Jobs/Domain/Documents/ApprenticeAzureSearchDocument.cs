@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using Azure.Search.Documents.Indexes;
 using System;
 using System.Collections.Generic;
@@ -53,7 +53,8 @@ public class ApprenticeAzureSearchDocument
             EmployerContactPhone = source.EmployerContactPhone,
             EmployerDescription = source.EmployerDescription,
             EmployerWebsiteUrl = source.EmployerWebsiteUrl,
-            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList()
+            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
+            TypicalJobTitles = source.TypicalJobTitles
         };
     }
 
@@ -105,7 +106,7 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string Ukprn { get; set; }
 
-    [SimpleField(IsFilterable = true)]
+    [SimpleField(IsFilterable = true, IsSortable = true)]
     public string VacancyReference { get; set; } = null!;
 
     [SimpleField(IsKey = true)]
@@ -177,6 +178,9 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public string? EmployerContactName { get; set; }
+
+    [SimpleField(IsSortable = true)]
+    public string TypicalJobTitles { get; set; } = null!;
 }
 
 public class CourseAzureSearchDocument

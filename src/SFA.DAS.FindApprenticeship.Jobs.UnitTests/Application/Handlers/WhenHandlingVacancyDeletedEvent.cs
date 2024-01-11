@@ -26,7 +26,7 @@ public class WhenHandlingVacancyDeletedEvent
 
         await sut.Handle(vacancyDeletedEvent, log);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"VAC{vacancyDeletedEvent.VacancyId}"), Times.Once());
+        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyDeletedEvent.VacancyId}"), Times.Once());
     }
 
     [Test, MoqAutoData]
@@ -37,10 +37,10 @@ public class WhenHandlingVacancyDeletedEvent
         VacancyDeletedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(() => null);
-        azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"VAC{vacancyDeletedEvent.VacancyId}")).Returns(Task.CompletedTask);
+        azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyDeletedEvent.VacancyId}")).Returns(Task.CompletedTask);
 
         await sut.Handle(vacancyDeletedEvent, log);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"VAC{vacancyDeletedEvent.VacancyId}"), Times.Never());
+        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyDeletedEvent.VacancyId}"), Times.Never());
     }
 }
