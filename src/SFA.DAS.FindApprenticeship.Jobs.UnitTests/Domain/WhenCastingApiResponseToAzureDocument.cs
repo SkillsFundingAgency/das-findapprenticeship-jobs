@@ -53,6 +53,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.EmployerContactPhone.Should().Be(source.EmployerContactPhone);
             apprenticeAzureSearchDocument.EmployerContactEmail.Should().Be(source.EmployerContactEmail);
             apprenticeAzureSearchDocument.EmployerContactName.Should().Be(source.EmployerContactName);
+            apprenticeAzureSearchDocument.TypicalJobTitles.Should().BeEquivalentTo(source.TypicalJobTitles);
             AssetQualificationsAreMapped(apprenticeAzureSearchDocument, source);
         }
     }
