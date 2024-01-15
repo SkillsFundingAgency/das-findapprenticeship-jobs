@@ -28,7 +28,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                 await req.Content.ReadAsStreamAsync(),
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            if (command == null || command.VacancyId == Guid.Empty)
+            if (command == null)
             {
                 throw new ArgumentException(
                     $"HandleVacancyDeletedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
