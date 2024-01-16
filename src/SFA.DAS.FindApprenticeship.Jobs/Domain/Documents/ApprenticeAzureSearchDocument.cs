@@ -185,10 +185,10 @@ public class ApprenticeAzureSearchDocument
     public string TypicalJobTitles { get; set; } = null!;
 
     [SimpleField]
-    public string AdditionalQuestion1 { get; set; } = null!;
+    public string? AdditionalQuestion1 { get; set; }
 
     [SimpleField]
-    public string AdditionalQuestion2 { get; set; } = null!;
+    public string? AdditionalQuestion2 { get; set; }
 }
 
 public class CourseAzureSearchDocument
