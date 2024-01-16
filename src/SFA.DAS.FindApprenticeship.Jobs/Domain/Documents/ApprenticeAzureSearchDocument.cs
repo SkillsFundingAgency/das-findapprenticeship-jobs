@@ -54,7 +54,9 @@ public class ApprenticeAzureSearchDocument
             EmployerDescription = source.EmployerDescription,
             EmployerWebsiteUrl = source.EmployerWebsiteUrl,
             Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
-            TypicalJobTitles = source.TypicalJobTitles
+            TypicalJobTitles = source.TypicalJobTitles,
+            AdditionalQuestion1 = source.AdditionalQuestion1,
+            AdditionalQuestion2 = source.AdditionalQuestion2,
         };
     }
 
@@ -181,6 +183,12 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField(IsSortable = true)]
     public string TypicalJobTitles { get; set; } = null!;
+
+    [SimpleField]
+    public string AdditionalQuestion1 { get; set; } = null!;
+
+    [SimpleField]
+    public string AdditionalQuestion2 { get; set; } = null!;
 }
 
 public class CourseAzureSearchDocument
