@@ -63,10 +63,10 @@ public class ApprenticeAzureSearchDocument
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Description { get; set; }
 
-    [SearchableField(IsFilterable = true, IsSortable = false, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = false, IsFacetable = true, NormalizerName = "lowercase")]
     public string Route { get; set; } = null!;
 
-    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true, NormalizerName = "lowercase")]
     public string? EmployerName { get; set; }
 
     [SimpleField(IsFilterable = true)]
@@ -87,7 +87,7 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public long HoursPerWeek { get; set; }
 
-    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true, NormalizerName = "lowercase")]
     public string? ProviderName { get; set; }
 
     [SimpleField(IsSortable = true)]
