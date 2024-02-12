@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
