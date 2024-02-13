@@ -383,10 +383,10 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "azureSearchName": {
+                    "aiSearchName": {
                         "value": "[variables('azureSearchName')]"
                     },
-                    "azureSearchSku": {
+                    "aiSearchSku": {
                         "value": "[parameters('azureSearchSku')]"
                     }
                 }
