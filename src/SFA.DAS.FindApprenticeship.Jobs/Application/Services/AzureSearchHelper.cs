@@ -9,12 +9,13 @@ using Azure.Search.Documents.Indexes.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Identity;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
 {
     private readonly SearchIndexClient _adminIndexClient;
-    private readonly AzureKeyCredential _azureKeyCredential;
+    private readonly AzureCliCredential _azureKeyCredential;
     private readonly SearchClientOptions _clientOptions;
     private readonly Uri _endpoint;
 
@@ -31,7 +32,10 @@ public class AzureSearchHelper : IAzureSearchHelper
             })
         };
 
-        _azureKeyCredential = new AzureKeyCredential(configuration.AzureSearchKey);
+        _azureKeyCredential = new AzureCliCredential(new AzureCliCredentialOptions
+        {
+            TenantId = configuration.AzureSearchResource
+        });
         _endpoint = new Uri(configuration.AzureSearchBaseUrl);
         _adminIndexClient = new SearchIndexClient(_endpoint, _azureKeyCredential, _clientOptions);
     }

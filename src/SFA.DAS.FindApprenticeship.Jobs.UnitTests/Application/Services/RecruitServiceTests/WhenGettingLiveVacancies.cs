@@ -17,7 +17,7 @@ public class WhenGettingLiveVacancies
         int pageSize,
         int pageNo,
         ApiResponse<GetLiveVacanciesApiResponse> response,
-        [Frozen] Mock<IRecruitApiClient> apiClient,
+        [Frozen] Mock<IOuterApiClient> apiClient,
         RecruitService service)
     {
         response.Body.PageNo = pageNo;
