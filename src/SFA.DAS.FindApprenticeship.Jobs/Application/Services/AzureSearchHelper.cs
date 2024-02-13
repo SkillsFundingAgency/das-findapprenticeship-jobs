@@ -15,7 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
 {
     private readonly SearchIndexClient _adminIndexClient;
-    private readonly AzureCliCredential _azureKeyCredential;
+    private readonly DefaultAzureCredential _azureKeyCredential;
     private readonly SearchClientOptions _clientOptions;
     private readonly Uri _endpoint;
 
@@ -32,10 +32,7 @@ public class AzureSearchHelper : IAzureSearchHelper
             })
         };
 
-        _azureKeyCredential = new AzureCliCredential(new AzureCliCredentialOptions
-        {
-            TenantId = configuration.AzureSearchResource
-        });
+        _azureKeyCredential = new DefaultAzureCredential();
         _endpoint = new Uri(configuration.AzureSearchBaseUrl);
         _adminIndexClient = new SearchIndexClient(_endpoint, _azureKeyCredential, _clientOptions);
     }
