@@ -10,33 +10,33 @@ using Esfa.Recruit.Vacancies.Client.Domain.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyDeletedEventHttp
+    public class HandleVacancyClosedEventHttp
     {
-        private readonly IVacancyDeletedHandler _vacancyDeletedHandler;
+        private readonly IVacancyClosedHandler _vacancyClosedHandler;
 
-        public HandleVacancyDeletedEventHttp(IVacancyDeletedHandler vacancyDeletedHandler)
+        public HandleVacancyClosedEventHttp(IVacancyClosedHandler vacancyClosedHandler)
         {
-            _vacancyDeletedHandler = vacancyDeletedHandler;
+            _vacancyClosedHandler = vacancyClosedHandler;
         }
 
-        [FunctionName("HandleVacancyDeletedEventHttp")]
+        [FunctionName("HandleVacancyClosedEventHttp")]
         public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
         {
-            log.LogInformation($"HandleVacancyDeletedEvent HTTP trigger function executed at {DateTime.UtcNow}");
+            log.LogInformation($"HandleVacancyClosedEvent HTTP trigger function executed at {DateTime.UtcNow}");
 
-            var command = await JsonSerializer.DeserializeAsync<VacancyDeletedEvent>(
+            var command = await JsonSerializer.DeserializeAsync<VacancyClosedEvent>(
                 await req.Content.ReadAsStreamAsync(),
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             if (command == null || command.VacancyId == Guid.Empty)
             {
                 throw new ArgumentException(
-                    $"HandleVacancyDeletedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
+                    $"HandleVacancyClosedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
                     nameof(req));
             }
 
-            await _vacancyDeletedHandler.Handle(command, log);
-            log.LogInformation($"HandleVacancyDeletedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+            await _vacancyClosedHandler.Handle(command, log);
+            log.LogInformation($"HandleVacancyClosedEvent HTTP trigger function finished at {DateTime.UtcNow}");
         }
     }
 }

@@ -10,38 +10,38 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
-public class WhenHandlingVacancyDeletedEvent
+public class WhenHandlingVacancyClosedEvent
 {
 
     [Test, MoqAutoData]
     public async Task Then_The_Vacancy_Is_Deleted(
-        VacancyDeletedEvent vacancyDeletedEvent,
+        VacancyClosedEvent vacancyClosedEvent,
         ILogger log,
         string aliasName,
         SearchAlias searchAlias,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        VacancyDeletedHandler sut)
+        VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
-        azureSearchHelper.Setup(x => x.DeleteDocument(searchAlias.Indexes.FirstOrDefault(), $"VAC{vacancyDeletedEvent.VacancyId}")).Returns(Task.CompletedTask);
+        azureSearchHelper.Setup(x => x.DeleteDocument(searchAlias.Indexes.FirstOrDefault(), $"VAC{vacancyClosedEvent.VacancyId}")).Returns(Task.CompletedTask);
 
-        await sut.Handle(vacancyDeletedEvent, log);
+        await sut.Handle(vacancyClosedEvent, log);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyDeletedEvent.VacancyId}"), Times.Once());
+        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyId}"), Times.Once());
     }
 
     [Test, MoqAutoData]
     public async Task And_There_Is_No_Index_Found_Then_The_Document_Is_Not_Deleted(
-        VacancyDeletedEvent vacancyDeletedEvent,
+        VacancyClosedEvent vacancyClosedEvent,
         ILogger log,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        VacancyDeletedHandler sut)
+        VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(() => null);
-        azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyDeletedEvent.VacancyId}")).Returns(Task.CompletedTask);
+        azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyId}")).Returns(Task.CompletedTask);
 
-        await sut.Handle(vacancyDeletedEvent, log);
+        await sut.Handle(vacancyClosedEvent, log);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyDeletedEvent.VacancyId}"), Times.Never());
+        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyId}"), Times.Never());
     }
 }
