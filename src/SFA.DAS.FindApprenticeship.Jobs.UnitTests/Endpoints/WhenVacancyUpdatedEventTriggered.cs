@@ -1,4 +1,5 @@
 ﻿using AutoFixture.NUnit3;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -12,13 +13,13 @@ public class WhenVacancyUpdatedEventTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Message_Will_Be_Handled(
-        VacancyUpdatedEvent message,
+        LiveVacancyUpdatedEvent message,
         ILogger log,
         [Frozen] Mock<IVacancyUpdatedHandler> handler,
         HandleVacancyUpdatedEvent sut)
     {
         await sut.Run(message, log);
 
-        handler.Verify(x => x.Handle(It.Is<VacancyUpdatedEvent>(x => x.VacancyId == message.VacancyId), log), Times.Once());
+        handler.Verify(x => x.Handle(It.Is<LiveVacancyUpdatedEvent>(x => x.VacancyId == message.VacancyId), log), Times.Once());
     }
 }

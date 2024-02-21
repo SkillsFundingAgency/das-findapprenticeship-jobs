@@ -7,9 +7,9 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class RecruitService : IRecruitService
 {
-    private readonly IRecruitApiClient _apiClient;
+    private readonly IOuterApiClient _apiClient;
 
-    public RecruitService(IRecruitApiClient apiClient)
+    public RecruitService(IOuterApiClient apiClient)
     {
         _apiClient = apiClient;
     }

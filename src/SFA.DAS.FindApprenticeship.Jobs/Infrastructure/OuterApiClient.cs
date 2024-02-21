@@ -5,11 +5,11 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-public class RecruitApiClient : ApiClientBase, IRecruitApiClient
+public class OuterApiClient : ApiClientBase, IOuterApiClient
 {
     private readonly FindApprenticeshipJobsConfiguration _configuration;
 
-    public RecruitApiClient(HttpClient httpClient, IOptions<FindApprenticeshipJobsConfiguration> configuration) : base(httpClient)
+    public OuterApiClient(HttpClient httpClient, IOptions<FindApprenticeshipJobsConfiguration> configuration) : base(httpClient)
     {
         _configuration = configuration.Value;
         httpClient.BaseAddress = new System.Uri(configuration.Value.ApimBaseUrl);

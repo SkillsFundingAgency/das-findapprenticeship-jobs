@@ -2,6 +2,7 @@
 using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ public class WhenHandlingVacancyUpdatedEvent
     public async Task Then_The_Vacancy_Is_Updated_In_The_Index(
         LiveUpdateKind updateKind,
         ILogger log,
-        VacancyUpdatedEvent vacancyUpdatedEvent,
+        LiveVacancyUpdatedEvent vacancyUpdatedEvent,
         string indexName,
         Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
@@ -65,7 +66,7 @@ public class WhenHandlingVacancyUpdatedEvent
     [Test, MoqAutoData]
     public async Task Then_The_Event_Is_Ignored_If_No_Index_Is_Currently_Aliased(
         ILogger log,
-        VacancyUpdatedEvent vacancyUpdatedEvent,
+        LiveVacancyUpdatedEvent vacancyUpdatedEvent,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {

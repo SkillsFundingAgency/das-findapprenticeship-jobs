@@ -1,7 +1,8 @@
 ﻿using System;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
-public class VacancyUpdatedEvent
+namespace Esfa.Recruit.Vacancies.Client.Domain.Events;
+public class LiveVacancyUpdatedEvent
 {
     public Guid VacancyId { get; set; }
     public long VacancyReference { get; set; }

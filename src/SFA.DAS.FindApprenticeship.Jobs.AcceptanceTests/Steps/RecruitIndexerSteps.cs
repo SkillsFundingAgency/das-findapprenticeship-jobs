@@ -40,7 +40,7 @@ public class RecruitIndexerSteps
     [When(@"I have vacancies")]
     public async Task WhenIHaveVacancies()
     {
-        var recruitService = _context.Get<Mock<IRecruitApiClient>>(ContextKeys.MockApiClient);
+        var recruitService = _context.Get<Mock<IOuterApiClient>>(ContextKeys.MockApiClient);
         await recruitService.Object.Get<GetLiveVacanciesApiResponse>(It.IsAny<GetLiveVacanciesApiRequest>());
     }
 

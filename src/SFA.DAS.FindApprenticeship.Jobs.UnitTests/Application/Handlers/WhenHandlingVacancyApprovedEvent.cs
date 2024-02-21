@@ -1,6 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;

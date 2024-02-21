@@ -50,6 +50,9 @@
         "sharedServiceBusName": {
             "type": "string"
         },
+        "sharedAiSearchName": {
+            "type": "string"
+        },
         "subnetObject": {
             "type": "object"
         },
@@ -84,20 +87,6 @@
             "type": "string",
             "defaultValue": "[utcNow()]"
         },
-        "azureSearchSku": {
-            "type": "string",
-            "defaultValue": "free",
-            "allowedValues": [
-                "free",
-                "basic",
-                "standard",
-                "standard2",
-                "standard3"
-            ],
-            "metadata": {
-                "description": "The SKU of the search service you want to create. E.g. free or standard"
-            }
-        },
         "tenant": {
             "type": "string"
         }
@@ -108,8 +97,7 @@
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
-        "configNames": "SFA.DAS.FindApprenticeship.Jobs",
-        "azureSearchName": "[concat(variables('resourceNamePrefix'), '-srch')]"
+        "configNames": "SFA.DAS.FindApprenticeship.Jobs"
     },
     "resources": [
         {
@@ -373,21 +361,24 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('azureSearchName'), '-', parameters('utcValue'))]",
+            "name": "[concat('role-assignment-', variables('functionAppName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('resourceGroupName')]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'azure-search.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-ai-search.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "azureSearchName": {
-                        "value": "[variables('azureSearchName')]"
+                    "principalId": {
+                        "value": "[reference(concat(variables('functionAppName'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
-                    "azureSearchSku": {
-                        "value": "[parameters('azureSearchSku')]"
+                    "assignmentType": {
+                        "value": "AiSearchIndexContributor"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedAiSearchName')]"
                     }
                 }
             }
@@ -401,18 +392,6 @@
         "FunctionAppName": {
             "type": "string",
             "value": "[variables('functionAppName')]"
-        },
-        "AzureSearchResource": {
-            "type": "string",
-            "value": "[concat('https://', parameters('tenant'), '/', variables('azureSearchName'))]"
-        },
-        "AzureSearchBaseUrl": {
-            "type": "string",
-            "value": "[reference(concat(variables('azureSearchName'), '-', parameters('utcValue'))).outputs.azureSearchUrl.value]"
-        },
-        "AzureSearchAdminKey": {
-            "type": "string",
-            "value": "[reference(concat(variables('azureSearchName'), '-', parameters('utcValue'))).outputs.azureSearchAdminKey.value]"
         }
     }
 }

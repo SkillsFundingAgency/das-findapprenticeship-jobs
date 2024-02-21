@@ -1,4 +1,5 @@
 ﻿using AutoFixture.NUnit3;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
