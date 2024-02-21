@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using Azure.Search.Documents.Indexes;
 using System;
 using System.Collections.Generic;
@@ -54,17 +54,19 @@ public class ApprenticeAzureSearchDocument
             EmployerDescription = source.EmployerDescription,
             EmployerWebsiteUrl = source.EmployerWebsiteUrl,
             Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
-            TypicalJobTitles = source.TypicalJobTitles
+            TypicalJobTitles = source.TypicalJobTitles,
+            AdditionalQuestion1 = source.AdditionalQuestion1,
+            AdditionalQuestion2 = source.AdditionalQuestion2,
         };
     }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Description { get; set; }
 
-    [SearchableField(IsFilterable = true, IsSortable = false, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = false, IsFacetable = true, NormalizerName = "lowercase")]
     public string Route { get; set; } = null!;
 
-    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true, NormalizerName = "lowercase")]
     public string? EmployerName { get; set; }
 
     [SimpleField(IsFilterable = true)]
@@ -85,7 +87,7 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public long HoursPerWeek { get; set; }
 
-    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true, NormalizerName = "lowercase")]
     public string? ProviderName { get; set; }
 
     [SimpleField(IsSortable = true)]
@@ -181,6 +183,12 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField(IsSortable = true)]
     public string TypicalJobTitles { get; set; } = null!;
+
+    [SimpleField]
+    public string? AdditionalQuestion1 { get; set; }
+
+    [SimpleField]
+    public string? AdditionalQuestion2 { get; set; }
 }
 
 public class CourseAzureSearchDocument

@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System.Collections.Generic;
 using System;
 
@@ -56,6 +56,8 @@ public class LiveVacancy
     public string? EmployerContactName { get; set; }
     public bool IsPositiveAboutDisability { get; set; }
     public string TypicalJobTitles { get; set; } = null!;
+    public string? AdditionalQuestion1 { get; set; }
+    public string? AdditionalQuestion2 { get; set; }
 }
 
 public class Address

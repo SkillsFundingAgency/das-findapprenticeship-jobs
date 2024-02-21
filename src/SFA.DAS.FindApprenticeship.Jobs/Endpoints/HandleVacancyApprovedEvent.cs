@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;

@@ -1,4 +1,5 @@
-﻿using NServiceBus;
+﻿using Esfa.Recruit.Vacancies.Client.Domain.Events;
+using NServiceBus;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 using SFA.DAS.NServiceBus.Configuration;
@@ -49,7 +50,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.TestHarness
                 if (key.Key == ConsoleKey.D1)
                 {
                     var vacancyId = Guid.NewGuid();
-                    await endpoint.Publish(new VacancyUpdatedEvent() { VacancyId = vacancyId, VacancyReference = 36, UpdateKind = LiveUpdateKind.StartDate });
+                    await endpoint.Publish(new LiveVacancyUpdatedEvent() { VacancyId = vacancyId, VacancyReference = 36, UpdateKind = LiveUpdateKind.StartDate });
                 }
                 else
                 {

@@ -6,6 +6,5 @@
         public string ApimKey { get; set; }
         public string AzureSearchBaseUrl { get; set; }
         public string AzureSearchResource { get; set; }
-        public string AzureSearchKey { get; set; }
     }
 }
