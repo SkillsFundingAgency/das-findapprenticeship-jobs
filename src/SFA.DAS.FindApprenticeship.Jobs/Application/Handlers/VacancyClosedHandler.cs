@@ -20,11 +20,11 @@ public class VacancyClosedHandler : IVacancyClosedHandler
 
         if (!string.IsNullOrEmpty(indexName))
         {
-            await _azureSearchHelperService.DeleteDocument(indexName, $"{vacancyClosedEvent.VacancyId}");
+            await _azureSearchHelperService.DeleteDocument(indexName, $"{vacancyClosedEvent.VacancyReference}");
         }
         else
         {
-            log.LogInformation($"Index {indexName} not found so document VAC{vacancyClosedEvent.VacancyId} has not been deleted");
+            log.LogInformation($"Index {indexName} not found so document VAC{vacancyClosedEvent.VacancyReference} has not been deleted");
         }
     }
 }

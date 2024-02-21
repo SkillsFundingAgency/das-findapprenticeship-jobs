@@ -23,11 +23,11 @@ public class WhenHandlingVacancyClosedEvent
         VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
-        azureSearchHelper.Setup(x => x.DeleteDocument(searchAlias.Indexes.FirstOrDefault(), $"VAC{vacancyClosedEvent.VacancyId}")).Returns(Task.CompletedTask);
+        azureSearchHelper.Setup(x => x.DeleteDocument(searchAlias.Indexes.FirstOrDefault(), $"{vacancyClosedEvent.VacancyReference}")).Returns(Task.CompletedTask);
 
         await sut.Handle(vacancyClosedEvent, log);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyId}"), Times.Once());
+        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}"), Times.Once());
     }
 
     [Test, MoqAutoData]
@@ -38,10 +38,10 @@ public class WhenHandlingVacancyClosedEvent
         VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(() => null);
-        azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyId}")).Returns(Task.CompletedTask);
+        azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}")).Returns(Task.CompletedTask);
 
         await sut.Handle(vacancyClosedEvent, log);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyId}"), Times.Never());
+        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}"), Times.Never());
     }
 }

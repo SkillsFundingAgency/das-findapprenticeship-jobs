@@ -10,17 +10,20 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
 {
+    private readonly ILogger<AzureSearchHelper> _logger;
     private readonly SearchIndexClient _adminIndexClient;
     private readonly DefaultAzureCredential _azureKeyCredential;
     private readonly SearchClientOptions _clientOptions;
     private readonly Uri _endpoint;
 
-    public AzureSearchHelper(FindApprenticeshipJobsConfiguration configuration)
+    public AzureSearchHelper(FindApprenticeshipJobsConfiguration configuration, ILogger<AzureSearchHelper> logger)
     {
+        _logger = logger;
         _clientOptions = new SearchClientOptions
         {
             Serializer = new JsonObjectSerializer(new System.Text.Json.JsonSerializerOptions
@@ -168,11 +171,11 @@ public class AzureSearchHelper : IAzureSearchHelper
         try
         {
             var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
-            await searchClient.DeleteDocumentsAsync("VacancyReference", new []{ vacancyReference });
+            await searchClient.DeleteDocumentsAsync("Id", new []{ vacancyReference });
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when deleting document with reference {vacancyReference}", ex);
+            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {vacancyReference}");
         }
     }
 }
