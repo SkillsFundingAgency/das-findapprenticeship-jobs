@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
@@ -20,7 +21,7 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
         _dateTimeService = dateTimeService;
     }
 
-    public async Task Handle(VacancyUpdatedEvent vacancyUpdatedEvent, ILogger log)
+    public async Task Handle(LiveVacancyUpdatedEvent vacancyUpdatedEvent, ILogger log)
     {
         log.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
 

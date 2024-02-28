@@ -72,14 +72,13 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IRecruitService, RecruitService>();
         builder.Services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
-        builder.Services.AddHttpClient<IAzureSearchApiClient, AzureSearchApiClient>();
         builder.Services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
         builder.Services.AddTransient<IIndexCleanupJobHandler, IndexCleanupJobHandler>();
         builder.Services.AddTransient<IVacancyUpdatedHandler, VacancyUpdatedHandler>();
-        builder.Services.AddTransient<IVacancyDeletedHandler, VacancyDeletedHandler>();
+        builder.Services.AddTransient<IVacancyClosedHandler, VacancyClosedHandler>();
         builder.Services.AddTransient<IVacancyApprovedHandler, VacancyApprovedHandler>();
         builder.Services.AddTransient<IDateTimeService, DateTimeService>();
-        builder.Services.AddHttpClient<IRecruitApiClient, RecruitApiClient>
+        builder.Services.AddHttpClient<IOuterApiClient, OuterApiClient>
         (
             options => options.Timeout = TimeSpan.FromMinutes(30)
         )
