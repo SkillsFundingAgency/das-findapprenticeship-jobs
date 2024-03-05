@@ -13,12 +13,11 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
 {
     private readonly IAzureSearchHelper _azureSearchHelperService;
     private readonly IRecruitService _recruitService;
-    private readonly IDateTimeService _dateTimeService;
-    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService, IDateTimeService dateTimeService)
+
+    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService)
     {
         _azureSearchHelperService = azureSearchHelper;
         _recruitService = recruitService;
-        _dateTimeService = dateTimeService;
     }
 
     public async Task Handle(LiveVacancyUpdatedEvent vacancyUpdatedEvent, ILogger log)
@@ -44,14 +43,8 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
             return;
         }
 
-        if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.ClosingDate))
-        {
-            document.Value.ClosingDate = updatedVacancy.ClosingDate;
-        }
-        if (vacancyUpdatedEvent.UpdateKind.HasFlag(LiveUpdateKind.StartDate))
-        {
-            document.Value.StartDate = updatedVacancy.StartDate;
-        }
+        document.Value.ClosingDate = updatedVacancy.ClosingDate;
+        document.Value.StartDate = updatedVacancy.StartDate;
 
         var uploadBatch = Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document);
         await _azureSearchHelperService.UploadDocuments(indexName, uploadBatch);

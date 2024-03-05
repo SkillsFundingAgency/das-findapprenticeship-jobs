@@ -17,12 +17,8 @@ using SFA.DAS.Testing.AutoFixture;
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
 public class WhenHandlingVacancyUpdatedEvent
 {
-    [Test]
-    [MoqInlineAutoData(LiveUpdateKind.StartDate)]
-    [MoqInlineAutoData(LiveUpdateKind.ClosingDate)]
-    [MoqInlineAutoData(LiveUpdateKind.StartDate | LiveUpdateKind.ClosingDate)]
+    [Test, MoqAutoData]
     public async Task Then_The_Vacancy_Is_Updated_In_The_Index(
-        LiveUpdateKind updateKind,
         ILogger log,
         LiveVacancyUpdatedEvent vacancyUpdatedEvent,
         string indexName,
@@ -32,8 +28,6 @@ public class WhenHandlingVacancyUpdatedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
-        vacancyUpdatedEvent.UpdateKind = updateKind;
-
         var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
 
         recruitService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
@@ -44,23 +38,15 @@ public class WhenHandlingVacancyUpdatedEvent
         await sut.Handle(vacancyUpdatedEvent, log);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
-            It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value, updateKind) )),
+            It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value) )),
             Times.Once());
     }
 
-    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, LiveVacancy liveVacancy, LiveUpdateKind updateKind)
+    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, LiveVacancy liveVacancy)
     {
         var updatedDocument = updatedDocuments.Single();
 
-        var expectedStartDate = updateKind.HasFlag(LiveUpdateKind.StartDate)
-            ? liveVacancy.StartDate
-            : originalDocument.StartDate;
-
-        var expectedClosingDate = updateKind.HasFlag(LiveUpdateKind.ClosingDate)
-            ? liveVacancy.ClosingDate
-            : originalDocument.ClosingDate;
-
-        return updatedDocument.StartDate == expectedStartDate && updatedDocument.ClosingDate == expectedClosingDate;
+        return updatedDocument.StartDate == liveVacancy.StartDate && updatedDocument.ClosingDate == liveVacancy.ClosingDate;
     }
 
     [Test, MoqAutoData]
