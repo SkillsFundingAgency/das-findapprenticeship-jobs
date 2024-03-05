@@ -51,6 +51,9 @@ public class ApprenticeAzureSearchDocument
             EmployerContactEmail = source.EmployerContactEmail,
             EmployerContactName = source.EmployerContactName,
             EmployerContactPhone = source.EmployerContactPhone,
+            ProviderContactEmail = source.ProviderContactEmail,
+            ProviderContactName = source.ProviderContactName,
+            ProviderContactPhone = source.ProviderContactPhone,
             EmployerDescription = source.EmployerDescription,
             EmployerWebsiteUrl = source.EmployerWebsiteUrl,
             Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
@@ -177,9 +180,18 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public string? EmployerContactEmail { get; set; }
-
+    
     [SimpleField]
     public string? EmployerContactName { get; set; }
+
+    [SimpleField]
+    public string? ProviderContactEmail { get; set; }
+
+    [SimpleField]
+    public string? ProviderContactName { get; set; }
+
+    [SimpleField]
+    public string? ProviderContactPhone { get; set; }
 
     [SimpleField(IsSortable = true)]
     public string TypicalJobTitles { get; set; } = null!;
