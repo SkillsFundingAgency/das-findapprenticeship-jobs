@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
@@ -24,5 +23,11 @@ public class RecruitService : IRecruitService
     {
         var liveVacancy = await _apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference));
         return liveVacancy.Body;
+    }
+
+    public async Task<GetNhsLiveVacanciesApiResponse> GetNhsLiveVacancies()
+    {
+        var liveVacancies = await _apiClient.Get<GetNhsLiveVacanciesApiResponse>(new GetNhsLiveVacanciesApiRequest());
+        return liveVacancies.Body;
     }
 }

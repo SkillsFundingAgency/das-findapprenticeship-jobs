@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
@@ -29,15 +31,30 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
         var pageNo = 1;
         var totalPages = 100;
         var updateAlias = false;
+        var batchDocuments = new List<ApprenticeAzureSearchDocument>();
 
         while (pageNo <= totalPages)
         {
             var liveVacancies = await _recruitService.GetLiveVacancies(pageNo, PageSize);
+            var nhsLiveVacancies = await _recruitService.GetNhsLiveVacancies();
 
-            if (liveVacancies != null && liveVacancies.Vacancies.Any())
+            totalPages = Math.Max(liveVacancies?.TotalPages ?? 0, nhsLiveVacancies?.TotalPages ?? 0);
+
+            if (liveVacancies != null || nhsLiveVacancies != null)
             {
-                totalPages = liveVacancies.TotalPages;
-                var batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
+                if (liveVacancies.Vacancies.Any())
+                {
+                    batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
+                }
+
+                if (nhsLiveVacancies.Vacancies.Any())
+                {
+                    foreach (var vacancy in nhsLiveVacancies.Vacancies)
+                    {
+                        batchDocuments.Add((ApprenticeAzureSearchDocument)vacancy);
+                    }
+                }
+
                 await _azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
                 pageNo++;
                 updateAlias = true;
