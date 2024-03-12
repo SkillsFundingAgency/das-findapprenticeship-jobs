@@ -23,7 +23,7 @@ public class VacancyApprovedHandler : IVacancyApprovedHandler
     {
         log.LogInformation($"Vacancy Approved Event handler invoked at {DateTime.UtcNow}");
 
-        var approvedVacancy = await _recruitService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference);
+        var approvedVacancy = await _recruitService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString());
 
         var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
         var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();

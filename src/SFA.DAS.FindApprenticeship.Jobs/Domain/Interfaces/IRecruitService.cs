@@ -6,6 +6,6 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 public interface IRecruitService
 {
     Task<GetLiveVacanciesApiResponse> GetLiveVacancies(int pageNumber, int pageSize);
-    Task<GetLiveVacancyApiResponse> GetLiveVacancy(long vacancyReference);
+    Task<GetLiveVacancyApiResponse> GetLiveVacancy(string vacancyReference);
 
 }
