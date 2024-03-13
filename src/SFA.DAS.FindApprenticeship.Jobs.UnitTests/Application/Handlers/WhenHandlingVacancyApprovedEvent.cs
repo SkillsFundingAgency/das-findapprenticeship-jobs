@@ -32,7 +32,7 @@ public class WhenHandlingVacancyApprovedEvent
     {
         liveVacancy.Value.StandardLarsCode = programmeId;
 
-        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
+        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));

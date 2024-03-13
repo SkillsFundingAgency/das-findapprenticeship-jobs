@@ -15,7 +15,7 @@ public class GetLiveVacanciesApiResponse
 public class LiveVacancy
 {
     public Guid VacancyId { get; set; }
-    public long VacancyReference { get; set; }
+    public string VacancyReference { get; set; }
     public string Title { get; set; } = null!;
     public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
