@@ -10,6 +10,9 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 public class ApprenticeAzureSearchDocument
 {
+    const string VacancySourceRecruit = "RAA";
+    const string VacancySourceNhs = "NHS";
+
     public static implicit operator ApprenticeAzureSearchDocument(LiveVacancy source)
     {
         return new ApprenticeAzureSearchDocument
@@ -60,6 +63,61 @@ public class ApprenticeAzureSearchDocument
             TypicalJobTitles = source.TypicalJobTitles,
             AdditionalQuestion1 = source.AdditionalQuestion1,
             AdditionalQuestion2 = source.AdditionalQuestion2,
+            VacancySource = VacancySourceRecruit
+        };
+    }
+
+    public static implicit operator ApprenticeAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
+    {
+        return new ApprenticeAzureSearchDocument
+        {
+            Description = source.Description,
+            Route = source.Route,
+            EmployerName = source.EmployerName,
+            ApprenticeshipLevel = source.ApprenticeshipLevel,
+            ApplicationMethod = source.ApplicationMethod,
+            ApplicationUrl = source.ApplicationUrl,
+            AccountPublicHashedId = source.AccountPublicHashedId,
+            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
+            HoursPerWeek = (long)source.Wage!.WeeklyHours,
+            ProviderName = source.ProviderName,
+            StartDate = source.StartDate,
+            PostedDate = source.PostedDate,
+            ClosingDate = source.ClosingDate,
+            Title = source.Title,
+            Ukprn = source.Ukprn.ToString(),
+            VacancyReference = $"VAC{source.VacancyReference}",
+            WageText = source.Wage.WageText,
+            Wage = (WageAzureSearchDocument)source.Wage,
+            Course = (CourseAzureSearchDocument)source,
+            Address = (AddressAzureSearchDocument)source.Address,
+            Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
+            NumberOfPositions = source.NumberOfPositions,
+            LongDescription = source.LongDescription,
+            TrainingDescription = source.TrainingDescription,
+            OutcomeDescription = source.OutcomeDescription,
+            Skills = source.Skills.ToList(),
+            ThingsToConsider = source.ThingsToConsider,
+            Id = source.Id,
+            AnonymousEmployerName = source.AnonymousEmployerName,
+            IsDisabilityConfident = source.IsDisabilityConfident,
+            IsPositiveAboutDisability = source.IsPositiveAboutDisability,
+            IsEmployerAnonymous = source.IsEmployerAnonymous,
+            IsRecruitVacancy = source.IsRecruitVacancy,
+            VacancyLocationType = source.VacancyLocationType,
+            EmployerContactEmail = source.EmployerContactEmail,
+            EmployerContactName = source.EmployerContactName,
+            EmployerContactPhone = source.EmployerContactPhone,
+            ProviderContactEmail = source.ProviderContactEmail,
+            ProviderContactName = source.ProviderContactName,
+            ProviderContactPhone = source.ProviderContactPhone,
+            EmployerDescription = source.EmployerDescription,
+            EmployerWebsiteUrl = source.EmployerWebsiteUrl,
+            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
+            TypicalJobTitles = source.TypicalJobTitles,
+            AdditionalQuestion1 = source.AdditionalQuestion1,
+            AdditionalQuestion2 = source.AdditionalQuestion2,
+            VacancySource = VacancySourceNhs
         };
     }
 
@@ -142,7 +200,7 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public string? TrainingDescription { get; set; }
 
-    [SearchableField] 
+    [SearchableField]
     public List<string> Skills { get; set; } = null!;
 
     [SimpleField]
@@ -168,7 +226,7 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public string? VacancyLocationType { get; set; }
-    
+
     [SearchableField]
     public string? EmployerDescription { get; set; }
 
@@ -180,7 +238,7 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public string? EmployerContactEmail { get; set; }
-    
+
     [SimpleField]
     public string? EmployerContactName { get; set; }
 
@@ -201,11 +259,25 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public string? AdditionalQuestion2 { get; set; }
+
+    [SimpleField(IsFilterable = true)]
+    public string VacancySource { get; set; }
 }
 
 public class CourseAzureSearchDocument
 {
     public static implicit operator CourseAzureSearchDocument(LiveVacancy source)
+    {
+        return new CourseAzureSearchDocument
+        {
+            Level = source.Level.ToString(),
+            Title = source.ApprenticeshipTitle,
+            LarsCode = source.StandardLarsCode,
+            RouteCode = source.RouteCode
+        };
+    }
+
+    public static implicit operator CourseAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
     {
         return new CourseAzureSearchDocument
         {
@@ -280,7 +352,7 @@ public class WageAzureSearchDocument
             Duration = source.Duration,
             WageAdditionalInformation = source.WageAdditionalInformation,
             WorkingWeekDescription = source.WorkingWeekDescription,
-            ApprenticeMinimumWage = (double) (source.ApprenticeMinimumWage ?? 0),
+            ApprenticeMinimumWage = (double)(source.ApprenticeMinimumWage ?? 0),
             Under18NationalMinimumWage = (double)(source.Under18NationalMinimumWage ?? 0),
             Between18AndUnder21NationalMinimumWage = (double)(source.Between18AndUnder21NationalMinimumWage ?? 0),
             Between21AndUnder25NationalMinimumWage = (double)(source.Between21AndUnder25NationalMinimumWage ?? 0),
@@ -343,7 +415,7 @@ public class QualificationAzureSearchDocument
 
     [SimpleField]
     public string? Grade { get; set; }
-    
+
     [SimpleField]
     public string? Weighting { get; set; }
 }
