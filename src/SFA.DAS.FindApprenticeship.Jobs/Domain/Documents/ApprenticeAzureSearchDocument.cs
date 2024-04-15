@@ -224,7 +224,7 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public bool IsRecruitVacancy { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsFilterable = true)]
     public string? VacancyLocationType { get; set; }
 
     [SearchableField]
