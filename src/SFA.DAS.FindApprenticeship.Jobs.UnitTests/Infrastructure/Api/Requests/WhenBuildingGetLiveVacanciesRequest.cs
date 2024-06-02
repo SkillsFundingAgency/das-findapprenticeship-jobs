@@ -9,8 +9,16 @@ public class WhenBuildingGetLiveVacanciesRequest
     [Test, AutoData]
     public void Then_The_Url_Is_Correctly_Built(int pageNo, int pageSize)
     {
-        var actual = new GetLiveVacanciesApiRequest(pageNo, pageSize);
+        var actual = new GetLiveVacanciesApiRequest(pageNo, pageSize, null);
 
         actual.GetUrl.Should().Be($"livevacancies?pageSize={pageSize}&pageNo={pageNo}");
+    }
+    
+    [Test, AutoData]
+    public void Then_The_Url_Is_Correctly_Built_With_Optional_Params(int pageNo, int pageSize, DateTime closingDate)
+    {
+        var actual = new GetLiveVacanciesApiRequest(pageNo, pageSize, closingDate);
+
+        actual.GetUrl.Should().Be($"livevacancies?pageSize={pageSize}&pageNo={pageNo}&closingDate={closingDate.Date}");
     }
 }
