@@ -37,4 +37,9 @@ public class RecruitService : IRecruitService
     {
         await _apiClient.Post<NullResponse>(new PostSendApplicationClosingSoonRequest(vacancyRef, daysUntilExpiry));
     }
+
+    public async Task CloseVacancyEarly(long vacancyRef)
+    {
+        await _apiClient.Post<NullResponse>(new PostVacancyClosedEarlyRequest(vacancyRef));
+    }
 }

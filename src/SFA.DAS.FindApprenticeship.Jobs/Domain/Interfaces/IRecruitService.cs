@@ -9,4 +9,5 @@ public interface IRecruitService
     Task<GetLiveVacancyApiResponse> GetLiveVacancy(string vacancyReference);
     Task<GetNhsLiveVacanciesApiResponse> GetNhsLiveVacancies();
     Task SendApplicationClosingSoonReminder(long vacancyReference, int daysUntilExpiry);
+    Task CloseVacancyEarly(long vacancyRef);
 }
