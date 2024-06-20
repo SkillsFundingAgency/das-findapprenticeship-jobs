@@ -23,11 +23,11 @@ public class WhenVacancyClosingSoonTimerTriggered
         GetVacanciesClosingSoonTimerTrigger sut)
     {
         handler.Setup(x => x.Handle(2)).ReturnsAsync(new List<long>{returnItem1});
-        handler.Setup(x => x.Handle(5)).ReturnsAsync(new List<long>{returnItem2});
+        handler.Setup(x => x.Handle(7)).ReturnsAsync(new List<long>{returnItem2});
         
         await sut.Run(It.IsAny<TimerInfo>(), log, collector.Object);
 
         collector.Verify(x=>x.Add(It.Is<VacancyQueueItem>(c=>c.VacancyReference==returnItem1 && c.DaysToExpire ==2)));
-        collector.Verify(x=>x.Add(It.Is<VacancyQueueItem>(c=>c.VacancyReference==returnItem2 && c.DaysToExpire ==5)));
+        collector.Verify(x=>x.Add(It.Is<VacancyQueueItem>(c=>c.VacancyReference==returnItem2 && c.DaysToExpire ==7)));
     }
 }

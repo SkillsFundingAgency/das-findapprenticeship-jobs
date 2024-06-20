@@ -29,8 +29,8 @@ public class GetVacanciesClosingSoonTimerTrigger
         var returnList = new List<VacancyQueueItem>();
         var vacanciesExpiringInTwoDays = await _handler.Handle(2);
         returnList.AddRange(vacanciesExpiringInTwoDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 2}));
-        var vacanciesExpiringInFiveDays = await _handler.Handle(5);
-        returnList.AddRange(vacanciesExpiringInFiveDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 5}));
+        var vacanciesExpiringInFiveDays = await _handler.Handle(7);
+        returnList.AddRange(vacanciesExpiringInFiveDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 7}));
         
         foreach (var vacancyQueueItem in returnList)
         {
@@ -56,8 +56,8 @@ public class GetVacanciesClosingSoonHttpTrigger
         var returnList = new List<VacancyQueueItem>();
         var vacanciesExpiringInTwoDays = await _handler.Handle(2);
         returnList.AddRange(vacanciesExpiringInTwoDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 2}));
-        var vacanciesExpiringInFiveDays = await _handler.Handle(5);
-        returnList.AddRange(vacanciesExpiringInFiveDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 5}));
+        var vacanciesExpiringInFiveDays = await _handler.Handle(7);
+        returnList.AddRange(vacanciesExpiringInFiveDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 7}));
 
         foreach (var vacancyQueueItem in returnList)
         {
