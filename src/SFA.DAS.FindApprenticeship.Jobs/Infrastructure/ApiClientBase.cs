@@ -22,6 +22,15 @@ public abstract class ApiClientBase
 
         return await ProcessResponse<TResponse>(response);
     }
+    public async Task<ApiResponse<TResponse>> Post<TResponse>(IPostApiRequest request)
+    {
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
+        await AddAuthenticationHeader(requestMessage);
+
+        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+        return await ProcessResponse<TResponse>(response);
+    }
 
     protected abstract Task AddAuthenticationHeader(HttpRequestMessage httpRequestMessage);
 
@@ -36,7 +45,7 @@ public abstract class ApiClientBase
         {
             errorContent = json;
         }
-        else
+        else if (typeof(TResponse) != typeof(NullResponse))
         {
             responseBody = JsonSerializer.Deserialize<TResponse>
                 (json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });

@@ -9,9 +9,12 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class VacancyClosedHandler : IVacancyClosedHandler
 {
     private readonly IAzureSearchHelper _azureSearchHelperService;
-    public VacancyClosedHandler(IAzureSearchHelper azureSearchHelper)
+    private readonly IRecruitService _recruitService;
+
+    public VacancyClosedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService)
     {
         _azureSearchHelperService = azureSearchHelper;
+        _recruitService = recruitService;
     }
     public async Task Handle(VacancyClosedEvent vacancyClosedEvent, ILogger log)
     {
@@ -26,5 +29,7 @@ public class VacancyClosedHandler : IVacancyClosedHandler
         {
             log.LogInformation($"Index {indexName} not found so document VAC{vacancyClosedEvent.VacancyReference} has not been deleted");
         }
+
+        await _recruitService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
     }
 }

@@ -1,16 +1,18 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+﻿using System;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 public class GetLiveVacanciesApiRequest : IGetApiRequest
 {
-    private readonly int? _pageNumber;
-    private readonly int? _pageSize;
-
-    public GetLiveVacanciesApiRequest(int? pageNumber, int? pageSize)
+    public GetLiveVacanciesApiRequest(int? pageNumber, int? pageSize, DateTime? closingDate)
     {
-        _pageNumber = pageNumber;
-        _pageSize = pageSize;
+        var getUrl = $"livevacancies?pageSize={pageSize}&pageNo={pageNumber}";
+        if (closingDate != null)
+        {
+            getUrl += $"&closingDate={closingDate.Value.Date}";
+        }
+        GetUrl = getUrl;
     }
 
-    public string GetUrl => $"livevacancies?pageSize={_pageSize}&pageNo={_pageNumber}";
+    public string GetUrl { get; }
 }
