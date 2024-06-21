@@ -154,7 +154,7 @@ public class ApprenticeAzureSearchDocument
     [SimpleField(IsSortable = true)]
     public DateTimeOffset StartDate { get; set; }
 
-    [SimpleField(IsSortable = true)]
+    [SimpleField(IsFilterable = true, IsSortable = true)]
     public DateTimeOffset PostedDate { get; set; }
 
     [SimpleField(IsSortable = true)]
