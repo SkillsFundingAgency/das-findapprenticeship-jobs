@@ -61,6 +61,7 @@ public class LiveVacancy
     public string TypicalJobTitles { get; set; } = null!;
     public string? AdditionalQuestion1 { get; set; }
     public string? AdditionalQuestion2 { get; set; }
+    public string? AdditionalTrainingDescription { get; set; }
 }
 
 public class Address
@@ -90,6 +91,8 @@ public class Wage
     public decimal? Between21AndUnder25NationalMinimumWage { get; set; }
     public decimal? Over25NationalMinimumWage { get; set; }
     public string WageText { get; set; } = null!;
+    public string? CompanyBenefitsInformation { get; set; }
+
 }
 
 public class Qualification
