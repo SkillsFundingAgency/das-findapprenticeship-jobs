@@ -63,6 +63,7 @@ public class ApprenticeAzureSearchDocument
             TypicalJobTitles = source.TypicalJobTitles,
             AdditionalQuestion1 = source.AdditionalQuestion1,
             AdditionalQuestion2 = source.AdditionalQuestion2,
+            AdditionalTrainingDescription = source.AdditionalTrainingDescription,
             VacancySource = VacancySourceRecruit
         };
     }
@@ -260,6 +261,9 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public string? AdditionalQuestion2 { get; set; }
 
+    [SimpleField]
+    public string AdditionalTrainingDescription { get; set; }
+
     [SimpleField(IsFilterable = true)]
     public string VacancySource { get; set; }
 }
@@ -356,7 +360,8 @@ public class WageAzureSearchDocument
             Under18NationalMinimumWage = (double)(source.Under18NationalMinimumWage ?? 0),
             Between18AndUnder21NationalMinimumWage = (double)(source.Between18AndUnder21NationalMinimumWage ?? 0),
             Between21AndUnder25NationalMinimumWage = (double)(source.Between21AndUnder25NationalMinimumWage ?? 0),
-            Over25NationalMinimumWage = (double)(source.Over25NationalMinimumWage ?? 0)
+            Over25NationalMinimumWage = (double)(source.Over25NationalMinimumWage ?? 0),
+            CompanyBenefitsInformation = source.CompanyBenefitsInformation
         };
     }
 
@@ -392,6 +397,9 @@ public class WageAzureSearchDocument
 
     [SimpleField(IsSortable = true)]
     public double Over25NationalMinimumWage { get; set; }
+
+    [SimpleField]
+    public string CompanyBenefitsInformation { get; set; }
 }
 
 public class QualificationAzureSearchDocument
