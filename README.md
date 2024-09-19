@@ -22,11 +22,12 @@ The notification job uses NServiceBus protocol to send a message per notificatio
 * A clone of this repository
 * A code editor that supports Azure functions and .NetCore 6
 * An Azure Service Bus instance with a Queues
+* Azure Search available either running locally or accessible in a Azure tenancy
 * An Azure Active Directory account with the appropriate roles as per the [config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-findapprenticeship-jobs/SFA.DAS.FindApprenticeship.Jobs.json)
 ```
 ### Config
 
-You can find the latest config file in das-employer-config(https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-findapprenticeship-jobs/SFA.DAS.FindApprenticeship.Jobs.json) repository.
+You can find the latest config file in [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-findapprenticeship-jobs/SFA.DAS.FindApprenticeship.Jobs.json) repository.
 
 In the SFA.DAS.FindApprenticeship.Jobs project, if not exist already, add local.settings.json file with following content:
 
@@ -71,19 +72,19 @@ This function is responsible for consuming events from the Recruit & FindAnAppre
 
 # Queue Trigger & Http Trigger
 
-GetVacanciesClosingSoonEvent
-VacancyApprovedEvent
-VacancyClosedEvent
-VacancyUpdatedEvent
+* GetVacanciesClosingSoonEvent
+* VacancyApprovedEvent
+* VacancyClosedEvent
+* VacancyUpdatedEvent
 
-# Queue Trigger
+### Queue Trigger
 
-SendApplicationReminders - Responsible for sending notification emails
+* SendApplicationReminders - Responsible for sending notification emails
 
-# Timer Trigger & Http Trigger 
+### Timer Trigger & Http Trigger 
 
-IndexCleanup - Responsible for Azure search re-index 
-RecruitIndexer - Responsible for syncing vacancies from Recruit to Azure search index
+* IndexCleanup - Responsible for Azure search re-index 
+* RecruitIndexer - Responsible for syncing vacancies from Recruit to Azure search index
 
 
 ## 🔗 External Dependencies
@@ -102,6 +103,7 @@ RecruitIndexer - Responsible for syncing vacancies from Recruit to Azure search 
 ```
 * .NetCore 6.0
 * Azure Functions V4
+* Azure Search
 * Azure Table Storage
 * NServiceBus
 * NUnit
