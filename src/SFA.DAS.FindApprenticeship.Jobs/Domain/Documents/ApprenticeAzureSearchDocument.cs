@@ -269,7 +269,7 @@ public class ApprenticeAzureSearchDocument
     public string VacancySource { get; set; }
 
     [SimpleField]
-    public object ApplicationInstructions { get; set; }
+    public string? ApplicationInstructions { get; set; }
 }
 
 public class CourseAzureSearchDocument
