@@ -23,6 +23,7 @@ public class ApprenticeAzureSearchDocument
             ApprenticeshipLevel = source.ApprenticeshipLevel,
             ApplicationMethod = source.ApplicationMethod,
             ApplicationUrl = source.ApplicationUrl,
+            ApplicationInstructions = source.ApplicationInstructions,
             AccountPublicHashedId = source.AccountPublicHashedId,
             AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
             HoursPerWeek = (long)source.Wage!.WeeklyHours,
@@ -266,6 +267,9 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField(IsFilterable = true)]
     public string VacancySource { get; set; }
+
+    [SimpleField]
+    public object ApplicationInstructions { get; set; }
 }
 
 public class CourseAzureSearchDocument

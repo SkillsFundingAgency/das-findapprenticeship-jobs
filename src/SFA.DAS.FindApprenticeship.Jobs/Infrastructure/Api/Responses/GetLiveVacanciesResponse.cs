@@ -25,6 +25,7 @@ public class LiveVacancy
     public string ApprenticeshipLevel { get; set; } = null!;
     public string ApplicationMethod { get; set; } = null!;
     public string? ApplicationUrl { get; set; }
+    public string? ApplicationInstructions { get; set; }
     public string AccountPublicHashedId { get; set; } = null!;
     public string AccountLegalEntityPublicHashedId { get; set; } = null!;
     public long Ukprn { get; set; }
