@@ -63,5 +63,6 @@ public class GetNhsLiveVacanciesApiResponse
         public string? AdditionalQuestion1 { get; set; }
         public string? AdditionalQuestion2 { get; set; }
         public string? OwnerType { get; set; }
+        public string? ApplicationInstructions { get; set; }
     }
 }
