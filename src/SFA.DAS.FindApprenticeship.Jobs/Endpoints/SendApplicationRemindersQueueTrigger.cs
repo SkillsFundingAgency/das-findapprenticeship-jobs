@@ -1,23 +1,16 @@
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 
-public class SendApplicationRemindersQueueTrigger
+public class SendApplicationRemindersQueueTrigger(ISendApplicationReminderHandler handler)
 {
-    private readonly ISendApplicationReminderHandler _handler;
-
-    public SendApplicationRemindersQueueTrigger(ISendApplicationReminderHandler handler)
-    {
-        _handler = handler;
-    }
-    
-    [FunctionName("SendApplicationRemindersQueueTrigger")]
+    [Function("SendApplicationRemindersQueueTrigger")]
     public async Task Run([QueueTrigger(StorageQueueNames.VacancyClosing)] VacancyQueueItem vacancyQueueItem, ILogger log)
     {
-        await _handler.Handle(vacancyQueueItem.VacancyReference, vacancyQueueItem.DaysToExpire);
+        await handler.Handle(vacancyQueueItem.VacancyReference, vacancyQueueItem.DaysToExpire);
     }
 }

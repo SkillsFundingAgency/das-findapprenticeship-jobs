@@ -1,25 +1,17 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using System.Net.Http;
 using System.Text.Json;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
+using Microsoft.Azure.Functions.Worker;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyClosedEventHttp
+    public class HandleVacancyClosedEventHttp(IVacancyClosedHandler vacancyClosedHandler)
     {
-        private readonly IVacancyClosedHandler _vacancyClosedHandler;
-
-        public HandleVacancyClosedEventHttp(IVacancyClosedHandler vacancyClosedHandler)
-        {
-            _vacancyClosedHandler = vacancyClosedHandler;
-        }
-
-        [FunctionName("HandleVacancyClosedEventHttp")]
+        [Function("HandleVacancyClosedEventHttp")]
         public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
         {
             log.LogInformation($"HandleVacancyClosedEvent HTTP trigger function executed at {DateTime.UtcNow}");
@@ -35,7 +27,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                     nameof(req));
             }
 
-            await _vacancyClosedHandler.Handle(command, log);
+            await vacancyClosedHandler.Handle(command, log);
             log.LogInformation($"HandleVacancyClosedEvent HTTP trigger function finished at {DateTime.UtcNow}");
         }
     }
