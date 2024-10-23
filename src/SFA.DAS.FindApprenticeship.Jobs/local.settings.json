@@ -8,5 +8,10 @@
     "ConfigNames": "SFA.DAS.FindApprenticeship.Jobs",
     "EnvironmentName": "LOCAL",
     "AzureFunctionsJobHost:Logging:LogLevel:Host": "Information"
+  },
+  "Host": {
+    "LocalHttpPort": 7025,
+    "CORS": "*",
+    "CORSCredentials": false
   }
 }

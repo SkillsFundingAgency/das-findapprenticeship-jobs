@@ -19,6 +19,7 @@ using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
+    .ConfigureFunctionsWorkerDefaults()
     .ConfigureAppConfiguration(builder => builder.BuildConfiguration())
     .ConfigureNServiceBus()
     .ConfigureServices((context, services) =>
