@@ -27,8 +27,8 @@ public class RecruitIndexerSteps
     [Given(@"I invoke the recruit indexer function")]
     public async Task GivenIInvokeTheRecruitIndexerFunction()
     {
-        var recruitIndexerFunction = new RecruitIndexerTimerTrigger(It.IsAny<RecruitIndexerJobHandler>());
-        await recruitIndexerFunction.Run(It.IsAny<TimerInfo>(), It.IsAny<ILogger>());
+        var recruitIndexerFunction = new RecruitIndexerTimerTrigger(It.IsAny<RecruitIndexerJobHandler>(), It.IsAny<ILogger<RecruitIndexerTimerTrigger>>());
+        await recruitIndexerFunction.Run(It.IsAny<TimerInfo>());
     }
 
     [Given("I invoke the passing test")]

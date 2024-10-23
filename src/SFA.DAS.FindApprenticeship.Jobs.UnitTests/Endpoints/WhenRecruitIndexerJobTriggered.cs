@@ -12,11 +12,10 @@ public class WhenRecruitIndexerJobTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Index_Is_Created(
-        ILogger logger,
         [Frozen] Mock<IRecruitIndexerJobHandler> handler,
         RecruitIndexerTimerTrigger sut)
     {
-        await sut.Run(It.IsAny<TimerInfo>(), logger);
+        await sut.Run(It.IsAny<TimerInfo>());
 
         handler.Verify(x => x.Handle(), Times.Once());
     }

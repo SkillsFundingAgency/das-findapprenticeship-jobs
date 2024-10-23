@@ -21,8 +21,7 @@ public class WhenVacancyApprovedEventTriggered
 
         handler.Verify(
             x => x.Handle(
-                It.Is<VacancyApprovedEvent>(c => c.VacancyId == command.VacancyId), 
-                It.IsAny<ILogger>()),
+                It.Is<VacancyApprovedEvent>(c => c.VacancyId == command.VacancyId)),
             Times.Once());
     }
 }

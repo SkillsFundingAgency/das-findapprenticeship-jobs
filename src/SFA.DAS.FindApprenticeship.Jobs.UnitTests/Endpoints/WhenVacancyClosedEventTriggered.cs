@@ -21,8 +21,7 @@ public class WhenVacancyClosedEventTriggered
 
         handler.Verify(
             x => x.Handle(
-                It.Is<VacancyClosedEvent>(c => c.VacancyId == command.VacancyId), 
-                It.IsAny<ILogger>()),
+                It.Is<VacancyClosedEvent>(c => c.VacancyId == command.VacancyId)),
             Times.Once());
     }
 }

@@ -1,18 +1,13 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System.Net.Http;
 using System.Text.Json;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
-using Microsoft.Azure.Functions.Worker;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 
-public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdatedHandler)
+public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdatedHandler, ILogger<HandleVacancyUpdatedEventHttp> log)
 {
     [Function("HandleVacancyUpdatedEventHttp")]
-    public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
+    public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
     {
         log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.UtcNow}");
 
@@ -27,7 +22,7 @@ public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdated
                 nameof(req));
         }
 
-        await vacancyUpdatedHandler.Handle(command, log);
+        await vacancyUpdatedHandler.Handle(command);
         log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
     }
 }

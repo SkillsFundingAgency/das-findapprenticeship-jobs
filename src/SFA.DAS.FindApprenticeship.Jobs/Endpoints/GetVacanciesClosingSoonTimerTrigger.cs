@@ -10,11 +10,11 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 
-public class GetVacanciesClosingSoonTimerTrigger(IVacancyClosingSoonHandler handler)
+public class GetVacanciesClosingSoonTimerTrigger(IVacancyClosingSoonHandler handler, ILogger<GetVacanciesClosingSoonTimerTrigger> log)
 {
     [QueueOutput(StorageQueueNames.VacancyClosing)]
     [Function("GetVacanciesClosingSoonTimerTrigger")]
-    public async Task<List<VacancyQueueItem>> Run([TimerTrigger("0 8 * * *")] TimerInfo myTimer, ILogger log)
+    public async Task<List<VacancyQueueItem>> Run([TimerTrigger("0 8 * * *")] TimerInfo myTimer)
     {
         log.LogInformation($"Application reminder function executed at: {DateTime.UtcNow}");
 
@@ -28,25 +28,18 @@ public class GetVacanciesClosingSoonTimerTrigger(IVacancyClosingSoonHandler hand
     }
 }
 
-public class GetVacanciesClosingSoonHttpTrigger
+public class GetVacanciesClosingSoonHttpTrigger(IVacancyClosingSoonHandler handler, ILogger<GetVacanciesClosingSoonHttpTrigger> log)
 {
-    private readonly IVacancyClosingSoonHandler _handler;
-
-    public GetVacanciesClosingSoonHttpTrigger(IVacancyClosingSoonHandler handler)
-    {
-        _handler = handler;
-    }
-    
     [QueueOutput(StorageQueueNames.VacancyClosing)]
     [Function("GetVacanciesClosingSoonHttpTrigger")]
-    public async Task<List<VacancyQueueItem>> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
+    public async Task<List<VacancyQueueItem>> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
     {
         log.LogInformation($"Application reminder function executed at: {DateTime.UtcNow}");
 
         var returnList = new List<VacancyQueueItem>();
-        var vacanciesExpiringInTwoDays = await _handler.Handle(2);
+        var vacanciesExpiringInTwoDays = await handler.Handle(2);
         returnList.AddRange(vacanciesExpiringInTwoDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 2}));
-        var vacanciesExpiringInFiveDays = await _handler.Handle(7);
+        var vacanciesExpiringInFiveDays = await handler.Handle(7);
         returnList.AddRange(vacanciesExpiringInFiveDays.Select(c =>new VacancyQueueItem{VacancyReference = c, DaysToExpire = 7}));
 
         return returnList;

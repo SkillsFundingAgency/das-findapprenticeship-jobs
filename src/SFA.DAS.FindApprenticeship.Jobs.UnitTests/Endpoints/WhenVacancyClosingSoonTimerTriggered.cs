@@ -15,7 +15,6 @@ public class WhenVacancyClosingSoonTimerTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Command_Will_Be_Handled_And_Items_Queued(
-        ILogger log,
         VacancyClosedEvent command,
         long returnItem1,
         long returnItem2,
@@ -25,7 +24,7 @@ public class WhenVacancyClosingSoonTimerTriggered
         handler.Setup(x => x.Handle(2)).ReturnsAsync(new List<long>{returnItem1});
         handler.Setup(x => x.Handle(7)).ReturnsAsync(new List<long>{returnItem2});
         
-        var collector = await sut.Run(It.IsAny<TimerInfo>(), log);
+        var collector = await sut.Run(It.IsAny<TimerInfo>());
 
         collector.Should().BeEquivalentTo(new List<VacancyQueueItem>(new[]
         {

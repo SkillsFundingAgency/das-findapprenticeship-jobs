@@ -19,6 +19,6 @@ public class WhenVacancyUpdatedEventTriggered
     {
         await sut.Handle(message, It.IsAny<IMessageHandlerContext>());
 
-        handler.Verify(x => x.Handle(It.Is<LiveVacancyUpdatedEvent>(c => c.VacancyId == message.VacancyId), It.IsAny<ILogger>()), Times.Once());
+        handler.Verify(x => x.Handle(It.Is<LiveVacancyUpdatedEvent>(c => c.VacancyId == message.VacancyId)), Times.Once());
     }
 }

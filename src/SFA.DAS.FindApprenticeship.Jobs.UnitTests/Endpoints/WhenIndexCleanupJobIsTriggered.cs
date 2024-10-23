@@ -17,7 +17,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
             [Frozen] Mock<IIndexCleanupJobHandler> handler,
             IndexCleanupTimerTrigger sut)
         {
-            await sut.Run(It.IsAny<TimerInfo>(), log);
+            await sut.Run(It.IsAny<TimerInfo>());
 
             handler.Verify(x => x.Handle(log), Times.Once());
         }
