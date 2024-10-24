@@ -42,7 +42,7 @@ public class TestEnvironmentManagement
         _server = new TestServer(new WebHostBuilder()
             .ConfigureTestServices(services => ConfigureTestServices(services, _mockApiClient, _mockAzureSearchHelper))
             .UseEnvironment(Environments.Development)
-            .UseStartup<Startup>()
+            .UseStartup<OuterApiClient>()
             .UseConfiguration(ConfigBuilder.GenerateConfiguration()));
 
         _staticClient = _server.CreateClient();

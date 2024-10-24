@@ -89,6 +89,9 @@
         },
         "tenant": {
             "type": "string"
+        },
+        "SharedServiceBusFqdn": {
+            "type": "string"
         }
     },
     "variables": {
@@ -319,11 +322,15 @@
                                 },
                                 {
                                     "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
+                                    "value": "dotnet-isolated"
                                 },
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('SharedServiceBusFqdn')]"
                                 }
                             ]
                         }

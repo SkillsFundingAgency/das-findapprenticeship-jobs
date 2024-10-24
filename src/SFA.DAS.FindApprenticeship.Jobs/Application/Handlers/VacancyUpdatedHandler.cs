@@ -1,30 +1,21 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
-using Microsoft.Extensions.Logging;
+﻿using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-public class VacancyUpdatedHandler : IVacancyUpdatedHandler
+public class VacancyUpdatedHandler(
+    IAzureSearchHelper azureSearchHelper,
+    IRecruitService recruitService,
+    ILogger<VacancyUpdatedHandler> log)
+    : IVacancyUpdatedHandler
 {
-    private readonly IAzureSearchHelper _azureSearchHelperService;
-    private readonly IRecruitService _recruitService;
 
-    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService)
-    {
-        _azureSearchHelperService = azureSearchHelper;
-        _recruitService = recruitService;
-    }
-
-    public async Task Handle(LiveVacancyUpdatedEvent vacancyUpdatedEvent, ILogger log)
+    public async Task Handle(LiveVacancyUpdatedEvent vacancyUpdatedEvent)
     {
         log.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
 
-        var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
+        var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(indexName))
@@ -34,8 +25,8 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
         }
 
         var vacancyReference = $"{vacancyUpdatedEvent.VacancyReference}";
-        var document = await _azureSearchHelperService.GetDocument(indexName, vacancyReference);
-        var updatedVacancy = await _recruitService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
+        var document = await azureSearchHelper.GetDocument(indexName, vacancyReference);
+        var updatedVacancy = await recruitService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
 
         if (updatedVacancy == null)
         {
@@ -47,6 +38,6 @@ public class VacancyUpdatedHandler : IVacancyUpdatedHandler
         document.Value.StartDate = updatedVacancy.StartDate;
 
         var uploadBatch = Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document);
-        await _azureSearchHelperService.UploadDocuments(indexName, uploadBatch);
+        await azureSearchHelper.UploadDocuments(indexName, uploadBatch);
     }
 }

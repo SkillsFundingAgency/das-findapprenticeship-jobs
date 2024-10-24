@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "SFA.DAS.FindApprenticeship.Jobs": {
+    "AzureFunction": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7205",
+      "commandLineArgs": "--port 7025",
       "launchBrowser": false
     }
   }

@@ -14,15 +14,17 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
     {
         private readonly IAzureSearchHelper _azureSearchHelperService;
         private readonly IDateTimeService _dateTimeService;
+        private readonly ILogger<IndexCleanupJobHandler> _log;
         private readonly TimeSpan _indexDeletionAgeThreshold = new(0, 6, 0, 0);
 
-        public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService)
+        public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService, ILogger<IndexCleanupJobHandler> log)
         {
             _azureSearchHelperService = azureSearchHelperService;
             _dateTimeService = dateTimeService;
+            _log = log;
         }
 
-        public async Task Handle(ILogger log)
+        public async Task Handle()
         {
             var aliasTask = _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
             var indexesTask = _azureSearchHelperService.GetIndexes();
@@ -38,13 +40,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
             {
                 if (index.Name == aliasTarget)
                 {
-                    log.LogInformation($"Skipping index {index.Name} as currently aliased");
+                    _log.LogInformation($"Skipping index {index.Name} as currently aliased");
                     continue;
                 }
 
-                if (IsDeletionCandidate(index, log))
+                if (IsDeletionCandidate(index, _log))
                 {
-                    log.LogInformation($"Deleting index {index.Name}");
+                    _log.LogInformation($"Deleting index {index.Name}");
                     await _azureSearchHelperService.DeleteIndex(index.Name);
                 }
             }

@@ -35,7 +35,7 @@ public class WhenHandlingVacancyUpdatedEvent
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 
-        await sut.Handle(vacancyUpdatedEvent, log);
+        await sut.Handle(vacancyUpdatedEvent);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
             It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value) )),
@@ -59,7 +59,7 @@ public class WhenHandlingVacancyUpdatedEvent
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => null);
 
-        await sut.Handle(vacancyUpdatedEvent, log);
+        await sut.Handle(vacancyUpdatedEvent);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()),
             Times.Never());
