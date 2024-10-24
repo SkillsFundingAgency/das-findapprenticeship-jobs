@@ -19,7 +19,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
         {
             await sut.Run(It.IsAny<TimerInfo>());
 
-            handler.Verify(x => x.Handle(log), Times.Once());
+            handler.Verify(x => x.Handle(), Times.Once());
         }
     }
 }

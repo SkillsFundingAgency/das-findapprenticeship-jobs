@@ -32,7 +32,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
 
-            await handler.Handle(log);
+            await handler.Handle();
 
             azureSearchHelper.Verify(x => x.DeleteIndex(indexes[0].Name), Times.Once);
             azureSearchHelper.Verify(x => x.DeleteIndex(indexes[1].Name), Times.Once);
@@ -59,7 +59,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
 
-            await handler.Handle(log);
+            await handler.Handle();
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }
@@ -83,7 +83,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetIndexes())
                 .ReturnsAsync(() => indexes);
 
-            await handler.Handle(log);
+            await handler.Handle();
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }
@@ -109,7 +109,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
                 .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 
-            await handler.Handle(log);
+            await handler.Handle();
 
             azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
         }
