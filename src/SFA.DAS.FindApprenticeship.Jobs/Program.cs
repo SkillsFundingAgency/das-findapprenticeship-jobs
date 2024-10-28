@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using NServiceBus;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.Api.Common.Infrastructure;
@@ -19,7 +18,6 @@ using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
-    //.ConfigureFunctionsWorkerDefaults()
     .ConfigureAppConfiguration(builder => builder.BuildConfiguration())
     .ConfigureNServiceBus()
     .ConfigureServices((context, services) =>
