@@ -52,7 +52,7 @@ public static class ConfigureNServiceBusExtension
 
     private static bool IsDasMessage(Type t, string namespaceSuffix)
         => t.Namespace != null &&
-           (t.Namespace.StartsWith("SFA.DAS") || t.Namespace.StartsWith("ESFA.")) &&
+           (t.Namespace.StartsWith("SFA.DAS") || t.Namespace.StartsWith("Esfa.", StringComparison.CurrentCultureIgnoreCase)) &&
            t.Namespace.EndsWith(namespaceSuffix);
 }
 
