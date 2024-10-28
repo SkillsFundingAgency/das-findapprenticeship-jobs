@@ -44,7 +44,7 @@ public static class ConfigureNServiceBusExtension
         return hostBuilder;
     }
 
-    private static bool IsMessage(Type t) => t is IMessage || IsDasMessage(t, "");
+    private static bool IsMessage(Type t) => t is IMessage || IsDasMessage(t, "Messages");
 
     private static bool IsEvent(Type t) => t is IEvent || IsDasMessage(t, "Events");
 
@@ -52,7 +52,7 @@ public static class ConfigureNServiceBusExtension
 
     private static bool IsDasMessage(Type t, string namespaceSuffix)
         => t.Namespace != null &&
-           (t.Namespace.StartsWith("SFA.DAS") || t.Namespace.StartsWith("Esfa.", StringComparison.CurrentCultureIgnoreCase)) &&
+           (t.Namespace.StartsWith("Esfa.", StringComparison.CurrentCultureIgnoreCase)) &&
            t.Namespace.EndsWith(namespaceSuffix);
 }
 
