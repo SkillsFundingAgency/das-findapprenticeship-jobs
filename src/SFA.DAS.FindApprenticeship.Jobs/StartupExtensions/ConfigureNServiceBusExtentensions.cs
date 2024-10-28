@@ -44,15 +44,15 @@ public static class ConfigureNServiceBusExtension
         return hostBuilder;
     }
 
-    private static bool IsMessage(Type t) => t is IMessage || IsDasMessage(t, "Messages");
+    private static bool IsMessage(Type t) => t is IMessage || IsDasMessage(t, "");
 
-    private static bool IsEvent(Type t) => t is IEvent || IsDasMessage(t, "Messages.Events");
+    private static bool IsEvent(Type t) => t is IEvent || IsDasMessage(t, "Events");
 
-    private static bool IsCommand(Type t) => t is ICommand || IsDasMessage(t, "Messages.Commands");
+    private static bool IsCommand(Type t) => t is ICommand || IsDasMessage(t, "Commands");
 
     private static bool IsDasMessage(Type t, string namespaceSuffix)
         => t.Namespace != null &&
-           t.Namespace.StartsWith("SFA.DAS") &&
+           (t.Namespace.StartsWith("SFA.DAS") || t.Namespace.StartsWith("ESFA.")) &&
            t.Namespace.EndsWith(namespaceSuffix);
 }
 
