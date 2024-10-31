@@ -16,7 +16,7 @@ public class WhenClosingVacancyEarly
     public async Task Then_The_Api_Is_Called_With_Vacancy_Ref(
         long vacancyRef,
         [Frozen] Mock<IOuterApiClient> apiClient,
-        RecruitService service)
+        FindApprenticeshipJobsService service)
     {
         apiClient.Setup(x =>
                 x.Post<NullResponse>(

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Esfa.Recruit.Vacancies.Client.Domain.Events;
+namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 public class VacancyClosedEvent
 {
     public Guid VacancyId { get; set; }

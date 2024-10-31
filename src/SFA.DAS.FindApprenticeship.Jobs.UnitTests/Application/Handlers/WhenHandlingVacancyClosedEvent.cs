@@ -1,6 +1,5 @@
 ﻿using AutoFixture.NUnit3;
 using Azure.Search.Documents.Indexes.Models;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -20,7 +19,7 @@ public class WhenHandlingVacancyClosedEvent
         string aliasName,
         SearchAlias searchAlias,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
         VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
@@ -37,7 +36,7 @@ public class WhenHandlingVacancyClosedEvent
         VacancyClosedEvent vacancyClosedEvent,
         ILogger log,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
         VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(() => null);

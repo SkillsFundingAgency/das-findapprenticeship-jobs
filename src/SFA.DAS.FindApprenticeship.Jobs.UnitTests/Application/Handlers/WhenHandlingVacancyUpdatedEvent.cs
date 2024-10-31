@@ -2,7 +2,6 @@
 using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -24,7 +23,7 @@ public class WhenHandlingVacancyUpdatedEvent
         string indexName,
         Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {

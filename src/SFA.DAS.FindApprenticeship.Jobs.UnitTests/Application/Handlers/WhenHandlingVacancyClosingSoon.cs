@@ -21,7 +21,7 @@ public class WhenHandlingVacancyClosingSoon
         List<LiveVacancy> liveVacancies,
         List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsLiveVacancies,
         [Frozen] Mock<IDateTimeService> dateTimeService,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
         VacancyClosingSoonHandler sut)
     {
         dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(dateTime);
@@ -56,7 +56,7 @@ public class WhenHandlingVacancyClosingSoon
 
     [Test, MoqAutoData]
     public async Task Then_LiveVacancies_Is_Null_Empty_List_Returned(
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
         VacancyClosingSoonHandler sut)
     {
         recruitService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>())).ReturnsAsync(() => null);

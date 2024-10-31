@@ -13,7 +13,7 @@ public class WhenHandlingSendApplicationReminder
     public async Task Then_The_Reminder_Is_Sent(
         long vacancyRef,
         int daysUntilExpiry,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
         SendApplicationReminderHandler handler)
     {
         await handler.Handle(vacancyRef, daysUntilExpiry);

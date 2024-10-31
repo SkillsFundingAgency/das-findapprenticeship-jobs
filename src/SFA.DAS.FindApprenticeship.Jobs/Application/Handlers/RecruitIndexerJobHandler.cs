@@ -10,12 +10,12 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
 {
-    private readonly IRecruitService _recruitService;
+    private readonly IFindApprenticeshipJobsService _recruitService;
     private readonly IAzureSearchHelper _azureSearchHelperService;
     private readonly IDateTimeService _dateTimeService;
     private const int PageSize = 500;
 
-    public RecruitIndexerJobHandler(IRecruitService recruitService, IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService)
+    public RecruitIndexerJobHandler(IFindApprenticeshipJobsService recruitService, IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService)
     {
         _recruitService = recruitService;
         _azureSearchHelperService = azureSearchHelperService;

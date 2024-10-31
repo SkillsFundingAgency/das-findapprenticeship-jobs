@@ -17,7 +17,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         public async Task Then_The_LiveVacancies_Are_Retrieved_And_Index_Is_Created(
             List<LiveVacancy> liveVacancies,
             List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsLiveVacancies,
-            [Frozen] Mock<IRecruitService> recruitService,
+            [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
             DateTime currentDateTime,
@@ -67,7 +67,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
         [Test, MoqAutoData]
         public async Task Then_LiveVacancies_Is_Null_And_Index_Is_Not_Created(
-            [Frozen] Mock<IRecruitService> recruitService,
+            [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             RecruitIndexerJobHandler sut)
         {

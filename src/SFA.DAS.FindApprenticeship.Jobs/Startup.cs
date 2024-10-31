@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +19,9 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.ServiceCollectionExtensions;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.NServiceBus.AzureFunction.Hosting;
+using System;
+using System.IO;
+using System.Net.Http;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.FindApprenticeship.Jobs;
@@ -69,7 +67,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton(new FunctionEnvironment(configuration["EnvironmentName"]));
 
-        builder.Services.AddTransient<IRecruitService, RecruitService>();
+        builder.Services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();
         builder.Services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         builder.Services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
-public class RecruitService : IRecruitService
+public class FindApprenticeshipJobsService : IFindApprenticeshipJobsService
 {
     private readonly IOuterApiClient _apiClient;
 
-    public RecruitService(IOuterApiClient apiClient)
+    public FindApprenticeshipJobsService(IOuterApiClient apiClient)
     {
         _apiClient = apiClient;
     }
@@ -20,6 +21,7 @@ public class RecruitService : IRecruitService
         var liveVacancies = await _apiClient.Get<GetLiveVacanciesApiResponse>(new GetLiveVacanciesApiRequest(pageNumber, pageSize, closingDate));
         return liveVacancies.Body;
     }
+
 
     public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(string vacancyReference)
     {
@@ -41,5 +43,24 @@ public class RecruitService : IRecruitService
     public async Task CloseVacancyEarly(long vacancyRef)
     {
         await _apiClient.Post<NullResponse>(new PostVacancyClosedEarlyRequest(vacancyRef));
+    }
+
+    public async Task<GetSavedSearchesApiResponse> GetSavedSearches(int pageNumber,
+        int pageSize,
+        string lastRunDateTime,
+        int maxApprenticeshipSearchResultCount = 10,
+        string sortOrder = "AgeDesc")
+    {
+        var savedSearches = await _apiClient.Get<GetSavedSearchesApiResponse>(new GetSavedSearchesApiRequest(
+            pageNumber,
+            pageSize,
+            lastRunDateTime,
+            maxApprenticeshipSearchResultCount));
+        return savedSearches.Body;
+    }
+
+    public async Task SendSavedSearchNotification(SavedSearch savedSearch)
+    {
+        await _apiClient.Post<NullResponse>(new PostSendSavedSearchNotificationApiRequest(savedSearch));
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
@@ -12,9 +11,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class VacancyUpdatedHandler : IVacancyUpdatedHandler
 {
     private readonly IAzureSearchHelper _azureSearchHelperService;
-    private readonly IRecruitService _recruitService;
+    private readonly IFindApprenticeshipJobsService _recruitService;
 
-    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IRecruitService recruitService)
+    public VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper, IFindApprenticeshipJobsService recruitService)
     {
         _azureSearchHelperService = azureSearchHelper;
         _recruitService = recruitService;

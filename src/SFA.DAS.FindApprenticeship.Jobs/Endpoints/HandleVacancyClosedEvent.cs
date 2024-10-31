@@ -5,7 +5,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using System.Threading.Tasks;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {

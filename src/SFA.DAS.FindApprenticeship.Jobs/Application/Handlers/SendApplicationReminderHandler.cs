@@ -6,9 +6,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 
 public class SendApplicationReminderHandler : ISendApplicationReminderHandler
 {
-    private readonly IRecruitService _recruitService;
+    private readonly IFindApprenticeshipJobsService _recruitService;
 
-    public SendApplicationReminderHandler(IRecruitService recruitService)
+    public SendApplicationReminderHandler(IFindApprenticeshipJobsService recruitService)
     {
         _recruitService = recruitService;
     }

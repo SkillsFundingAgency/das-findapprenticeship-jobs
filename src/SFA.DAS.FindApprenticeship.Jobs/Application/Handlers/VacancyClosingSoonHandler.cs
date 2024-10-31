@@ -1,20 +1,19 @@
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 
 public class VacancyClosingSoonHandler : IVacancyClosingSoonHandler
 {
-    private readonly IRecruitService _recruitService;
+    private readonly IFindApprenticeshipJobsService _recruitService;
     private readonly IDateTimeService _dateTimeService;
     private const int PageSize = 500;
 
-    public VacancyClosingSoonHandler(IRecruitService recruitService, IDateTimeService dateTimeService)
+    public VacancyClosingSoonHandler(IFindApprenticeshipJobsService recruitService, IDateTimeService dateTimeService)
     {
         _recruitService = recruitService;
         _dateTimeService = dateTimeService;
