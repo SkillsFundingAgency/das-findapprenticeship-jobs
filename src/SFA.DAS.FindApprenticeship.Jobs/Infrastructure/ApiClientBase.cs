@@ -2,6 +2,7 @@
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Text;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 public abstract class ApiClientBase
@@ -25,6 +26,19 @@ public abstract class ApiClientBase
     public async Task<ApiResponse<TResponse>> Post<TResponse>(IPostApiRequest request)
     {
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
+        await AddAuthenticationHeader(requestMessage);
+
+        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+        return await ProcessResponse<TResponse>(response);
+    }
+
+    public async Task<ApiResponse<TResponse>> PostWithResponseCode<TResponse>(IPostApiRequestWithData request)
+    {
+        var stringContent = new StringContent(JsonSerializer.Serialize(request.Data), Encoding.UTF8, "application/json");
+
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
+        requestMessage.Content = stringContent;
         await AddAuthenticationHeader(requestMessage);
 
         var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);

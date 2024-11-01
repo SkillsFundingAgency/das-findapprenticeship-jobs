@@ -1,4 +1,5 @@
 ﻿using AutoFixture.NUnit3;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
     public class WhenHandlingSendSavedSearchNotificationHandler
     {
         [Test, MoqAutoData]
-        public async Task Then_The_SavedSearches_Are_Retrieved_And_Items_Added_To_Queue_Is_Created(
+        public async Task Then_The_SavedSearches_Are_Retrieved(
             List<SavedSearchResult> mockSavedSearchResult,
             [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeShipJobsService,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -41,12 +42,11 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
                 x.GetSavedSearches(pageNumber, pageSize, currentDateTime.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder))
                 .ReturnsAsync(mockGetSavedSearchesApiResponse);
 
-            await sut.Handle();
+            var result = await sut.Handle();
 
             using (new AssertionScope())
             {
-                findApprenticeShipJobsService.Verify(x => x.GetSavedSearches(pageNumber, pageSize, currentDateTime.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder),
-                    Times.AtLeastOnce());
+                result.Count.Should().Be(mockSavedSearchResult.Count);
             }
         }
     }

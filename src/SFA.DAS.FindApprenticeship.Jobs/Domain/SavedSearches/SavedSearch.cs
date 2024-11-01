@@ -24,7 +24,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         {
             return new SavedSearch
             {
-                User = source.UserDetails,
+                User = source.User,
                 Categories = source.Categories,
                 Levels = source.Levels,
                 Distance = source.Distance,

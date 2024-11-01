@@ -77,6 +77,8 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IVacancyApprovedHandler, VacancyApprovedHandler>();
         builder.Services.AddTransient<IVacancyClosingSoonHandler, VacancyClosingSoonHandler>();
         builder.Services.AddTransient<ISendApplicationReminderHandler, SendApplicationReminderHandler>();
+        builder.Services.AddTransient<IGetAllSavedSearchesNotificationHandler, GetAllSavedSearchesNotificationHandler>();
+        builder.Services.AddTransient<ISendSavedSearchesNotificationHandler, SendSavedSearchesNotificationHandler>();
         builder.Services.AddTransient<IDateTimeService, DateTimeService>();
         builder.Services.AddHttpClient<IOuterApiClient, OuterApiClient>
         (

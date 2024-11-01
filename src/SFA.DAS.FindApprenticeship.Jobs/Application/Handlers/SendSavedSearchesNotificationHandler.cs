@@ -10,9 +10,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
     {
         private readonly IFindApprenticeshipJobsService _findApprenticeshipJobsService;
 
-        public SendSavedSearchesNotificationHandler(IFindApprenticeshipJobsService recruitService)
+        public SendSavedSearchesNotificationHandler(IFindApprenticeshipJobsService findApprenticeshipJobsService)
         {
-            _findApprenticeshipJobsService = recruitService;
+            _findApprenticeshipJobsService = findApprenticeshipJobsService;
         }
 
         public async Task Handle(List<SavedSearch> savedSearches)

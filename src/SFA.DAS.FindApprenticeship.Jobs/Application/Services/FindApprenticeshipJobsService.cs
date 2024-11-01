@@ -61,6 +61,6 @@ public class FindApprenticeshipJobsService : IFindApprenticeshipJobsService
 
     public async Task SendSavedSearchNotification(SavedSearch savedSearch)
     {
-        await _apiClient.Post<NullResponse>(new PostSendSavedSearchNotificationApiRequest(savedSearch));
+        await _apiClient.PostWithResponseCode<NullResponse>(new PostSendSavedSearchNotificationApiRequest(savedSearch));
     }
 }

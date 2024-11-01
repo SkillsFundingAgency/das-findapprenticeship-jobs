@@ -1,14 +1,12 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
@@ -29,11 +27,11 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         {
             log.LogInformation($"Send saved searches notifications function executed at: {DateTime.UtcNow}");
 
-            var returnList = new List<SavedSearchQueueItem>();
+            var queueItems = new List<SavedSearchQueueItem>();
 
             var savedSearches = await _handler.Handle();
 
-            returnList.AddRange(savedSearches.Select(c => new SavedSearchQueueItem
+            queueItems.AddRange(savedSearches.Select(c => new SavedSearchQueueItem
             {
                 Categories = c.Categories,
                 DisabilityConfident = c.DisabilityConfident,
@@ -55,7 +53,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                 }).ToList()
             }));
 
-            foreach (var savedSearchQueueItem in returnList)
+            foreach (var savedSearchQueueItem in queueItems)
             {
                 outputQueue.Add(savedSearchQueueItem);
             }

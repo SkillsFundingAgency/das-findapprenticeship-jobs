@@ -25,7 +25,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
         {
 
             [JsonProperty("userDetails")] 
-            public UserDetails UserDetails { get; set; } = new();
+            public UserDetails User { get; set; } = new();
 
             [JsonProperty("categories")] 
             public List<int>? Categories { get; set; }
