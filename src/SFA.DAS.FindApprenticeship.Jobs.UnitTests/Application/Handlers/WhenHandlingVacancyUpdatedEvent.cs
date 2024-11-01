@@ -23,13 +23,13 @@ public class WhenHandlingVacancyUpdatedEvent
         string indexName,
         Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
-        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
         var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
 
-        recruitService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));

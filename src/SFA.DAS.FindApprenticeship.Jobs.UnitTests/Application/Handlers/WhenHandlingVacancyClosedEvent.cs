@@ -19,7 +19,7 @@ public class WhenHandlingVacancyClosedEvent
         string aliasName,
         SearchAlias searchAlias,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
@@ -28,7 +28,7 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
 
         azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}"), Times.Once());
-        recruitService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
     }
 
     [Test, MoqAutoData]
@@ -36,7 +36,7 @@ public class WhenHandlingVacancyClosedEvent
         VacancyClosedEvent vacancyClosedEvent,
         ILogger log,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosedHandler sut)
     {
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(() => null);
@@ -45,6 +45,6 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
 
         azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}"), Times.Never());
-        recruitService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
     }
 }

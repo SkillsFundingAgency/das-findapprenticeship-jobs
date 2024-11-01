@@ -6,8 +6,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -21,7 +19,7 @@ public class WhenHandlingVacancyClosingSoon
         List<LiveVacancy> liveVacancies,
         List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsLiveVacancies,
         [Frozen] Mock<IDateTimeService> dateTimeService,
-        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosingSoonHandler sut)
     {
         dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(dateTime);
@@ -41,14 +39,14 @@ public class WhenHandlingVacancyClosingSoon
             TotalPages = 1
         };
 
-        recruitService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), dateTime.AddDays(2))).ReturnsAsync(liveVacanciesApiResponse);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), dateTime.AddDays(2))).ReturnsAsync(liveVacanciesApiResponse);
             
 
         var vacancies = await sut.Handle(2);
 
         using (new AssertionScope())
         {
-            recruitService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), dateTime.AddDays(2)), Times.Exactly(liveVacanciesApiResponse.TotalPages));
+            findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), dateTime.AddDays(2)), Times.Exactly(liveVacanciesApiResponse.TotalPages));
         }
 
         vacancies.Should().BeEquivalentTo(liveVacancies.Select(c => Convert.ToInt64(c.VacancyReference.Replace("VAC",""))).ToList());
@@ -56,10 +54,10 @@ public class WhenHandlingVacancyClosingSoon
 
     [Test, MoqAutoData]
     public async Task Then_LiveVacancies_Is_Null_Empty_List_Returned(
-        [Frozen] Mock<IFindApprenticeshipJobsService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosingSoonHandler sut)
     {
-        recruitService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>())).ReturnsAsync(() => null);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>())).ReturnsAsync(() => null);
             
         var actual = await sut.Handle(5);
 
