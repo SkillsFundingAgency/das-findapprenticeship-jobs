@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Moq;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 using TechTalk.SpecFlow;
@@ -42,7 +43,7 @@ public class TestEnvironmentManagement
         _server = new TestServer(new WebHostBuilder()
             .ConfigureTestServices(services => ConfigureTestServices(services, _mockApiClient, _mockAzureSearchHelper))
             .UseEnvironment(Environments.Development)
-            .UseStartup<Startup>()
+            .UseStartup<OuterApiClient>()
             .UseConfiguration(ConfigBuilder.GenerateConfiguration()));
 
         _staticClient = _server.CreateClient();

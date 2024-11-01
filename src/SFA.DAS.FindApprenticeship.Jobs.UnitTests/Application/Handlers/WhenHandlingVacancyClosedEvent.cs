@@ -25,7 +25,7 @@ public class WhenHandlingVacancyClosedEvent
         azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
         azureSearchHelper.Setup(x => x.DeleteDocument(searchAlias.Indexes.FirstOrDefault(), $"{vacancyClosedEvent.VacancyReference}")).Returns(Task.CompletedTask);
 
-        await sut.Handle(vacancyClosedEvent, log);
+        await sut.Handle(vacancyClosedEvent);
 
         azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}"), Times.Once());
         recruitService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
@@ -42,7 +42,7 @@ public class WhenHandlingVacancyClosedEvent
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>())).ReturnsAsync(() => null);
         azureSearchHelper.Setup(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}")).Returns(Task.CompletedTask);
 
-        await sut.Handle(vacancyClosedEvent, log);
+        await sut.Handle(vacancyClosedEvent);
 
         azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"{vacancyClosedEvent.VacancyReference}"), Times.Never());
         recruitService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);

@@ -1,35 +1,28 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-public class VacancyClosedHandler : IVacancyClosedHandler
+public class VacancyClosedHandler(
+    IAzureSearchHelper azureSearchHelper,
+    IFindApprenticeshipJobsService findApprenticeshipJobsService,
+    ILogger<VacancyClosedHandler> log)
+    : IVacancyClosedHandler
 {
-    private readonly IAzureSearchHelper _azureSearchHelperService;
-    private readonly IFindApprenticeshipJobsService _recruitService;
-
-    public VacancyClosedHandler(IAzureSearchHelper azureSearchHelper, IFindApprenticeshipJobsService recruitService)
+    public async Task Handle(VacancyClosedEvent vacancyClosedEvent)
     {
-        _azureSearchHelperService = azureSearchHelper;
-        _recruitService = recruitService;
-    }
-    public async Task Handle(VacancyClosedEvent vacancyClosedEvent, ILogger log)
-    {
-        var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
+        var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
 
         if (!string.IsNullOrEmpty(indexName))
         {
-            await _azureSearchHelperService.DeleteDocument(indexName, $"{vacancyClosedEvent.VacancyReference}");
+            await azureSearchHelper.DeleteDocument(indexName, $"{vacancyClosedEvent.VacancyReference}");
         }
         else
         {
             log.LogInformation($"Index {indexName} not found so document VAC{vacancyClosedEvent.VacancyReference} has not been deleted");
         }
 
-        await _recruitService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
+        await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
     }
 }

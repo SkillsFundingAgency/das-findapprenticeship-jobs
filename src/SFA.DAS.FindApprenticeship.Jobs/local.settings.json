@@ -2,10 +2,17 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true;",
+    "AzureWebJobsServiceBus": "",
     "NServiceBusConnectionString": "UseLearningEndpoint=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
     "ConfigNames": "SFA.DAS.FindApprenticeship.Jobs",
-    "EnvironmentName": "LOCAL"
+    "EnvironmentName": "LOCAL",
+    "AzureFunctionsJobHost:Logging:LogLevel:Host": "Information"
+  },
+  "Host": {
+    "LocalHttpPort": 7025,
+    "CORS": "*",
+    "CORSCredentials": false
   }
 }

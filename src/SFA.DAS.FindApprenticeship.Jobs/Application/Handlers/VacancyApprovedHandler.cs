@@ -1,37 +1,28 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-public class VacancyApprovedHandler : IVacancyApprovedHandler
+public class VacancyApprovedHandler(
+    IAzureSearchHelper azureSearchHelper,
+    IFindApprenticeshipJobsService findApprenticeshipJobsService,
+    ILogger<VacancyApprovedHandler> log)
+    : IVacancyApprovedHandler
 {
-    private readonly IAzureSearchHelper _azureSearchHelperService;
-    private readonly IFindApprenticeshipJobsService _recruitService;
-
-    public VacancyApprovedHandler(IAzureSearchHelper azureSearchHelper, IFindApprenticeshipJobsService recruitService)
-    {
-        _azureSearchHelperService = azureSearchHelper;
-        _recruitService = recruitService;
-    }
-
-    public async Task Handle(VacancyApprovedEvent vacancyApprovedEvent, ILogger log)
+    public async Task Handle(VacancyApprovedEvent vacancyApprovedEvent)
     {
         log.LogInformation($"Vacancy Approved Event handler invoked at {DateTime.UtcNow}");
 
-        var approvedVacancy = await _recruitService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString());
+        var approvedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString());
 
-        var alias = await _azureSearchHelperService.GetAlias(Domain.Constants.AliasName);
+        var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
 
         if (approvedVacancy != null && !string.IsNullOrEmpty(indexName))
         {
             var document = (ApprenticeAzureSearchDocument)approvedVacancy;
-            await _azureSearchHelperService.UploadDocuments(indexName, Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document));
+            await azureSearchHelper.UploadDocuments(indexName, Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document));
         }
         else
         {

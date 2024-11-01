@@ -1,26 +1,13 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System.Net.Http;
 using System.Text.Json;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyApprovedEventHttp
+    public class HandleVacancyApprovedEventHttp(IVacancyApprovedHandler vacancyApprovedHandler, ILogger<HandleVacancyApprovedEventHttp> log)
     {
-        private readonly IVacancyApprovedHandler _vacancyApprovedHandler;
-
-        public HandleVacancyApprovedEventHttp(IVacancyApprovedHandler vacancyApprovedHandler)
-        {
-            _vacancyApprovedHandler = vacancyApprovedHandler;
-        }
-
-        [FunctionName("HandleVacancyApprovedEventHttp")]
-        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
+        [Function("HandleVacancyApprovedEventHttp")]
+        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
         {
             log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function executed at {DateTime.UtcNow}");
 
@@ -35,7 +22,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                     nameof(req));
             }
 
-            await _vacancyApprovedHandler.Handle(command, log);
+            await vacancyApprovedHandler.Handle(command);
             log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function finished at {DateTime.UtcNow}");
         }
     }

@@ -1,5 +1,4 @@
 ﻿using AutoFixture.NUnit3;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
@@ -12,13 +11,15 @@ public class WhenVacancyApprovedEventTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Command_Will_Be_Handled(
-        ILogger log,
         VacancyApprovedEvent command,
         [Frozen] Mock<IVacancyApprovedHandler> handler,
         HandleVacancyApprovedEvent sut)
     {
-        await sut.Run(command, log);
+        await sut.Handle(command, It.IsAny<IMessageHandlerContext>());
 
-        handler.Verify(x => x.Handle(It.Is<VacancyApprovedEvent>(x => x.VacancyId == command.VacancyId), log), Times.Once());
+        handler.Verify(
+            x => x.Handle(
+                It.Is<VacancyApprovedEvent>(c => c.VacancyId == command.VacancyId)),
+            Times.Once());
     }
 }

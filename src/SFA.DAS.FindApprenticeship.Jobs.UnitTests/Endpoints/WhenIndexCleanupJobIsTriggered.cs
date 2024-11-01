@@ -1,5 +1,5 @@
 ﻿using AutoFixture.NUnit3;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -17,9 +17,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
             [Frozen] Mock<IIndexCleanupJobHandler> handler,
             IndexCleanupTimerTrigger sut)
         {
-            await sut.Run(It.IsAny<TimerInfo>(), log);
+            await sut.Run(It.IsAny<TimerInfo>());
 
-            handler.Verify(x => x.Handle(log), Times.Once());
+            handler.Verify(x => x.Handle(), Times.Once());
         }
     }
 }

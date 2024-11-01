@@ -1,35 +1,23 @@
-﻿using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class SavedSearchesNotificationsTimerTrigger
+    public class SavedSearchesNotificationsTimerTrigger(
+        IGetAllSavedSearchesNotificationHandler handler,
+        ILogger<SavedSearchesNotificationsTimerTrigger> log)
     {
-        private readonly IGetAllSavedSearchesNotificationHandler _handler;
-
-        public SavedSearchesNotificationsTimerTrigger(IGetAllSavedSearchesNotificationHandler handler)
-        {
-            _handler = handler;
-        }
-
-        [FunctionName("SendSavedSearchesNotificationsTimerTrigger")]
-        public async Task Run([TimerTrigger("0 0 3 ? * MON *")] TimerInfo myTimer,
-            ILogger log,
-            [Queue(StorageQueueNames.SendSavedSearchNotificationAlert)]
-            ICollector<SavedSearchQueueItem> outputQueue)
+        [QueueOutput(StorageQueueNames.SendSavedSearchNotificationAlert)]
+        [Function("SendSavedSearchesNotificationsTimerTrigger")]
+        public async Task<List<SavedSearchQueueItem>> Run([TimerTrigger("0 0 3 * * MON")] TimerInfo myTimer)
+            
         {
             log.LogInformation($"Send saved searches notifications function executed at: {DateTime.UtcNow}");
 
             var queueItems = new List<SavedSearchQueueItem>();
 
-            var savedSearches = await _handler.Handle();
+            var savedSearches = await handler.Handle();
 
             queueItems.AddRange(savedSearches.Select(c => new SavedSearchQueueItem
             {
@@ -53,10 +41,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                 }).ToList()
             }));
 
-            foreach (var savedSearchQueueItem in queueItems)
-            {
-                outputQueue.Add(savedSearchQueueItem);
-            }
+            return queueItems;
         }
     }
 }
