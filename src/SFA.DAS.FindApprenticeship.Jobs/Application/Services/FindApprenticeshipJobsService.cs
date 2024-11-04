@@ -48,7 +48,7 @@ public class FindApprenticeshipJobsService : IFindApprenticeshipJobsService
     public async Task<GetSavedSearchesApiResponse> GetSavedSearches(int pageNumber,
         int pageSize,
         string lastRunDateTime,
-        int maxApprenticeshipSearchResultCount = 10,
+        int maxApprenticeshipSearchResultCount = 5,
         string sortOrder = "AgeDesc")
     {
         var savedSearches = await _apiClient.Get<GetSavedSearchesApiResponse>(new GetSavedSearchesApiRequest(
