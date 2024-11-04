@@ -1,26 +1,35 @@
 ﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
 {
-    public class SendSavedSearchesNotificationHandler : ISendSavedSearchesNotificationHandler
+    public class SendSavedSearchesNotificationHandler(
+        ILogger<SendApplicationReminderHandler> logger,
+        IFindApprenticeshipJobsService findApprenticeshipJobsService,
+        IBatchTaskRunner batchTaskRunner)
+        : ISendSavedSearchesNotificationHandler
     {
-        private readonly IFindApprenticeshipJobsService _findApprenticeshipJobsService;
-
-        public SendSavedSearchesNotificationHandler(IFindApprenticeshipJobsService findApprenticeshipJobsService)
-        {
-            _findApprenticeshipJobsService = findApprenticeshipJobsService;
-        }
-
         public async Task Handle(List<SavedSearch> savedSearches)
         {
-            foreach (var savedSearch in savedSearches)
+            // Add tasks to the runner
+            for (var index = 1; index <= savedSearches.Count; index++)
             {
-                await _findApprenticeshipJobsService.SendSavedSearchNotification(savedSearch);
+                var taskId = index;
+                var savedSearchIndex = index;
+                if (savedSearchIndex >= 0 && savedSearchIndex < savedSearches.Count)
+                {
+                    batchTaskRunner.AddTask(async () =>
+                    {
+                        logger.LogInformation("SendSavedSearchNotification Task {TaskId} started", taskId);
+                        await findApprenticeshipJobsService.SendSavedSearchNotification(savedSearches[savedSearchIndex]);
+                        logger.LogInformation("SendSavedSearchNotification Task {TaskId} completed", taskId);
+                    });
+                }
             }
+
+            // Run tasks in batches
+            await batchTaskRunner.RunBatchesAsync();
         }
     }
 }

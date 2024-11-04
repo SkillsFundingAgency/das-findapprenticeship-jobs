@@ -14,13 +14,16 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         [Test, MoqAutoData]
         public async Task Then_The_Notification_Is_Sent(
         List<SavedSearch> mockSavedSearches,
+        [Frozen] Mock<IBatchTaskRunner> batchTaskRunner,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         SendSavedSearchesNotificationHandler handler)
         {
             await handler.Handle(mockSavedSearches);
 
-            findApprenticeshipJobsService.Verify(
-                x => x.SendSavedSearchNotification(It.IsAny<SavedSearch>()), Times.Exactly(mockSavedSearches.Count));
+            batchTaskRunner.Verify(
+                x => x.AddTask(It.IsAny<Func<Task>>()), Times.Exactly(mockSavedSearches.Count - 1));
+            batchTaskRunner.Verify(
+                x => x.RunBatchesAsync(), Times.Once());
         }
     }
 }

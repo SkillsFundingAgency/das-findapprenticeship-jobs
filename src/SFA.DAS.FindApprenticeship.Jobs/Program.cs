@@ -59,6 +59,7 @@ var host = new HostBuilder()
         services.AddTransient<IGetAllSavedSearchesNotificationHandler, GetAllSavedSearchesNotificationHandler>();
         services.AddTransient<ISendSavedSearchesNotificationHandler, SendSavedSearchesNotificationHandler>();
         services.AddTransient<IDateTimeService, DateTimeService>();
+        services.AddTransient<IBatchTaskRunner, BatchTaskRunner>();
         services.AddHttpClient<IOuterApiClient, OuterApiClient>
             (
                 options => options.Timeout = TimeSpan.FromMinutes(30)
