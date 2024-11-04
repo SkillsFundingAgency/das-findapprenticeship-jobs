@@ -25,6 +25,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                 Distance = c.Distance,
                 Levels = c.Levels,
                 SearchTerm = c.SearchTerm,
+                Location = c.Location,
                 User = c.User,
                 Vacancies = c.Vacancies.Select(vac => new SavedSearchQueueItem.Vacancy
                 {

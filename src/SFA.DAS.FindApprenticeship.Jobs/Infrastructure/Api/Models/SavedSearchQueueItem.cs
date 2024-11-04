@@ -16,6 +16,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models
         public bool DisabilityConfident { get; set; }
 
         public List<Vacancy>? Vacancies { get; set; } = [];
+        public string? Location { get; set; }
 
         public class Vacancy
         {

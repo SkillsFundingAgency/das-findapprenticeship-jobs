@@ -12,6 +12,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public int Distance { get; set; }
 
         public string? SearchTerm { get; set; }
+        public string? Location { get; set; }
 
         public bool DisabilityConfident { get; set; }
 
@@ -26,6 +27,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                 Levels = source.Levels,
                 Distance = source.Distance,
                 SearchTerm = source.SearchTerm,
+                Location = source.Location,
                 DisabilityConfident = source.DisabilityConfident,
                 Vacancies = source.Vacancies.Select(x => (Vacancy) x).ToList()
             };

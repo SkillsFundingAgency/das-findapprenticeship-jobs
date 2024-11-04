@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 {
@@ -39,11 +37,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             [JsonProperty("searchTerm")]
             public string? SearchTerm { get; set; }
 
+            [JsonProperty("location")]
+            public string? Location { get; set; }
+
             [JsonProperty("disabilityConfident")]
             public bool DisabilityConfident { get; set; }
 
             [JsonProperty("vacancies")] 
-            public List<Vacancy> Vacancies { get; set; } = new();
+            public List<Vacancy> Vacancies { get; set; } = [];
         }
 
         public class UserDetails
