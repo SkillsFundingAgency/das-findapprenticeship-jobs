@@ -1,15 +1,13 @@
 ﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
-using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models
 {
     public class SavedSearchQueueItem
     {
         public UserDetails? User { get; set; } = new();
-        public List<int>? Categories { get; set; }
+        public List<string>? Categories { get; set; }
 
-        public List<int>? Levels { get; set; }
+        public List<string>? Levels { get; set; }
 
         public int Distance { get; set; }
 
@@ -17,7 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models
 
         public bool DisabilityConfident { get; set; }
 
-        public List<Vacancy>? Vacancies { get; set; } = new();
+        public List<Vacancy>? Vacancies { get; set; } = [];
 
         public class Vacancy
         {

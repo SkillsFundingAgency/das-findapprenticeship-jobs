@@ -28,10 +28,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             public UserDetails User { get; set; } = new();
 
             [JsonProperty("categories")] 
-            public List<int>? Categories { get; set; }
+            public List<string>? Categories { get; set; }
 
             [JsonProperty("levels")]
-            public List<int>? Levels { get; set; } 
+            public List<string>? Levels { get; set; } 
 
             [JsonProperty("distance")]
             public int Distance { get; set; }

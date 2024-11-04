@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 {
     public class SavedSearch
     {
         public UserDetails User { get; set; } = new();
-        public List<int>? Categories { get; set; }
+        public List<string>? Categories { get; set; }
 
-        public List<int>? Levels { get; set; }
+        public List<string>? Levels { get; set; }
 
         public int Distance { get; set; }
 
