@@ -20,13 +20,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 
             queueItems.AddRange(savedSearches.Select(c => new SavedSearchQueueItem
             {
-                Categories = c.Categories,
-                DisabilityConfident = c.DisabilityConfident,
-                Distance = c.Distance,
-                Levels = c.Levels,
                 SearchTerm = c.SearchTerm,
                 Location = c.Location,
+                DisabilityConfident = c.DisabilityConfident,
+                Distance = c.Distance,
+                UnSubscribeToken = c.UnSubscribeToken,
                 User = c.User,
+                Levels = c.Levels?.Select(lev => (SavedSearchQueueItem.Level)lev).ToList(),
+                Categories = c.Categories?.Select(cat => (SavedSearchQueueItem.Category)cat).ToList(),
                 Vacancies = c.Vacancies.Select(vac => new SavedSearchQueueItem.Vacancy
                 {
                     Address = vac.Address,

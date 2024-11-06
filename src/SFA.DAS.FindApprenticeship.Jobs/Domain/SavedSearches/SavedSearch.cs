@@ -5,30 +5,27 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
     public class SavedSearch
     {
         public UserDetails User { get; set; } = new();
-        public List<string>? Categories { get; set; }
-
-        public List<string>? Levels { get; set; }
-
+        public List<Category>? Categories { get; set; }
+        public List<Level>? Levels { get; set; }
         public int Distance { get; set; }
-
         public string? SearchTerm { get; set; }
         public string? Location { get; set; }
-
         public bool DisabilityConfident { get; set; }
-
-        public List<Vacancy> Vacancies { get; set; } = new();
+        public string? UnSubscribeToken { get; set; }
+        public List<Vacancy> Vacancies { get; set; } = [];
 
         public static implicit operator SavedSearch(GetSavedSearchesApiResponse.SavedSearchResult source)
         {
             return new SavedSearch
             {
                 User = source.User,
-                Categories = source.Categories,
-                Levels = source.Levels,
+                Categories = source.Categories?.Select(cat => (Category)cat).ToList(),
+                Levels = source.Levels?.Select(lev => (Level)lev).ToList(),
                 Distance = source.Distance,
                 SearchTerm = source.SearchTerm,
                 Location = source.Location,
                 DisabilityConfident = source.DisabilityConfident,
+                UnSubscribeToken = source.UnSubscribeToken,
                 Vacancies = source.Vacancies.Select(x => (Vacancy) x).ToList()
             };
         }
@@ -112,6 +109,36 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     MiddleNames = source.MiddleNames,
                     LastName = source.LastName,
                     Email = source.Email,
+                };
+            }
+        }
+
+        public class Category
+        {
+            public int Id { get; set; }
+            public string? Name { get; set; }
+
+            public static implicit operator Category(GetSavedSearchesApiResponse.Category source)
+            {
+                return new Category
+                {
+                    Id = source.Id,
+                    Name = source.Name,
+                };
+            }
+        }
+
+        public class Level
+        {
+            public int Code { get; set; }
+            public string? Name { get; set; }
+
+            public static implicit operator Level(GetSavedSearchesApiResponse.Level source)
+            {
+                return new Level
+                {
+                    Code = source.Code,
+                    Name = source.Name,
                 };
             }
         }

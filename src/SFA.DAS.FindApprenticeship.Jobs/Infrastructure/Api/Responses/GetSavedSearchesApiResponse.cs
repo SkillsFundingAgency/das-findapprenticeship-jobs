@@ -26,10 +26,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             public UserDetails User { get; set; } = new();
 
             [JsonProperty("categories")] 
-            public List<string>? Categories { get; set; }
+            public List<Category>? Categories { get; set; }
 
             [JsonProperty("levels")]
-            public List<string>? Levels { get; set; } 
+            public List<Level>? Levels { get; set; } 
 
             [JsonProperty("distance")]
             public int Distance { get; set; }
@@ -42,6 +42,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 
             [JsonProperty("disabilityConfident")]
             public bool DisabilityConfident { get; set; }
+
+            [JsonProperty("unSubscribeToken")]
+            public string? UnSubscribeToken { get; set; }
 
             [JsonProperty("vacancies")] 
             public List<Vacancy> Vacancies { get; set; } = [];
@@ -59,6 +62,21 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             public string? LastName { get; set; }
             [JsonProperty("email")]
             public string? Email { get; set; }
+        }
+
+        public class Category
+        {
+            [JsonProperty("id")]
+            public int Id { get; set; }
+            [JsonProperty("name")]
+            public string? Name { get; set; }
+        }
+        public class Level
+        {
+            [JsonProperty("code")]
+            public int Code { get; set; }
+            [JsonProperty("name")]
+            public string? Name { get; set; }
         }
 
         public class Vacancy
