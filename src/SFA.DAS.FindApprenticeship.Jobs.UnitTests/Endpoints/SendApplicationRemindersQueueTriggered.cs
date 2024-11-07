@@ -17,7 +17,7 @@ public class SendApplicationRemindersQueueTriggered
         [Frozen] Mock<ISendApplicationReminderHandler> handler,
         SendApplicationRemindersQueueTrigger trigger)
     {
-        await trigger.Run(queueItem, log);
+        await trigger.Run(queueItem);
         
         handler.Verify(x=>x.Handle(queueItem.VacancyReference, queueItem.DaysToExpire), Times.Once);
     }
