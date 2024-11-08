@@ -7,7 +7,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public UserDetails User { get; set; } = new();
         public List<Category>? Categories { get; set; }
         public List<Level>? Levels { get; set; }
-        public int Distance { get; set; }
+        public decimal? Distance { get; set; }
         public string? SearchTerm { get; set; }
         public string? Location { get; set; }
         public bool DisabilityConfident { get; set; }
