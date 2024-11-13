@@ -12,7 +12,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         [Function("SendSavedSearchesNotificationsTimerTrigger")]
         public async Task<List<SavedSearchQueueItem>> Run([TimerTrigger("0 0 3 * * MON")] TimerInfo myTimer)
         {
-            log.LogInformation($"Send saved searches notifications function executed at: {DateTime.UtcNow}");
+            log.LogInformation("Send saved searches notifications function executed at: {DateTime}", DateTime.UtcNow);
 
             var queueItems = new List<SavedSearchQueueItem>();
 
