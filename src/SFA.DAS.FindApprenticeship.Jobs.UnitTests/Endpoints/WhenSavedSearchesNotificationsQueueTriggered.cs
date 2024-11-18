@@ -18,12 +18,12 @@ public class WhenSavedSearchesNotificationsQueueTriggered
     [Test, MoqAutoData]
     public async Task Then_The_Queue_Item_Is_Processed_And_SendReminderHandler_Called(
         ILogger<SendSavedSearchesNotificationsQueueTrigger> logger,
-        List<SavedSearchQueueItem> mockSavedSearchQueueItems,
+        SavedSearchQueueItem mockSavedSearchQueueItem,
         [Frozen] Mock<ISendSavedSearchesNotificationHandler> handler,
         SendSavedSearchesNotificationsQueueTrigger trigger)
     {
-        await trigger.Run(mockSavedSearchQueueItems,logger);
+        await trigger.Run(mockSavedSearchQueueItem, logger);
 
-        handler.Verify(x => x.Handle(It.IsAny<List<SavedSearch>>()), Times.Once());
+        handler.Verify(x => x.Handle(It.IsAny<SavedSearch>()), Times.Once());
     }
 }

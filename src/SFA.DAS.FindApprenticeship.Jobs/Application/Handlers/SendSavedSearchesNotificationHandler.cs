@@ -10,7 +10,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
         IBatchTaskRunner batchTaskRunner)
         : ISendSavedSearchesNotificationHandler
     {
-        public async Task Handle(List<SavedSearch> savedSearches)
+        public async Task BatchHandle(List<SavedSearch> savedSearches)
         {
             // Add tasks to the runner
             for (var index = 1; index <= savedSearches.Count; index++)
@@ -30,6 +30,11 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
 
             // Run tasks in batches
             await batchTaskRunner.RunBatchesAsync();
+        }
+
+        public async Task Handle(SavedSearch savedSearch)
+        {
+            await findApprenticeshipJobsService.SendSavedSearchNotification(savedSearch);
         }
     }
 }

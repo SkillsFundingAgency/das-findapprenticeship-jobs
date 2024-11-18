@@ -4,6 +4,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers
 {
     public interface ISendSavedSearchesNotificationHandler
     {
-        Task Handle(List<SavedSearch> savedSearches);
+        Task BatchHandle(List<SavedSearch> savedSearches);
+        
+        Task Handle(SavedSearch savedSearch);
     }
 }

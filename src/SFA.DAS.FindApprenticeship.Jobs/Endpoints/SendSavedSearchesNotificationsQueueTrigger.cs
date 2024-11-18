@@ -8,10 +8,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 public class SendSavedSearchesNotificationsQueueTrigger(ISendSavedSearchesNotificationHandler handler)
 {
     [Function("SendSavedSearchesNotificationsQueueTrigger")]
-    public async Task Run([QueueTrigger(StorageQueueNames.SendSavedSearchNotificationAlert)] List<SavedSearchQueueItem> queueItem,
+    public async Task Run([QueueTrigger(StorageQueueNames.SendSavedSearchNotificationAlert)] SavedSearchQueueItem queueItem,
         ILogger<SendSavedSearchesNotificationsQueueTrigger> logger)
     {
         logger.LogInformation("Send SavedSearchesNotificationsQueueTrigger executed at {DateTime}", DateTime.UtcNow);
-        await handler.Handle(queueItem.Select(item => (SavedSearch)item).ToList());
+        await handler.Handle((SavedSearch)queueItem);
     }
 }
