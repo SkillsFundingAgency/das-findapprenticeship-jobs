@@ -1,4 +1,5 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 {
@@ -15,6 +16,22 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public List<Vacancy> Vacancies { get; set; } = [];
 
         public static implicit operator SavedSearch(GetSavedSearchesApiResponse.SavedSearchResult source)
+        {
+            return new SavedSearch
+            {
+                User = source.User,
+                Categories = source.Categories?.Select(cat => (Category)cat).ToList(),
+                Levels = source.Levels?.Select(lev => (Level)lev).ToList(),
+                Distance = source.Distance,
+                SearchTerm = source.SearchTerm,
+                Location = source.Location,
+                DisabilityConfident = source.DisabilityConfident,
+                UnSubscribeToken = source.UnSubscribeToken,
+                Vacancies = source.Vacancies.Select(x => (Vacancy) x).ToList()
+            };
+        }
+        
+        public static implicit operator SavedSearch(SavedSearchQueueItem source)
         {
             return new SavedSearch
             {
@@ -65,6 +82,22 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     Address = source.Address,
                 };
             }
+            
+            public static implicit operator Vacancy(SavedSearchQueueItem.Vacancy source)
+            {
+                return new Vacancy
+                {
+                    Id = source.Id,
+                    VacancyReference = source.VacancyReference,
+                    Title = source.Title,
+                    EmployerName = source.EmployerName,
+                    Wage = source.Wage,
+                    ClosingDate = source.ClosingDate,
+                    TrainingCourse = source.TrainingCourse,
+                    Distance = source.Distance,
+                    Address = source.Address,
+                };
+            }
         }
 
         public class Address
@@ -80,6 +113,18 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? Postcode { get; set; }
 
             public static implicit operator Address(GetSavedSearchesApiResponse.Address source)
+            {
+                return new Address
+                {
+                    AddressLine1 = source.AddressLine1,
+                    AddressLine2 = source.AddressLine2,
+                    AddressLine3 = source.AddressLine3,
+                    AddressLine4 = source.AddressLine4,
+                    Postcode = source.Postcode,
+                };
+            }
+            
+            public static implicit operator Address(SavedSearchQueueItem.Address source)
             {
                 return new Address
                 {
@@ -111,6 +156,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     Email = source.Email,
                 };
             }
+            
+            public static implicit operator UserDetails(SavedSearchQueueItem.UserDetails source)
+            {
+                return new UserDetails
+                {
+                    Id = source.Id,
+                    FirstName = source.FirstName,
+                    MiddleNames = source.MiddleNames,
+                    LastName = source.LastName,
+                    Email = source.Email,
+                };
+            }
+            
         }
 
         public class Category
@@ -126,6 +184,16 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     Name = source.Name,
                 };
             }
+            
+            public static implicit operator Category(SavedSearchQueueItem.Category source)
+            {
+                return new Category
+                {
+                    Id = source.Id,
+                    Name = source.Name,
+                };
+            }
+            
         }
 
         public class Level
@@ -141,6 +209,16 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     Name = source.Name,
                 };
             }
+            
+            public static implicit operator Level(SavedSearchQueueItem.Level source)
+            {
+                return new Level
+                {
+                    Code = source.Code,
+                    Name = source.Name,
+                };
+            }
+            
         }
     }
 }
