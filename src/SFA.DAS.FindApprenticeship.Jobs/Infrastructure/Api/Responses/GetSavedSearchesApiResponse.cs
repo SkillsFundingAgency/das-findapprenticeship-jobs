@@ -32,7 +32,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             public List<Level>? Levels { get; set; } 
 
             [JsonProperty("distance")]
-            public int Distance { get; set; }
+            public int? Distance { get; set; }
 
             [JsonProperty("searchTerm")]
             public string? SearchTerm { get; set; }
