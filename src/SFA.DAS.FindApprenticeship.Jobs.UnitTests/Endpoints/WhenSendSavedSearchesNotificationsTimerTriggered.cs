@@ -1,4 +1,5 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Text.Json;
+using AutoFixture.NUnit3;
 using FluentAssertions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 using SFA.DAS.FindApprenticeship.Jobs.Endpoints;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
@@ -21,13 +23,18 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
             [Frozen] Mock<IGetAllSavedSearchesNotificationHandler> handler,
             SavedSearchesNotificationsTimerTrigger sut)
         {
+            var mockSavedSearchQueueItem = new SavedSearchQueueItem
+            {
+                Payload = JsonSerializer.Serialize<SavedSearch>(mockSavedSearch)
+            };
+
             handler.Setup(x => x.Handle()).ReturnsAsync([mockSavedSearch]);
 
             var collector = await sut.Run(It.IsAny<TimerInfo>());
 
             handler.Verify(x => x.Handle(), Times.Once());
 
-            collector.Should().BeEquivalentTo([mockSavedSearch]);
+            collector.Should().BeEquivalentTo([mockSavedSearchQueueItem]);
         }
     }
 }

@@ -1,7 +1,5 @@
+using System.Text.Json;
 using AutoFixture.NUnit3;
-using FluentAssertions;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
@@ -17,10 +15,15 @@ public class WhenSavedSearchesNotificationsQueueTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Queue_Item_Is_Processed_And_SendReminderHandler_Called(
-        SavedSearchQueueItem mockSavedSearchQueueItem,
+        SavedSearch mockSavedSearch,
         [Frozen] Mock<ISendSavedSearchesNotificationHandler> handler,
         SendSavedSearchesNotificationsQueueTrigger trigger)
     {
+        var mockSavedSearchQueueItem = new SavedSearchQueueItem
+        {
+            Payload = JsonSerializer.Serialize<SavedSearch>(mockSavedSearch)
+        };
+
         await trigger.Run(mockSavedSearchQueueItem);
 
         handler.Verify(x => x.Handle(It.IsAny<SavedSearch>()), Times.Once());
