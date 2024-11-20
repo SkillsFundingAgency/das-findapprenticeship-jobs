@@ -5,6 +5,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 {
     public class SavedSearch
     {
+        public Guid Id { get; set; }
         public UserDetails User { get; set; } = new();
         public List<Category>? Categories { get; set; }
         public List<Level>? Levels { get; set; }
@@ -19,6 +20,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         {
             return new SavedSearch
             {
+                Id = source.Id,
                 User = source.User,
                 Categories = source.Categories?.Select(cat => (Category)cat).ToList(),
                 Levels = source.Levels?.Select(lev => (Level)lev).ToList(),

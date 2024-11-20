@@ -21,7 +21,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 
         public class SavedSearchResult
         {
-
+            [JsonProperty("id")]
+            public Guid Id { get; set; }
+            
             [JsonProperty("userDetails")] 
             public UserDetails User { get; set; } = new();
 
