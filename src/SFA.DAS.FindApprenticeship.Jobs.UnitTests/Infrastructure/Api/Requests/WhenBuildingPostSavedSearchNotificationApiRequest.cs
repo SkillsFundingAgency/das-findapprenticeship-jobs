@@ -14,7 +14,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Infrastructure.Api.Requests
         {
             var actual = new PostSendSavedSearchNotificationApiRequest(savedSearch);
 
-            actual.PostUrl.Should().Be("/savedSearches/sendNotification");
+            actual.PostUrl.Should().Be("savedSearches/sendNotification");
         }
     }
 }
