@@ -13,12 +13,12 @@ public class WhenHandlingSendApplicationReminder
     public async Task Then_The_Reminder_Is_Sent(
         long vacancyRef,
         int daysUntilExpiry,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         SendApplicationReminderHandler handler)
     {
         await handler.Handle(vacancyRef, daysUntilExpiry);
 
-        recruitService.Verify(
+        findApprenticeshipJobsService.Verify(
             x => x.SendApplicationClosingSoonReminder(vacancyRef, daysUntilExpiry));
     }
 }

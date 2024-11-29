@@ -1,12 +1,12 @@
-﻿using Esfa.Recruit.Vacancies.Client.Domain.Events;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class VacancyUpdatedHandler(
     IAzureSearchHelper azureSearchHelper,
-    IRecruitService recruitService,
+    IFindApprenticeshipJobsService findApprenticeshipJobsService,
     ILogger<VacancyUpdatedHandler> log)
     : IVacancyUpdatedHandler
 {
@@ -26,7 +26,7 @@ public class VacancyUpdatedHandler(
 
         var vacancyReference = $"{vacancyUpdatedEvent.VacancyReference}";
         var document = await azureSearchHelper.GetDocument(indexName, vacancyReference);
-        var updatedVacancy = await recruitService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
+        var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
 
         if (updatedVacancy == null)
         {

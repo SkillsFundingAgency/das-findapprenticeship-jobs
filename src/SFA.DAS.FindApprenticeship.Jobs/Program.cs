@@ -13,6 +13,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
@@ -45,7 +46,7 @@ var host = new HostBuilder()
         var environmentName = configuration["Values:EnvironmentName"] ?? configuration["EnvironmentName"];
         services.AddSingleton(new FunctionEnvironment(environmentName));
 
-        services.AddTransient<IRecruitService, RecruitService>();
+        services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();
         services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
@@ -55,7 +56,10 @@ var host = new HostBuilder()
         services.AddTransient<IVacancyApprovedHandler, VacancyApprovedHandler>();
         services.AddTransient<IVacancyClosingSoonHandler, VacancyClosingSoonHandler>();
         services.AddTransient<ISendApplicationReminderHandler, SendApplicationReminderHandler>();
+        services.AddTransient<IGetAllSavedSearchesNotificationHandler, GetAllSavedSearchesNotificationHandler>();
+        services.AddTransient<ISendSavedSearchesNotificationHandler, SendSavedSearchesNotificationHandler>();
         services.AddTransient<IDateTimeService, DateTimeService>();
+        services.AddTransient<IBatchTaskRunner, BatchTaskRunner>();
         services.AddHttpClient<IOuterApiClient, OuterApiClient>
             (
                 options => options.Timeout = TimeSpan.FromMinutes(30)

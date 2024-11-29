@@ -1,32 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.FindApprenticeship.Jobs.Domain;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
+public class RecruitIndexerJobHandler(
+    IFindApprenticeshipJobsService findApprenticeshipJobsService,
+    IAzureSearchHelper azureSearchHelperService,
+    IDateTimeService dateTimeService)
+    : IRecruitIndexerJobHandler
 {
-    private readonly IRecruitService _recruitService;
-    private readonly IAzureSearchHelper _azureSearchHelperService;
-    private readonly IDateTimeService _dateTimeService;
     private const int PageSize = 500;
-
-    public RecruitIndexerJobHandler(IRecruitService recruitService, IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService)
-    {
-        _recruitService = recruitService;
-        _azureSearchHelperService = azureSearchHelperService;
-        _dateTimeService = dateTimeService;
-    }
 
     public async Task Handle()
     {
-        var indexName = $"{Constants.IndexPrefix}{_dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
+        var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
 
-        await _azureSearchHelperService.CreateIndex(indexName);
+        await azureSearchHelperService.CreateIndex(indexName);
 
         var pageNo = 1;
         var totalPages = 100;
@@ -35,8 +25,8 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
 
         while (pageNo <= totalPages)
         {
-            var liveVacancies = await _recruitService.GetLiveVacancies(pageNo, PageSize);
-            var nhsLiveVacancies = await _recruitService.GetNhsLiveVacancies();
+            var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize);
+            var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
 
             totalPages = Math.Max(liveVacancies?.TotalPages ?? 0, nhsLiveVacancies?.TotalPages ?? 0);
 
@@ -55,7 +45,7 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
                     }
                 }
 
-                await _azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
+                await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
                 pageNo++;
                 updateAlias = true;
             }
@@ -67,7 +57,7 @@ public class RecruitIndexerJobHandler : IRecruitIndexerJobHandler
 
         if (updateAlias)
         {
-            await _azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
+            await azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
         }
     }
 }

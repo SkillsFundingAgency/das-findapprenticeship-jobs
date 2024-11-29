@@ -1,7 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -26,13 +25,13 @@ public class WhenHandlingVacancyApprovedEvent
         int programmeId,
         Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyApprovedHandler sut)
     {
         liveVacancy.Value.StandardLarsCode = programmeId;
 
-        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));

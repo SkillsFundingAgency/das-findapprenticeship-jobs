@@ -1,7 +1,7 @@
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using System.Net.Http;
 using System.Text.Json;
-using Esfa.Recruit.Vacancies.Client.Domain.Events;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {

@@ -17,7 +17,7 @@ public class WhenSendingApplicationReminder
         long vacancyRef,
         int daysUntilClosing,
         [Frozen] Mock<IOuterApiClient> apiClient,
-        RecruitService service)
+        FindApprenticeshipJobsService service)
     {
         apiClient.Setup(x =>
                 x.Post<NullResponse>(

@@ -1,34 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 
-public class VacancyClosingSoonHandler : IVacancyClosingSoonHandler
+public class VacancyClosingSoonHandler(IFindApprenticeshipJobsService findApprenticeshipJobsService, IDateTimeService dateTimeService)
+    : IVacancyClosingSoonHandler
 {
-    private readonly IRecruitService _recruitService;
-    private readonly IDateTimeService _dateTimeService;
     private const int PageSize = 500;
 
-    public VacancyClosingSoonHandler(IRecruitService recruitService, IDateTimeService dateTimeService)
-    {
-        _recruitService = recruitService;
-        _dateTimeService = dateTimeService;
-    }
     public async Task<IList<long>> Handle(int daysToExpire)
     {
-        var dateToUse = _dateTimeService.GetCurrentDateTime().AddDays(daysToExpire);
+        var dateToUse = dateTimeService.GetCurrentDateTime().AddDays(daysToExpire);
         
         var pageNo = 1;
         var totalPages = 100;
         var vacancyReferences = new List<long>();
         while (pageNo <= totalPages)
         {
-            var liveVacancies = await _recruitService.GetLiveVacancies(pageNo, PageSize, dateToUse);
+            var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize, dateToUse);
             
 
             totalPages = liveVacancies?.TotalPages ?? 0;

@@ -15,7 +15,7 @@ public class WhenGettingLiveVacancy
     public async Task Then_The_Api_Is_Called_And_A_LiveVacancy_Is_Returned(
     ApiResponse<GetLiveVacancyApiResponse> response,
     [Frozen] Mock<IOuterApiClient> apiClient,
-    RecruitService service)
+    FindApprenticeshipJobsService service)
     {
         apiClient.Setup(x =>
         x.Get<GetLiveVacancyApiResponse>(

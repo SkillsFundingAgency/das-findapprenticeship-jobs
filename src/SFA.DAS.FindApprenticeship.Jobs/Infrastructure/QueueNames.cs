@@ -10,4 +10,5 @@ public static class QueueNames
 public static class StorageQueueNames
 {
     public const string VacancyClosing = "vacancy-closing";
+    public const string SendSavedSearchNotificationAlert = "saved-search-notification";
 }
