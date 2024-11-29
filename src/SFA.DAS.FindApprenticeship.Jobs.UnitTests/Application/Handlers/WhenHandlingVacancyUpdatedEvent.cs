@@ -2,6 +2,7 @@
 using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
+using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -10,7 +11,6 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;

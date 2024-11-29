@@ -1,8 +1,5 @@
 #nullable enable
 using Azure.Search.Documents.Indexes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Spatial;
 using Azure.Core.Serialization;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;

@@ -1,9 +1,5 @@
-using System;
-using System.IO;
-using System.Net;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Hosting;
-using NServiceBus;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Azure.Search.Documents.Indexes.Models;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Extensions;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;

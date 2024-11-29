@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+﻿namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 public class ApiResponse<TResponse>
 {
     public TResponse Body { get; }

@@ -1,16 +1,12 @@
 ﻿using Azure.Core.Serialization;
 using Azure.Search.Documents;
 using Azure;
-using System;
 using Azure.Search.Documents.Indexes;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using Azure.Search.Documents.Indexes.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Azure.Identity;
-using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
