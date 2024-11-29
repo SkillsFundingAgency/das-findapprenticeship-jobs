@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+﻿namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetNhsLiveVacanciesApiResponse
 {
     public IEnumerable<NhsLiveVacancy> Vacancies { get; set; } = null!;

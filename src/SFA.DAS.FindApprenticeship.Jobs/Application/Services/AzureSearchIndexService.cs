@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Azure;
+﻿using Azure;
 using Azure.Search.Documents.Indexes.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;

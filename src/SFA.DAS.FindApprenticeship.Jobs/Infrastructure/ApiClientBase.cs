@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using System.Threading.Tasks;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using System.Text.Json;
 using System.Text;
 

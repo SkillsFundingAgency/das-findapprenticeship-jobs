@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;

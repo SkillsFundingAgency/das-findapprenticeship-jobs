@@ -1,5 +1,4 @@
-﻿using System;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;

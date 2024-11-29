@@ -1,6 +1,5 @@
 ﻿using AutoFixture.NUnit3;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;

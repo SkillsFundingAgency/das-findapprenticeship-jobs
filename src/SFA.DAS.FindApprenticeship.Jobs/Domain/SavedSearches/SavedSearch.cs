@@ -1,5 +1,4 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 {

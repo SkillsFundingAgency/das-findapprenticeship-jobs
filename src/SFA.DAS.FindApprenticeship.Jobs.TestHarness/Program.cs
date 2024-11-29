@@ -1,4 +1,4 @@
-﻿using NServiceBus;
+﻿using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
 using SFA.DAS.NServiceBus.Configuration;

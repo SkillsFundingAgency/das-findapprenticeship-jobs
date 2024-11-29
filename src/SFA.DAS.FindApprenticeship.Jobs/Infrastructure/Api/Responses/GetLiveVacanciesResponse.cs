@@ -1,7 +1,4 @@
 #nullable enable
-using System.Collections.Generic;
-using System;
-
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetLiveVacanciesApiResponse
 {
