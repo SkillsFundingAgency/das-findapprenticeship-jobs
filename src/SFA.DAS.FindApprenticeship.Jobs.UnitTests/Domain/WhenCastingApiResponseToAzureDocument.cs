@@ -24,7 +24,7 @@ public class WhenCastingApiResponseToAzureDocument
             apprenticeAzureSearchDocument.ApplicationInstructions.Should().Be(source.ApplicationInstructions);
             apprenticeAzureSearchDocument.AccountPublicHashedId.Should().Be(source.AccountPublicHashedId);
             apprenticeAzureSearchDocument.AccountLegalEntityPublicHashedId.Should().Be(source.AccountLegalEntityPublicHashedId);
-            apprenticeAzureSearchDocument.HoursPerWeek.Should().Be((long)source.Wage.WeeklyHours);
+            apprenticeAzureSearchDocument.HoursPerWeek.Should().Be(source.Wage.WeeklyHours);
             apprenticeAzureSearchDocument.ProviderName.Should().BeEquivalentTo(source.ProviderName);
             apprenticeAzureSearchDocument.StartDate.Should().Be(source.StartDate);
             apprenticeAzureSearchDocument.PostedDate.Should().Be(source.PostedDate);
