@@ -23,7 +23,7 @@ public class ApprenticeAzureSearchDocument
             ApplicationInstructions = source.ApplicationInstructions,
             AccountPublicHashedId = source.AccountPublicHashedId,
             AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
-            HoursPerWeek = (long)source.Wage!.WeeklyHours,
+            HoursPerWeek = (double)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
             PostedDate = source.PostedDate,
@@ -78,7 +78,7 @@ public class ApprenticeAzureSearchDocument
             ApplicationUrl = source.ApplicationUrl,
             AccountPublicHashedId = source.AccountPublicHashedId,
             AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
-            HoursPerWeek = (long)source.Wage!.WeeklyHours,
+            HoursPerWeek = (double)source.Wage!.WeeklyHours,
             ProviderName = source.ProviderName,
             StartDate = source.StartDate,
             PostedDate = source.PostedDate,
@@ -145,7 +145,7 @@ public class ApprenticeAzureSearchDocument
     public string? ApplicationUrl { get; set; }
 
     [SimpleField]
-    public long HoursPerWeek { get; set; }
+    public double HoursPerWeek { get; set; }
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true, NormalizerName = "lowercase")]
     public string? ProviderName { get; set; }
