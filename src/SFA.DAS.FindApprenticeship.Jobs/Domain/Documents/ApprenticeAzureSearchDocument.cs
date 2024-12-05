@@ -62,7 +62,8 @@ public class ApprenticeAzureSearchDocument
             AdditionalQuestion1 = source.AdditionalQuestion1,
             AdditionalQuestion2 = source.AdditionalQuestion2,
             AdditionalTrainingDescription = source.AdditionalTrainingDescription,
-            VacancySource = VacancySourceRecruit
+            VacancySource = VacancySourceRecruit,
+            SearchTags = source.SearchTags
         };
     }
 
@@ -116,7 +117,8 @@ public class ApprenticeAzureSearchDocument
             TypicalJobTitles = source.TypicalJobTitles,
             AdditionalQuestion1 = source.AdditionalQuestion1,
             AdditionalQuestion2 = source.AdditionalQuestion2,
-            VacancySource = VacancySourceNhs
+            VacancySource = VacancySourceNhs,
+            SearchTags = source.SearchTags
         };
     }
 
@@ -267,6 +269,9 @@ public class ApprenticeAzureSearchDocument
 
     [SimpleField]
     public string? ApplicationInstructions { get; set; }
+
+    [SearchableField(IsFilterable = false, IsSortable = false, IsFacetable = true)]
+    public string? SearchTags { get; set; }
 }
 
 public class CourseAzureSearchDocument
