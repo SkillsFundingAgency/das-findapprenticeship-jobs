@@ -258,7 +258,97 @@ public class TestDataValues
             }
     };
 
+    private static readonly GetNhsLiveVacanciesApiResponse NhsVacancies = new()
+    {
+        PageNo = PageNo,
+        PageSize = PageSize,
+        TotalLiveVacanciesReturned = PageSize,
+        TotalLiveVacancies = 100,
+        TotalPages = 100 / PageSize,
+        Vacancies = new List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy>
+            {
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    VacancyReference = "VACC9262-24-1846",
+                    Title = "NHS Vacancy 1",
+                    ApprenticeshipTitle = "AHP IMSK Services - Business & Administration Apprentice",
+                    Description = "An exciting opportunity has arisen for highly motivated, enthusiastic and hardworking individuals to join the AHP IMSK Team as a Business and Admin Ap...",
+                    ApplicationUrl = "https://beta.jobs.nhs.uk/candidate/jobadvert/C9262-24-1846",
+                    Address = new Address
+                    {
+                        AddressLine1 = null,
+                        AddressLine2 = null,
+                        AddressLine4 = "Whitehaven",
+                        Postcode = "CA28 8JG",
+                        Latitude = 54.530059,
+                        Longitude = -3.562598
+                    },
+                    IsPrimaryLocation = true,
+                    OtherAddresses = [],
+                    EmployerName = "North Cumbria Integrated Care NHS Foundation Trust",
+                    Ukprn = 0,
+                    ProviderName = "",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
+                    StartDate = new DateTime(2025, 02, 01),
+                    ClosingDate = new DateTime(2025, 01, 01),
+                    Route = "",
+                    Level = 4,
+                    Wage = new Wage
+                    {
+                        Duration = 2,
+                        DurationUnit = "Year",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Competitive Salary"
+                    }
+                },
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    VacancyReference = "VACC9186-24-1594",
+                    Title = "Apprentice Administration Assistant/Receptionist",
+                    ApprenticeshipTitle = "Apprenticeship title 2",
+                    Description = "Child and Adolescent Mental Health Services (CAMHS) multi-disciplinary teams provide a comprehensive range of services to children and young people fr...",
+                    Address = new Address
+                    {
+                        AddressLine1 = null,
+                        AddressLine2 = null,
+                        AddressLine4 = "Langold",
+                        Postcode = "S81 9QL",
+                        Latitude = 53.376919,
+                        Longitude = -1.119084
+                    },
+                    IsPrimaryLocation = true,
+                    OtherAddresses = [],
+                    EmployerName = "Nottinghamshire Healthcare NHS Foundation Trust",
+                    Ukprn = 0,
+                    ProviderName = "",
+                    PostedDate = new DateTime(2023, 10, 15),
+                    StandardLarsCode = 561,
+                    StartDate = new DateTime(2025, 05, 11),
+                    ClosingDate = new DateTime(2025, 02, 01),
+                    Route = "",
+                    Level = 7,
+                    Wage = new Wage
+                    {
+                        Duration = 12,
+                        DurationUnit = "Month",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Competitive Salary",
+                        WageAdditionalInformation = "pay information about bonus"
+                    }
+                },
+            }
+    };
+
     public static readonly ApiResponse<GetLiveVacanciesApiResponse> LiveVacanciesApiResponse = new(body: LiveVacancies,
+        System.Net.HttpStatusCode.OK,
+        "");
+
+    public static readonly ApiResponse<GetNhsLiveVacanciesApiResponse> NhsVacanciesApiResponse = new(body: NhsVacancies,
         System.Net.HttpStatusCode.OK,
         "");
 }
