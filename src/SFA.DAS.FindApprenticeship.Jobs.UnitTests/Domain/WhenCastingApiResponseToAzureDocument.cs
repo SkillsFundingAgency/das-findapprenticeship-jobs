@@ -36,6 +36,8 @@ public class WhenCastingApiResponseToAzureDocument
             AssertWageIsMapped(apprenticeAzureSearchDocument, source);
             AssertCourseIsMapped(apprenticeAzureSearchDocument, source);
             AssertAddressIsMapped(apprenticeAzureSearchDocument, source);
+            AssetOtherAddressesAreMapped(apprenticeAzureSearchDocument, source);
+            apprenticeAzureSearchDocument.IsPrimaryLocation.Should().Be(source.IsPrimaryLocation);
             apprenticeAzureSearchDocument.Location.Should().NotBeNull();
             apprenticeAzureSearchDocument.NumberOfPositions.Should().Be(source.NumberOfPositions);
             apprenticeAzureSearchDocument.LongDescription.Should().Be(source.LongDescription);
@@ -95,5 +97,10 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Qualifications.Should().BeEquivalentTo(source.Qualifications,
             opt =>
                 opt.Excluding(x => x.Weighting));
+    }
+
+    private static void AssetOtherAddressesAreMapped(ApprenticeAzureSearchDocument apprenticeAzureSearchDocument, LiveVacancy source)
+    {
+        apprenticeAzureSearchDocument.OtherAddresses.Should().BeEquivalentTo(source.OtherAddresses);
     }
 }

@@ -22,7 +22,9 @@ public class GetNhsLiveVacanciesApiResponse
         public int NumberOfPositions { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public string? Description { get; set; }
-        public Address? Address { get; set; }
+        public bool IsPrimaryLocation { get; set; } = false;
+        public Address Address { get; set; } = null!;
+        public List<Address> OtherAddresses { get; set; } = [];
         public string? EmployerName { get; set; }
         public long? Ukprn { get; set; }
         public string? ProviderName { get; set; }

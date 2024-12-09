@@ -7,8 +7,8 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 public class ApprenticeAzureSearchDocument
 {
-    const string VacancySourceRecruit = "RAA";
-    const string VacancySourceNhs = "NHS";
+    private const string VacancySourceRecruit = "RAA";
+    private const string VacancySourceNhs = "NHS";
 
     public static implicit operator ApprenticeAzureSearchDocument(LiveVacancy source)
     {
@@ -35,6 +35,8 @@ public class ApprenticeAzureSearchDocument
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.Address,
+            IsPrimaryLocation = source.IsPrimaryLocation,
+            OtherAddresses = source.OtherAddresses.Select(add => (AddressAzureSearchDocument)add).ToList(),
             Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
             NumberOfPositions = source.NumberOfPositions,
             LongDescription = source.LongDescription,
@@ -91,6 +93,8 @@ public class ApprenticeAzureSearchDocument
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.Address,
+            IsPrimaryLocation = true,
+            OtherAddresses = [],
             Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
             NumberOfPositions = source.NumberOfPositions,
             LongDescription = source.LongDescription,
@@ -181,6 +185,12 @@ public class ApprenticeAzureSearchDocument
 
     [SearchableField]
     public AddressAzureSearchDocument? Address { get; set; }
+
+    [SearchableField]
+    public bool IsPrimaryLocation { get; set; }
+
+    [SimpleField] 
+    public List<AddressAzureSearchDocument> OtherAddresses { get; set; } = [];
 
     [SearchableField]
     public WageAzureSearchDocument? Wage { get; set; }
