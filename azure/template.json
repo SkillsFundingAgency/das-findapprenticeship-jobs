@@ -92,6 +92,15 @@
         },
         "SharedServiceBusFqdn": {
             "type": "string"
+        },
+        "applicationInsightsConnectionString": {
+            "type": "securestring"
+        },
+        "applicationInsightsResourceId": {
+            "type": "string"
+        },
+        "alertActionGroupResourceId": {
+            "type": "string"
         }
     },
     "variables": {
@@ -196,33 +205,6 @@
             ]
         },
         {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "attachedService": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "logAnalyticsWorkspaceId": {
-                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
-        },
-        {
             "apiVersion": "2020-06-01",
             "name": "[concat(variables('functionAppName'), '-apim-subscription-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedApimResourceGroup')]",
@@ -302,8 +284,7 @@
                                 },
                                 {
                                     "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                                    "value": "[reference(concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
-                                },
+                                    "value": "[parameters('applicationInsightsConnectionString')]"                                },
                                 {
                                     "name": "AzureWebJobsStorage",
                                     "value": "[parameters('sharedStorageAccountConnectionString')]"
@@ -386,6 +367,30 @@
                     },
                     "resourceName": {
                         "value": "[parameters('sharedAiSearchName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('application-insights-', variables('functionAppName'), '-alert-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceName": {
+                        "value": "[variables('functionAppName')]"
+                    },
+                    "applicationInsightsResourceId": {
+                        "value": "[parameters('applicationInsightsResourceId')]"
+                    },
+                    "alertActionGroupResourceId": {
+                        "value": "[parameters('alertActionGroupResourceId')]"
                     }
                 }
             }
