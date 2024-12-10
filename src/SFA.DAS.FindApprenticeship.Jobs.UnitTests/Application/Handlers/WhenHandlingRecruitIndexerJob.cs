@@ -23,19 +23,6 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             DateTime currentDateTime,
             RecruitIndexerJobHandler sut)
         {
-            liveVacancies.RemoveRange(1, 2);
-            liveVacancies.FirstOrDefault().OtherAddresses = new List<Address>
-            {
-                new Address
-                {
-                    AddressLine1 = "124 Bards" 
-                },
-                new Address
-                {
-                    AddressLine1 = "29 bfenman"
-                }
-            };
-
             dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
 
             var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
