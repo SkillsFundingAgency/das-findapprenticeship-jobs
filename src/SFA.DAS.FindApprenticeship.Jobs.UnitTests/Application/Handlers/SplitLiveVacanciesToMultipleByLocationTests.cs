@@ -12,8 +12,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         [Test, MoqAutoData]
         public void SplitLiveVacanciesToMultipleByLocation_SingleLocation_ReturnsCorrectResults(
             string addressLine1,
-            string postcode,
-            RecruitIndexerJobHandler sut)
+            string postcode)
         {
             // Arrange
             var vacancies = new List<LiveVacancy>
@@ -26,7 +25,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             };
 
             // Act
-            var result = sut.SplitLiveVacanciesToMultipleByLocation(vacancies);
+            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(vacancies);
 
             // Assert
             var liveVacancies = result.ToList();
@@ -39,9 +38,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             document.Address.Postcode.Should().Be(postcode);
         }
 
-        [Test, MoqAutoData]
-        public void SplitLiveVacanciesToMultipleByLocation_MultipleLocations_SplitsCorrectly(
-            RecruitIndexerJobHandler sut)
+        [Test]
+        public void SplitLiveVacanciesToMultipleByLocation_MultipleLocations_SplitsCorrectly()
         {
             // Arrange
             var vacancies = new List<LiveVacancy>
@@ -58,27 +56,25 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             };
 
             // Act
-            var result = sut.SplitLiveVacanciesToMultipleByLocation(vacancies);
+            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(vacancies);
 
             // Assert
             result.Count().Should().Be(3);
         }
 
-        [Test, MoqAutoData]
-        public void SplitLiveVacanciesToMultipleByLocation_EmptyVacancies_ReturnsEmpty(
-            RecruitIndexerJobHandler sut)
+        [Test]
+        public void SplitLiveVacanciesToMultipleByLocation_EmptyVacancies_ReturnsEmpty()
         {
             // Act
-            var result = sut.SplitLiveVacanciesToMultipleByLocation(
+            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(
                 new List<LiveVacancy>(0));
 
             // Assert
             result.Should().BeNullOrEmpty();
         }
 
-        [Test, MoqAutoData]
-        public void SplitLiveVacanciesToMultipleByLocation_MaintainsDataIntegrity(
-            RecruitIndexerJobHandler sut)
+        [Test]
+        public void SplitLiveVacanciesToMultipleByLocation_MaintainsDataIntegrity()
         {
             // Arrange
             var vacancies = new List<LiveVacancy>
@@ -91,7 +87,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             };
 
             // Act
-            var result = sut.SplitLiveVacanciesToMultipleByLocation(vacancies);
+            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(vacancies);
 
             // Assert
             var liveVacancies = result.ToList();

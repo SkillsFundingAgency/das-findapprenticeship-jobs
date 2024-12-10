@@ -12,7 +12,10 @@ public class RecruitIndexerJobHandler(
     IDateTimeService dateTimeService)
     : IRecruitIndexerJobHandler
 {
-    private const int PageSize = 500;
+    private const int PageSize = 500; 
+    
+    // Define a small tolerance
+    private const double Epsilon = 1e-10;
 
     public async Task Handle()
     {
@@ -68,7 +71,7 @@ public class RecruitIndexerJobHandler(
         }
     }
 
-    public IEnumerable<LiveVacancy> SplitLiveVacanciesToMultipleByLocation(IReadOnlyCollection<LiveVacancy> vacancies)
+    public static IEnumerable<LiveVacancy> SplitLiveVacanciesToMultipleByLocation(IReadOnlyCollection<LiveVacancy> vacancies)
     {
         var multipleLocationVacancies = new List<LiveVacancy>();
 
@@ -86,8 +89,8 @@ public class RecruitIndexerJobHandler(
                     && r.AddressLine3 == vacancyOtherAddress.AddressLine3
                     && r.AddressLine4 == vacancyOtherAddress.AddressLine4
                     && r.Postcode == vacancyOtherAddress.Postcode
-                    && Math.Abs(r.Longitude - vacancyOtherAddress.Longitude) == 0
-                    && Math.Abs(r.Latitude - vacancyOtherAddress.Latitude) == 0);
+                    && Math.Abs(r.Longitude - vacancyOtherAddress.Longitude) < Epsilon
+                    && Math.Abs(r.Latitude - vacancyOtherAddress.Latitude) < Epsilon);
 
                 if (liveVacancy.Address != null) vacancy.OtherAddresses.Add(liveVacancy.Address);
                 vacancy.Address = vacancyOtherAddress;
