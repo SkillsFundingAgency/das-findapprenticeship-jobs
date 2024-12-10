@@ -31,7 +31,6 @@ public class TestDataValues
                         Latitude = 51.258114,
                         Longitude = 0.014037
                     },
-                    IsPrimaryLocation = true,
                     OtherAddresses =
                     [
                         new Address
@@ -87,7 +86,6 @@ public class TestDataValues
                         Latitude = 51.258114,
                         Longitude = 0.014037
                     },
-                    IsPrimaryLocation = true,
                     OtherAddresses = [],
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10001309,
@@ -122,7 +120,6 @@ public class TestDataValues
                         Latitude = 51.258114,
                         Longitude = 0.014037
                     },
-                    IsPrimaryLocation = true,
                     OtherAddresses = [],
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10000528,
@@ -159,7 +156,6 @@ public class TestDataValues
                         Latitude = 51.40714,
                         Longitude = -2.51436
                     },
-                    IsPrimaryLocation = false,
                     OtherAddresses =
                     [
                         new Address
@@ -215,7 +211,6 @@ public class TestDataValues
                         Latitude = 52.400347,
                         Longitude = -1.507885
                     },
-                    IsPrimaryLocation = false,
                     OtherAddresses =
                     [
                         new Address
@@ -284,7 +279,6 @@ public class TestDataValues
                         Latitude = 54.530059,
                         Longitude = -3.562598
                     },
-                    IsPrimaryLocation = true,
                     OtherAddresses = [],
                     EmployerName = "North Cumbria Integrated Care NHS Foundation Trust",
                     Ukprn = 0,
@@ -320,7 +314,6 @@ public class TestDataValues
                         Latitude = 53.376919,
                         Longitude = -1.119084
                     },
-                    IsPrimaryLocation = true,
                     OtherAddresses = [],
                     EmployerName = "Nottinghamshire Healthcare NHS Foundation Trust",
                     Ukprn = 0,
