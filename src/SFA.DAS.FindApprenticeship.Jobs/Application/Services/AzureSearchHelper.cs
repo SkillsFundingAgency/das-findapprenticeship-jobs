@@ -174,4 +174,17 @@ public class AzureSearchHelper : IAzureSearchHelper
             _logger.LogWarning(ex, $"Failure returned when deleting document with reference {vacancyReference}");
         }
     }
+
+    public async Task DeleteDocuments(string indexName, List<string> vacancyIds)
+    {
+        try
+        {
+            var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
+            await searchClient.DeleteDocumentsAsync("Id",  vacancyIds);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {vacancyIds}");
+        }
+    }
 }

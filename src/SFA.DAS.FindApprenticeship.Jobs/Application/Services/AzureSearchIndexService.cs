@@ -36,4 +36,9 @@ public class AzureSearchIndexService
     {
         await _azureSearchHelper.DeleteDocument(indexName, vacancyReference);
     }
+
+    public async Task DeleteDocuments(string indexName, List<string> vacancyIds)
+    {
+        await _azureSearchHelper.DeleteDocuments(indexName, vacancyIds);
+    }
 }

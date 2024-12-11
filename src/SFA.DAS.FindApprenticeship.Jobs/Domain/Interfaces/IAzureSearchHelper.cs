@@ -14,4 +14,5 @@ public interface IAzureSearchHelper
     Task UpdateAlias(string aliasName, string indexName);
     Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string indexName, string vacancyReference);
     Task DeleteDocument(string indexName, string vacancyReference);
+    Task DeleteDocuments(string indexName, List<string> vacancyIds);
 }

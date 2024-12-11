@@ -19,6 +19,7 @@ public class WhenHandlingVacancyUpdatedEvent
     [Test, MoqAutoData]
     public async Task Then_The_Vacancy_Is_Updated_In_The_Index(
         ILogger log,
+        List<Address> otherAddresses,
         LiveVacancyUpdatedEvent vacancyUpdatedEvent,
         string indexName,
         Response<ApprenticeAzureSearchDocument> document,
@@ -27,6 +28,7 @@ public class WhenHandlingVacancyUpdatedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
+        liveVacancy.Value.OtherAddresses = otherAddresses;
         var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
@@ -38,7 +40,7 @@ public class WhenHandlingVacancyUpdatedEvent
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
             It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value) )),
-            Times.Once());
+            Times.Exactly(otherAddresses.Count + 1));
     }
 
     private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, LiveVacancy liveVacancy)
@@ -62,5 +64,31 @@ public class WhenHandlingVacancyUpdatedEvent
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()),
             Times.Never());
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_OtherAddresses_Are_Null_The_Vacancy_Is_Updated_In_The_Index(
+        ILogger log,
+        LiveVacancyUpdatedEvent vacancyUpdatedEvent,
+        string indexName,
+        Response<ApprenticeAzureSearchDocument> document,
+        Response<GetLiveVacancyApiResponse> liveVacancy,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        VacancyUpdatedHandler sut)
+    {
+        liveVacancy.Value.OtherAddresses = [];
+        var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
+
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
+
+        await sut.Handle(vacancyUpdatedEvent);
+
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
+                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value))),
+            Times.Exactly(1));
     }
 }

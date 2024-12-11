@@ -24,18 +24,31 @@ public class VacancyUpdatedHandler(
             return;
         }
 
-        var vacancyReference = $"{vacancyUpdatedEvent.VacancyReference}";
-        var document = await azureSearchHelper.GetDocument(indexName, vacancyReference);
         var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
-
-        if (updatedVacancy == null)
+        
+        if (updatedVacancy.OtherAddresses is {Count: > 0})
         {
-            log.LogInformation($"Unable to update vacancy reference {vacancyUpdatedEvent.VacancyReference} - vacancy not found");
-            return;
+            var counter = 1;
+            foreach (var azureSearchDocumentKey in updatedVacancy.OtherAddresses.Select(_ => $"{updatedVacancy.Id}-{counter}"))
+            {
+                await UpdateAzureSearchDocument(indexName, azureSearchDocumentKey, updatedVacancy.StartDate, updatedVacancy.ClosingDate);
+                counter++;
+            }
         }
 
-        document.Value.ClosingDate = updatedVacancy.ClosingDate;
-        document.Value.StartDate = updatedVacancy.StartDate;
+        await UpdateAzureSearchDocument(indexName, updatedVacancy.Id, updatedVacancy.StartDate, updatedVacancy.ClosingDate);
+    }
+
+    private async Task UpdateAzureSearchDocument(
+        string indexName,
+        string vacancyReference,
+        DateTime startDate,
+        DateTime closingDate)
+    {
+        var document = await azureSearchHelper.GetDocument(indexName, vacancyReference);
+
+        document.Value.ClosingDate = closingDate;
+        document.Value.StartDate = startDate;
 
         var uploadBatch = Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document);
         await azureSearchHelper.UploadDocuments(indexName, uploadBatch);

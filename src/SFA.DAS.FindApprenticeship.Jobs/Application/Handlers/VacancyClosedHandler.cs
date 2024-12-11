@@ -16,7 +16,23 @@ public class VacancyClosedHandler(
 
         if (!string.IsNullOrEmpty(indexName))
         {
-            await azureSearchHelper.DeleteDocument(indexName, $"{vacancyClosedEvent.VacancyReference}");
+            var vacancyIds = new List<string>
+            {
+                $"{vacancyClosedEvent.VacancyReference}"
+            };
+
+            var vacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyClosedEvent.VacancyReference.ToString());
+
+            if (vacancy.OtherAddresses is { Count: > 0 })
+            {
+                var counter = 1;
+                foreach (var azureSearchDocumentKey in vacancy.OtherAddresses.Select(_ => $"{vacancy.Id}-{counter}"))
+                {
+                    vacancyIds.Add(azureSearchDocumentKey);
+                    counter++;
+                }
+            }
+            await azureSearchHelper.DeleteDocuments(indexName, vacancyIds);
         }
         else
         {
