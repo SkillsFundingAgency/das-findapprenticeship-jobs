@@ -38,19 +38,25 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             document.Address.Postcode.Should().Be(postcode);
         }
 
-        [Test]
-        public void SplitLiveVacanciesToMultipleByLocation_MultipleLocations_SplitsCorrectly()
+        [Test, MoqAutoData]
+        public void SplitLiveVacanciesToMultipleByLocation_MultipleLocations_SplitsCorrectly(
+            string addressLine,
+            string postcode,
+            string addressLine1,
+            string postcode1,
+            string addressLine2,
+            string postcode2)
         {
             // Arrange
             var vacancies = new List<LiveVacancy>
             {
-                new LiveVacancy
+                new()
                 {
-                    Address = new Address { AddressLine1 = "123 Main St", Postcode = "12345" },
+                    Address = new Address { AddressLine1 = addressLine, Postcode = postcode },
                     OtherAddresses =
                     [
-                        new Address {AddressLine1 = "456 Elm St", Postcode = "67890"},
-                        new Address {AddressLine1 = "789 Pine St", Postcode = "54321"}
+                        new Address {AddressLine1 = addressLine1, Postcode = postcode1},
+                        new Address {AddressLine1 = addressLine2, Postcode = postcode2}
                     ]
                 }
             };
@@ -73,16 +79,22 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             result.Should().BeNullOrEmpty();
         }
 
-        [Test]
-        public void SplitLiveVacanciesToMultipleByLocation_MaintainsDataIntegrity()
+        [Test, MoqAutoData]
+        public void SplitLiveVacanciesToMultipleByLocation_MaintainsDataIntegrity(
+            string vacancyId,
+            string primaryAddressLine1,
+            string primaryPostcode,
+            string otherAddressLine1,
+            string otherAddressPostcode)
         {
             // Arrange
             var vacancies = new List<LiveVacancy>
             {
-                new LiveVacancy
+                new()
                 {
-                    Address = new Address { AddressLine1 = "123 Main St", Postcode = "12345" },
-                    OtherAddresses = [new Address {AddressLine1 = "456 Elm St", Postcode = "67890"}]
+                    Id = vacancyId,
+                    Address = new Address { AddressLine1 = primaryAddressLine1, Postcode = primaryPostcode },
+                    OtherAddresses = [new Address {AddressLine1 = otherAddressLine1, Postcode = otherAddressPostcode}]
                 }
             };
 
@@ -93,13 +105,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             var liveVacancies = result.ToList();
 
             liveVacancies.ToList().Count.Should().Be(2);
-            var originalVacancy = liveVacancies.FirstOrDefault(r => r.Address.AddressLine1 == "123 Main St");
-            var newVacancy = liveVacancies.FirstOrDefault(r => r.Address.AddressLine1 == "456 Elm St");
+            var originalVacancy = liveVacancies.FirstOrDefault(r => r.Address.AddressLine1 == primaryAddressLine1);
+            var newVacancy = liveVacancies.FirstOrDefault(r => r.Address.AddressLine1 == otherAddressLine1);
 
             originalVacancy.Should().NotBeNull();
             newVacancy.Should().NotBeNull();
             originalVacancy!.OtherAddresses.Count.Should().Be(1);
             newVacancy!.OtherAddresses.Count.Should().Be(1);
+            newVacancy.Id.Should().Be($"{originalVacancy.Id}-1");
         }
     }
 }

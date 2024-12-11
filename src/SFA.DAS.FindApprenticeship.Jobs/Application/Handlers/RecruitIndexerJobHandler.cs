@@ -77,11 +77,13 @@ public class RecruitIndexerJobHandler(
 
         foreach (var liveVacancy in vacancies)
         {
+            var counter = 1;
             foreach (var vacancyOtherAddress in liveVacancy.OtherAddresses)
             {
                 var vacancy = DeepCopyJson(liveVacancy);
                 if (vacancy == null) continue;
 
+                vacancy.Id = $"{liveVacancy.Id}-{counter}";
                 vacancy.IsPrimaryLocation = false;
                 vacancy.OtherAddresses.RemoveAll(r =>
                     r.AddressLine1 == vacancyOtherAddress.AddressLine1
@@ -95,6 +97,7 @@ public class RecruitIndexerJobHandler(
                 if (liveVacancy.Address != null) vacancy.OtherAddresses.Add(liveVacancy.Address);
                 vacancy.Address = vacancyOtherAddress;
                 multipleLocationVacancies.Add(vacancy);
+                counter++;
             }
         }
 
