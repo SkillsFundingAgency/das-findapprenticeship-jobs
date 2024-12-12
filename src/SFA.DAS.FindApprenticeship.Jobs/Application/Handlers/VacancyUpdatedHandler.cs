@@ -13,10 +13,12 @@ public class VacancyUpdatedHandler(
 
     public async Task Handle(LiveVacancyUpdatedEvent vacancyUpdatedEvent)
     {
+        var vacancyReferenceIds = new List<string>();
+
         log.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
 
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
-        var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
+        var indexName = alias?.Indexes?.FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(indexName))
         {
@@ -25,32 +27,34 @@ public class VacancyUpdatedHandler(
         }
 
         var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
+        vacancyReferenceIds.Add(updatedVacancy.Id);
         
         if (updatedVacancy.OtherAddresses is {Count: > 0})
         {
             var counter = 1;
             foreach (var azureSearchDocumentKey in updatedVacancy.OtherAddresses.Select(_ => $"{updatedVacancy.Id}-{counter}"))
             {
-                await UpdateAzureSearchDocument(indexName, azureSearchDocumentKey, updatedVacancy.StartDate, updatedVacancy.ClosingDate);
+                vacancyReferenceIds.Add(azureSearchDocumentKey);
                 counter++;
             }
         }
-
-        await UpdateAzureSearchDocument(indexName, updatedVacancy.Id, updatedVacancy.StartDate, updatedVacancy.ClosingDate);
+        await UpdateAzureSearchDocuments(indexName, vacancyReferenceIds, updatedVacancy.StartDate, updatedVacancy.ClosingDate);
     }
 
-    private async Task UpdateAzureSearchDocument(
+    private async Task UpdateAzureSearchDocuments(
         string indexName,
-        string vacancyReference,
+        List<string> vacancyReferenceIds,
         DateTime startDate,
         DateTime closingDate)
     {
-        var document = await azureSearchHelper.GetDocument(indexName, vacancyReference);
-
-        document.Value.ClosingDate = closingDate;
-        document.Value.StartDate = startDate;
-
-        var uploadBatch = Enumerable.Empty<ApprenticeAzureSearchDocument>().Append(document);
-        await azureSearchHelper.UploadDocuments(indexName, uploadBatch);
+        var documents = new List<ApprenticeAzureSearchDocument>();
+        foreach (var vacancyReferenceId in vacancyReferenceIds)
+        {
+            var document = await azureSearchHelper.GetDocument(indexName, vacancyReferenceId);
+            document.Value.ClosingDate = closingDate;
+            document.Value.StartDate = startDate;
+            documents.Add(document);
+        }
+        await azureSearchHelper.UploadDocuments(indexName, documents);
     }
 }

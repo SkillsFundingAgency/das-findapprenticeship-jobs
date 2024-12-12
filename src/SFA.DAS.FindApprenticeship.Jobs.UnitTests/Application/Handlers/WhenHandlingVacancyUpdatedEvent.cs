@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
@@ -29,7 +28,6 @@ public class WhenHandlingVacancyUpdatedEvent
         VacancyUpdatedHandler sut)
     {
         liveVacancy.Value.OtherAddresses = otherAddresses;
-        var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
@@ -39,13 +37,13 @@ public class WhenHandlingVacancyUpdatedEvent
         await sut.Handle(vacancyUpdatedEvent);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
-            It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value) )),
-            Times.Exactly(otherAddresses.Count + 1));
+            It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, liveVacancy.Value) )),
+            Times.Once());
     }
 
-    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, ApprenticeAzureSearchDocument originalDocument, LiveVacancy liveVacancy)
+    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, LiveVacancy liveVacancy)
     {
-        var updatedDocument = updatedDocuments.Single();
+        var updatedDocument = updatedDocuments.FirstOrDefault()!;
 
         return updatedDocument.StartDate == liveVacancy.StartDate && updatedDocument.ClosingDate == liveVacancy.ClosingDate;
     }
@@ -78,7 +76,6 @@ public class WhenHandlingVacancyUpdatedEvent
         VacancyUpdatedHandler sut)
     {
         liveVacancy.Value.OtherAddresses = [];
-        var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
@@ -88,7 +85,7 @@ public class WhenHandlingVacancyUpdatedEvent
         await sut.Handle(vacancyUpdatedEvent);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
-                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, originalDocument, liveVacancy.Value))),
+                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, liveVacancy.Value))),
             Times.Exactly(1));
     }
 }

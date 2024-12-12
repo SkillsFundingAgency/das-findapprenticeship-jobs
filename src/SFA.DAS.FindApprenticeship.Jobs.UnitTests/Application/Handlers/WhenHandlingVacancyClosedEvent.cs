@@ -1,12 +1,14 @@
 ﻿using AutoFixture.NUnit3;
+using Azure;
 using Azure.Search.Documents.Indexes.Models;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
@@ -14,35 +16,35 @@ public class WhenHandlingVacancyClosedEvent
 {
     [Test, MoqAutoData]
     public async Task Then_The_Vacancy_Is_Deleted_And_Closed_Early_Request_Made(
-        GetLiveVacancyApiResponse mockLiveVacancyApiResponse,
+        Response<ApprenticeAzureSearchDocument> searchDocument,
         VacancyClosedEvent vacancyClosedEvent,
         ILogger log,
-        string aliasName,
         SearchAlias searchAlias,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosedHandler sut)
     {
+        var indexName = searchAlias.Indexes.FirstOrDefault()!;
+        var vacancyReferenceId = $"{vacancyClosedEvent.VacancyReference}";
         var vacancyIds = new List<string>
         {
-            $"{vacancyClosedEvent.VacancyReference}"
+            vacancyReferenceId
         };
 
         var counter = 1;
-        foreach (var azureSearchDocumentKey in mockLiveVacancyApiResponse.OtherAddresses.Select(_ => $"{mockLiveVacancyApiResponse.Id}-{counter}"))
+        foreach (var azureSearchDocumentKey in searchDocument.Value.OtherAddresses.Select(_ => $"{searchDocument.Value.Id}-{counter}"))
         {
             vacancyIds.Add(azureSearchDocumentKey);
             counter++;
         }
 
-        azureSearchHelper.Setup(x => x.GetAlias(aliasName)).ReturnsAsync(searchAlias);
-        azureSearchHelper.Setup(x => x.DeleteDocuments(searchAlias.Indexes.FirstOrDefault(), vacancyIds)).Returns(Task.CompletedTask);
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy($"{vacancyClosedEvent.VacancyReference}"))
-            .ReturnsAsync(mockLiveVacancyApiResponse);
+        azureSearchHelper.Setup(x => x.GetAlias(Jobs.Domain.Constants.AliasName)).ReturnsAsync(searchAlias);
+        azureSearchHelper.Setup(x => x.GetDocument(indexName, vacancyReferenceId)).ReturnsAsync(searchDocument);
+        azureSearchHelper.Setup(x => x.DeleteDocuments(indexName, vacancyIds)).Returns(Task.CompletedTask);
 
         await sut.Handle(vacancyClosedEvent);
 
-        azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), vacancyIds), Times.Once());
+        azureSearchHelper.Verify(x => x.DeleteDocuments(indexName, vacancyIds), Times.Once());
         findApprenticeshipJobsService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
     }
 
@@ -66,5 +68,22 @@ public class WhenHandlingVacancyClosedEvent
 
         azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), vacancyIds), Times.Never());
         findApprenticeshipJobsService.Verify(x=>x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Event_Is_Ignored_If_No_Index_Is_Currently_Aliased(
+        ILogger log,
+        VacancyClosedEvent vacancyClosedEvent,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        VacancyClosedHandler sut)
+    {
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => null);
+
+        await sut.Handle(vacancyClosedEvent);
+
+        azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never());
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
     }
 }

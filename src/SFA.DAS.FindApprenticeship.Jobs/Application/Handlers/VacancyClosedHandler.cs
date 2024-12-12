@@ -11,22 +11,24 @@ public class VacancyClosedHandler(
 {
     public async Task Handle(VacancyClosedEvent vacancyClosedEvent)
     {
+        var vacancyReferenceId = $"{vacancyClosedEvent.VacancyReference}";
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
-        var indexName = alias == null ? string.Empty : alias.Indexes.FirstOrDefault();
+        var indexName = alias?.Indexes?.FirstOrDefault();
 
         if (!string.IsNullOrEmpty(indexName))
         {
             var vacancyIds = new List<string>
             {
-                $"{vacancyClosedEvent.VacancyReference}"
+                vacancyReferenceId
             };
 
-            var vacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyClosedEvent.VacancyReference.ToString());
+            var document = await azureSearchHelper.GetDocument(indexName, $"{vacancyReferenceId}");
 
-            if (vacancy.OtherAddresses is { Count: > 0 })
+            if (document is {Value.OtherAddresses.Count: > 0})
             {
                 var counter = 1;
-                foreach (var azureSearchDocumentKey in vacancy.OtherAddresses.Select(_ => $"{vacancy.Id}-{counter}"))
+                foreach (var azureSearchDocumentKey in document.Value.OtherAddresses.Select(_ =>
+                             $"{document.Value.Id}-{counter}"))
                 {
                     vacancyIds.Add(azureSearchDocumentKey);
                     counter++;
@@ -36,7 +38,7 @@ public class VacancyClosedHandler(
         }
         else
         {
-            log.LogInformation($"Index {indexName} not found so document VAC{vacancyClosedEvent.VacancyReference} has not been deleted");
+            log.LogInformation($"Index {indexName} not found so document VAC{vacancyReferenceId} has not been deleted");
         }
 
         await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);

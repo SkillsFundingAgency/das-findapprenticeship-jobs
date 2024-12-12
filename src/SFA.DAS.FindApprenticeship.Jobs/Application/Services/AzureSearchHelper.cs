@@ -7,6 +7,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using Azure.Search.Documents.Indexes.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using Azure.Identity;
+using Azure.Search.Documents.Models;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
@@ -162,19 +163,6 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task DeleteDocument(string indexName, string vacancyReference)
-    {
-        try
-        {
-            var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
-            await searchClient.DeleteDocumentsAsync("Id", new []{ vacancyReference });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {vacancyReference}");
-        }
-    }
-
     public async Task DeleteDocuments(string indexName, List<string> vacancyIds)
     {
         try
@@ -184,7 +172,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {vacancyIds}");
+            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {string.Join(",", vacancyIds)}");
         }
     }
 }

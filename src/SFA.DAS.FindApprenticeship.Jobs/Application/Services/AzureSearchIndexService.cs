@@ -4,41 +4,30 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
-public class AzureSearchIndexService
+public class AzureSearchIndexService(IAzureSearchHelper azureSearchHelper)
 {
-    private readonly IAzureSearchHelper _azureSearchHelper;
-    public AzureSearchIndexService(IAzureSearchHelper azureSearchHelper)
-    {
-        _azureSearchHelper = azureSearchHelper;
-    }
-
     public async Task CreateIndex(string indexName)
     {
-        await _azureSearchHelper.CreateIndex(indexName);
+        await azureSearchHelper.CreateIndex(indexName);
     }
 
     public async Task DeleteIndex(string indexName)
     {
-        await _azureSearchHelper.DeleteIndex(indexName);
+        await azureSearchHelper.DeleteIndex(indexName);
     }
 
     public async Task UploadDocuments(string indexName, IEnumerable<ApprenticeAzureSearchDocument> documents)
     {
-        await _azureSearchHelper.UploadDocuments(indexName, documents);
+        await azureSearchHelper.UploadDocuments(indexName, documents);
     }
 
     public async Task<Response<SearchIndex>> GetIndex(string indexName)
     {
-        return await _azureSearchHelper.GetIndex(indexName);
-    }
-
-    public async Task DeleteDocument(string indexName, string vacancyReference)
-    {
-        await _azureSearchHelper.DeleteDocument(indexName, vacancyReference);
+        return await azureSearchHelper.GetIndex(indexName);
     }
 
     public async Task DeleteDocuments(string indexName, List<string> vacancyIds)
     {
-        await _azureSearchHelper.DeleteDocuments(indexName, vacancyIds);
+        await azureSearchHelper.DeleteDocuments(indexName, vacancyIds);
     }
 }
