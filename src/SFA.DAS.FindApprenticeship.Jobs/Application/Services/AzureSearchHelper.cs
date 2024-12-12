@@ -1,13 +1,12 @@
-﻿using Azure.Core.Serialization;
-using Azure.Search.Documents;
-using Azure;
-using Azure.Search.Documents.Indexes;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using Azure.Search.Documents.Indexes.Models;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+﻿using Azure;
+using Azure.Core.Serialization;
 using Azure.Identity;
-using Azure.Search.Documents.Models;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 public class AzureSearchHelper : IAzureSearchHelper
@@ -53,6 +52,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when creating index with name {IndexName}", indexName);
             throw new RequestFailedException($"Failure returned when creating index with name {indexName}", ex);
         }
     }
@@ -70,6 +70,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when deleting index with name {IndexName}", indexName);
             throw new RequestFailedException($"Failure returned when deleting index with name {indexName}", ex);
         }
     }
@@ -83,7 +84,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when uploading documents to index", ex);
+            _logger.LogWarning(ex, "returned when uploading documents to index with name {IndexName}", indexName);
+            throw new RequestFailedException("Failure returned when uploading documents to index", ex);
         }
     }
 
@@ -95,6 +97,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when requesting index with name {IndexName}", indexName);
             throw new RequestFailedException($"Failure returned when requesting index with name {indexName}", ex);
         }
     }
@@ -117,7 +120,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when requesting indexes", ex);
+            _logger.LogWarning(ex, "Failure returned when requesting indexes");
+            throw new RequestFailedException("Failure returned when requesting indexes", ex);
         }
     }
 
@@ -133,6 +137,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when requesting alias {AliasName}", aliasName);
             throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
         }
     }
@@ -146,6 +151,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when requesting document {VacancyReference}", vacancyReference);
             throw new RequestFailedException($"Failure returned when requesting document {vacancyReference}", ex);
         }
     }
@@ -172,7 +178,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {string.Join(",", vacancyIds)}");
+            _logger.LogWarning(ex, "Failure returned when deleting documents with vacancy reference ids {VacancyReferenceIds}", string.Join(",", vacancyIds));
+            throw new RequestFailedException($"Failure returned when deleting documents with vacancy reference ids {string.Join(",", vacancyIds)}", ex);
         }
     }
 }
