@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Application.Extensions;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Extensions
 {
     [TestFixture]
-    public class SplitLiveVacanciesToMultipleByLocationTests
+    public class LiveVacancyExtensionsTest
     {
         [Test, MoqAutoData]
         public void SplitLiveVacanciesToMultipleByLocation_SingleLocation_ReturnsCorrectResults(
@@ -25,7 +25,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             };
 
             // Act
-            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(vacancies);
+            var result = LiveVacancyExtensions.SplitLiveVacanciesToMultipleByLocation(vacancies);
 
             // Assert
             var liveVacancies = result.ToList();
@@ -62,7 +62,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             };
 
             // Act
-            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(vacancies);
+            var result = LiveVacancyExtensions.SplitLiveVacanciesToMultipleByLocation(vacancies);
 
             // Assert
             result.Count().Should().Be(3);
@@ -72,7 +72,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         public void SplitLiveVacanciesToMultipleByLocation_EmptyVacancies_ReturnsEmpty()
         {
             // Act
-            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(
+            var result = LiveVacancyExtensions.SplitLiveVacanciesToMultipleByLocation(
                 new List<LiveVacancy>(0));
 
             // Assert
@@ -99,7 +99,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             };
 
             // Act
-            var result = RecruitIndexerJobHandler.SplitLiveVacanciesToMultipleByLocation(vacancies);
+            var result = LiveVacancyExtensions.SplitLiveVacanciesToMultipleByLocation(vacancies);
 
             // Assert
             var liveVacancies = result.ToList();

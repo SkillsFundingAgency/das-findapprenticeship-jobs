@@ -8,32 +8,32 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.AzureSearchIndexServiceTests;
-public class WhenDeletingDocument
+public class WhenDeletingDocuments
 {
     [Test, MoqAutoData]
     public async Task Then_The_Api_Is_Called_And_The_Document_Is_Deleted(
         string indexName,
-        Guid vacancyId,
+        List<string> vacancyIds,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         AzureSearchIndexService service)
     {
-        azureSearchHelper.Setup(x => x.DeleteDocument(indexName, $"VAC{vacancyId}")).Returns(Task.FromResult(true));
+        azureSearchHelper.Setup(x => x.DeleteDocuments(indexName, vacancyIds)).Returns(Task.FromResult(true));
 
-        await service.DeleteDocument(indexName, $"VAC{vacancyId}");
+        await service.DeleteDocuments(indexName, vacancyIds);
 
-        azureSearchHelper.Verify(x => x.DeleteDocument(It.IsAny<string>(), $"VAC{vacancyId}"), Times.Once);
+        azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), vacancyIds), Times.Once);
     }
 
     [Test, MoqAutoData]
     public async Task Then_The_Api_Returns_An_Error(
         string indexName,
-        Guid vacancyId,
+        List<string> vacancyIds,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         AzureSearchIndexService service)
     {
-        azureSearchHelper.Setup(x => x.DeleteDocument(indexName, $"VAC{vacancyId}")).ThrowsAsync(new RequestFailedException("test exception"));
+        azureSearchHelper.Setup(x => x.DeleteDocuments(indexName, vacancyIds)).ThrowsAsync(new RequestFailedException("test exception"));
 
-        Func<Task> actual = () => service.DeleteDocument(indexName, $"VAC{vacancyId}");
+        Func<Task> actual = () => service.DeleteDocuments(indexName, vacancyIds);
 
         await actual.Should().ThrowAsync<RequestFailedException>();
     }
