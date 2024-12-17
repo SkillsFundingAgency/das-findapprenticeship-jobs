@@ -3,5 +3,5 @@
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 public class GetNhsLiveVacanciesApiRequest : IGetApiRequest
 {
-    public string GetUrl => $"nhsvacancies";
+    public string GetUrl => "nhsvacancies";
 }
