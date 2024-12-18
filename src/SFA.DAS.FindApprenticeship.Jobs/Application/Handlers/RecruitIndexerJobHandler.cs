@@ -39,7 +39,8 @@ public class RecruitIndexerJobHandler(
 
                 if (nhsLiveVacancies.Vacancies.Any())
                 {
-                    foreach (var vacancy in nhsLiveVacancies.Vacancies)
+                    foreach (var vacancy in nhsLiveVacancies.Vacancies.Where(fil =>
+                                 string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         batchDocuments.Add((ApprenticeAzureSearchDocument)vacancy);
                     }
