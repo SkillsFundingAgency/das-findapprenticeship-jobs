@@ -51,6 +51,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? TrainingCourse { get; set; }
 
             public double? Distance { get; set; }
+            
+            public string? VacancySource { get; set; }
+            public string? WageUnit { get; set; }
+            public string? WageType { get; set; }
 
             public static implicit operator Vacancy(GetSavedSearchesApiResponse.Vacancy source)
             {
@@ -65,6 +69,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     TrainingCourse = source.TrainingCourse,
                     Distance = source.Distance,
                     Address = source.Address,
+                    VacancySource = source.VacancySource,
+                    WageUnit = source.WageUnit,
+                    WageType = source.WageType
                 };
             }
         }
