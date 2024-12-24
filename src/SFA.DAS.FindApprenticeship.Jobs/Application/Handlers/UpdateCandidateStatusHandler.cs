@@ -13,23 +13,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
         public async Task BatchHandle(List<Candidate> candidates)
         {
             // Add tasks to the runner
-            for (var index = 1; index <= candidates.Count; index++)
+            for (var index = 0; index < candidates.Count; index++)
             {
-                var taskId = index;
-                var userReferenceIdIndex = index;
-                if (userReferenceIdIndex >= 0 && userReferenceIdIndex < candidates.Count)
+                var taskId = index + 1;
+                var candidate = candidates[index];
+                batchTaskRunner.AddTask(async () =>
                 {
-                    batchTaskRunner.AddTask(async () =>
-                    {
-                        logger.LogInformation("Update Candidate Status Task {TaskId} started", taskId);
-                        var candidate = candidates[userReferenceIdIndex];
-                        await findApprenticeshipJobsService.UpdateCandidateStatus(
-                            candidate.GovUkIdentifier,
-                            candidate.Email,
-                            CandidateStatus.Dormant);
-                        logger.LogInformation("UnsubscribeSavedSearch Task {TaskId} completed", taskId);
-                    });
-                }
+                    logger.LogInformation("Update Candidate Status Task {TaskId} started", taskId);
+                    await findApprenticeshipJobsService.UpdateCandidateStatus(
+                        candidate.GovUkIdentifier,
+                        candidate.Email,
+                        CandidateStatus.Dormant);
+                    logger.LogInformation("Update Candidate Status Task {TaskId} completed", taskId);
+                });
             }
 
             // Run tasks in batches

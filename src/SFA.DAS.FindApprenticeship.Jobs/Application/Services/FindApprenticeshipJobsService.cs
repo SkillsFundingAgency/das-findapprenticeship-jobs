@@ -57,9 +57,9 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         await apiClient.PostWithResponseCode<NullResponse>(new PostSendSavedSearchNotificationApiRequest(savedSearch));
     }
 
-    public async Task<GetCandidatesByActivityApiResponse> GetDormantCandidates(string cutOffDateTime, int pageNumber, int pageSize)
+    public async Task<GetInactiveCandidatesApiResponse> GetDormantCandidates(string cutOffDateTime, int pageNumber, int pageSize)
     {
-        var candidates = await apiClient.Get<GetCandidatesByActivityApiResponse>(new GetCandidatesByActivityApiRequest(cutOffDateTime, pageNumber, pageSize));
+        var candidates = await apiClient.Get<GetInactiveCandidatesApiResponse>(new GetInactiveCandidatesApiRequest(cutOffDateTime, pageNumber, pageSize));
         return candidates.Body;
     }
 

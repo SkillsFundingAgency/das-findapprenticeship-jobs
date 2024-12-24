@@ -8,7 +8,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Candidate
         public string Email { get; set; } = null!;
         public CandidateStatus Status { get; set; }
 
-        public static implicit operator Candidate(GetCandidatesByActivityApiResponse.Candidate source)
+        public static implicit operator Candidate(GetInactiveCandidatesApiResponse.Candidate source)
         {
             return new Candidate
             {

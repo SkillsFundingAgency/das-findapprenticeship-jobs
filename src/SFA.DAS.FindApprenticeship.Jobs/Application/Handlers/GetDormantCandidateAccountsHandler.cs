@@ -28,10 +28,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
 
                 if (dormantCandidates is { Candidates.Count: > 0 })
                 {
-                    totalPages = dormantCandidates.TotalPages;
+                    batchDormantCandidates.AddRange(dormantCandidates.Candidates.Select(x => (Candidate)x).ToList());
 
-                    batchDormantCandidates =
-                        dormantCandidates.Candidates.Select(x => (Candidate)x).ToList();
+                    totalPages = dormantCandidates.TotalPages;
 
                     pageNumber++;
                 }
