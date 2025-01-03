@@ -41,7 +41,6 @@ public class RecruitIndexerJobHandler(
                 {
                     foreach (var vacancy in nhsLiveVacancies.Vacancies)
                     {
-                        vacancy.PostedDate = DateTime.UtcNow.AddDays(-1);
                         batchDocuments.Add((ApprenticeAzureSearchDocument)vacancy);
                     }
                 }
