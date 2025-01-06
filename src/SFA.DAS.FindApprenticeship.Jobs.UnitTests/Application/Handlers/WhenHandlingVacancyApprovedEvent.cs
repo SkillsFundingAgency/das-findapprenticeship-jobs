@@ -1,4 +1,5 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Text.Json;
+using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
@@ -29,6 +30,7 @@ public class WhenHandlingVacancyApprovedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyApprovedHandler sut)
     {
+        liveVacancy.Value.OtherAddresses = [];
         liveVacancy.Value.StandardLarsCode = programmeId;
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
@@ -58,5 +60,42 @@ public class WhenHandlingVacancyApprovedEvent
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()),
             Times.Never());
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Vacancy_With_OtherAddresses_Is_Uploaded_To_The_Index(
+        List<Address> otherAddresses,
+        ILogger log,
+        VacancyApprovedEvent vacancyApprovedEvent,
+        string indexName,
+        int programmeId,
+        Response<ApprenticeAzureSearchDocument> document,
+        Response<GetLiveVacancyApiResponse> liveVacancy,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        VacancyApprovedHandler sut)
+    {
+        liveVacancy.Value.OtherAddresses = otherAddresses;
+        liveVacancy.Value.StandardLarsCode = programmeId;
+
+        var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
+
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
+
+        await sut.Handle(vacancyApprovedEvent);
+
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
+                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, liveVacancy.Value))),
+            Times.Once());
+    }
+
+    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, LiveVacancy liveVacancy)
+    {
+        var updatedDocument = updatedDocuments.FirstOrDefault();
+
+        return updatedDocument!.Id == liveVacancy.Id;
     }
 }
