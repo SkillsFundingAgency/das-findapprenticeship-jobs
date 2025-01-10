@@ -86,7 +86,7 @@ public class ApprenticeAzureSearchDocument
             ClosingDate = source.ClosingDate,
             Title = source.Title,
             Ukprn = source.Ukprn.ToString(),
-            VacancyReference = $"VAC{source.VacancyReference}",
+            VacancyReference = $"{source.VacancyReference}",
             WageText = source.Wage.WageText,
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
@@ -98,7 +98,7 @@ public class ApprenticeAzureSearchDocument
             OutcomeDescription = source.OutcomeDescription,
             Skills = source.Skills.ToList(),
             ThingsToConsider = source.ThingsToConsider,
-            Id = source.Id,
+            Id = source.VacancyReference,
             AnonymousEmployerName = source.AnonymousEmployerName,
             IsDisabilityConfident = source.IsDisabilityConfident,
             IsPositiveAboutDisability = source.IsPositiveAboutDisability,
@@ -323,7 +323,8 @@ public class AddressAzureSearchDocument
             AddressLine4 = source.AddressLine4,
             Postcode = source.Postcode,
             Longitude = source.Longitude,
-            Latitude = source.Latitude
+            Latitude = source.Latitude,
+            Country = source.Country,
         };
     }
 
@@ -348,6 +349,8 @@ public class AddressAzureSearchDocument
     [SimpleField]
     public double Longitude { get; set; }
 
+    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string? Country { get; set; }
 }
 
 public class WageAzureSearchDocument
