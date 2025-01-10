@@ -6,14 +6,12 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Candidate
     {
         public string GovUkIdentifier { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public CandidateStatus Status { get; set; }
 
         public static implicit operator Candidate(GetInactiveCandidatesApiResponse.Candidate source)
         {
             return new Candidate
             {
                 GovUkIdentifier = source.GovUkIdentifier,
-                Status = source.Status,
                 Email = source.Email,
             };
         }

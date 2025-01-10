@@ -43,7 +43,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             [JsonProperty("termsOfUseAcceptedOn")]
             public DateTime? TermsOfUseAcceptedOn { get; set; }
             [JsonProperty("status")]
-            public CandidateStatus Status { get; set; }
+            public int Status { get; set; }
             [JsonProperty("migratedEmail")]
             public string? MigratedEmail { get; set; }
 
