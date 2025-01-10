@@ -84,6 +84,7 @@ public class WhenCastingApiResponseToAzureDocument
         apprenticeAzureSearchDocument.Address.AddressLine2.Should().BeEquivalentTo(source.Address.AddressLine2);
         apprenticeAzureSearchDocument.Address.AddressLine3.Should().BeEquivalentTo(source.Address.AddressLine3);
         apprenticeAzureSearchDocument.Address.AddressLine4.Should().BeEquivalentTo(source.Address.AddressLine4);
+        apprenticeAzureSearchDocument.Address.Country.Should().BeEquivalentTo(source.Address.Country);
         apprenticeAzureSearchDocument.Address.Postcode.Should().BeEquivalentTo(source.Address.Postcode);
         apprenticeAzureSearchDocument.Address.Latitude.Should().Be(source.Address.Latitude);
         apprenticeAzureSearchDocument.Address.Longitude.Should().Be(source.Address.Longitude);
