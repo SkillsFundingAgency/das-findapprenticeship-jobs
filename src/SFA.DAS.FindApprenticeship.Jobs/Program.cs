@@ -57,7 +57,9 @@ var host = new HostBuilder()
         services.AddTransient<IVacancyClosingSoonHandler, VacancyClosingSoonHandler>();
         services.AddTransient<ISendApplicationReminderHandler, SendApplicationReminderHandler>();
         services.AddTransient<IGetAllSavedSearchesNotificationHandler, GetAllSavedSearchesNotificationHandler>();
+        services.AddTransient<IGetDormantCandidateAccountsHandler, GetDormantCandidateAccountsHandler>();
         services.AddTransient<ISendSavedSearchesNotificationHandler, SendSavedSearchesNotificationHandler>();
+        services.AddTransient<IUpdateCandidateStatusHandler, UpdateCandidateStatusHandler>();
         services.AddTransient<IDateTimeService, DateTimeService>();
         services.AddTransient<IBatchTaskRunner, BatchTaskRunner>();
         services.AddHttpClient<IOuterApiClient, OuterApiClient>
