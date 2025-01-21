@@ -45,10 +45,12 @@ public class RecruitIndexerJobHandler(
 
                     batchDocuments.AddRange(vacanciesWithOneLocation.Concat(vacanciesWithMultipleLocations.Select(a => (ApprenticeAzureSearchDocument)a)).ToList());
                 }
-
+                    
                 if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
                 {
-                    batchDocuments.AddRange(nhsLiveVacancies.Vacancies.Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
+                    batchDocuments.AddRange(nhsLiveVacancies.Vacancies
+                        .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                        .Select(vacancy => (ApprenticeAzureSearchDocument)vacancy));
                 }
 
                 await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
