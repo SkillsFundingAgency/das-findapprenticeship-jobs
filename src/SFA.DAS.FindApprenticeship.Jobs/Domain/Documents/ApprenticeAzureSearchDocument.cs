@@ -333,7 +333,8 @@ public class AddressAzureSearchDocument
             AddressLine4 = source.AddressLine4,
             Postcode = source.Postcode,
             Longitude = source.Longitude,
-            Latitude = source.Latitude
+            Latitude = source.Latitude,
+            Country = source.Country,
         };
     }
 
@@ -358,6 +359,8 @@ public class AddressAzureSearchDocument
     [SimpleField]
     public double Longitude { get; set; }
 
+    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string? Country { get; set; }
 }
 
 public class WageAzureSearchDocument

@@ -52,7 +52,9 @@ public class RecruitIndexerJobHandler(
 
                 if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
                 {
-                    batchDocuments.AddRange(nhsLiveVacancies.Vacancies.Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
+                    batchDocuments.AddRange(nhsLiveVacancies.Vacancies
+                        .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                        .Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
                 }
 
                 await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);

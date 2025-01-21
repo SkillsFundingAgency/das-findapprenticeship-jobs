@@ -11,4 +11,6 @@ public interface IFindApprenticeshipJobsService
     Task CloseVacancyEarly(long vacancyRef);
     Task<GetSavedSearchesApiResponse> GetSavedSearches(int pageNumber, int pageSize, string lastRunDateTime, int maxApprenticeshipSearchResultCount = 5, string sortOrder = "AgeDesc");
     Task SendSavedSearchNotification(SavedSearch savedSearch);
+    Task<GetInactiveCandidatesApiResponse> GetDormantCandidates(string cutOffDateTime, int pageNumber, int pageSize);
+    Task UpdateCandidateStatus(string govIdentifier, string email, CandidateStatus status);
 }
