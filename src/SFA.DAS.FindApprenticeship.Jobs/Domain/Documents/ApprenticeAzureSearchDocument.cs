@@ -307,7 +307,7 @@ public class CourseAzureSearchDocument
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string Level { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public int RouteCode { get; set; }
 }
 
