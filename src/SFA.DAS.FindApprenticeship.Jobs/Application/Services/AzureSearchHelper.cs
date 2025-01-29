@@ -162,16 +162,16 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task DeleteDocument(string indexName, string vacancyReference)
+    public async Task DeleteDocuments(string indexName, IEnumerable<string> ids)
     {
         try
         {
             var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
-            await searchClient.DeleteDocumentsAsync("Id", new []{ vacancyReference });
+            await searchClient.DeleteDocumentsAsync("Id", ids);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, $"Failure returned when deleting document with reference {vacancyReference}");
+            _logger.LogWarning(ex, $"Failure returned when deleting document(s) with reference(s) {string.Join(", ", ids)}");
         }
     }
 }

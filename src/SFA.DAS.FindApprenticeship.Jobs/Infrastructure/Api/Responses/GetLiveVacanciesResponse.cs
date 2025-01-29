@@ -18,8 +18,10 @@ public class LiveVacancy
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
     public bool IsPrimaryLocation { get; set; } = true;
-    public Address Address { get; set; } = null!;
-    public List<Address> OtherAddresses { get; set; } = [];
+    public Address? Address { get; set; }
+    public List<Address>? EmploymentLocations { get; set; }
+    public AvailableWhere? EmploymentLocationOption { get; set; }
+    public string? EmploymentLocationInformation { get; set; }
     public string? EmployerName { get; set; }
     public string ApprenticeshipLevel { get; set; } = null!;
     public string ApplicationMethod { get; set; } = null!;
@@ -102,4 +104,11 @@ public class Qualification
     public string Subject { get; set; } = null!;
     public string Grade { get; set; } = null!;
     public string Weighting { get; set; } = null!;
+}
+
+public enum AvailableWhere
+{
+    OneLocation,
+    MultipleLocations,
+    AcrossEngland,
 }
