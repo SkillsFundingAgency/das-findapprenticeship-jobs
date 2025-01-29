@@ -128,7 +128,7 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public AddressAzureSearchDocument? Address { get; set; }
 
-    [SearchableField]
+    [SimpleField(IsFilterable = true)]
     public bool IsPrimaryLocation { get; set; }
 
     [SimpleField]
