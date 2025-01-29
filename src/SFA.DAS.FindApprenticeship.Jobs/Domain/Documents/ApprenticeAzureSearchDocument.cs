@@ -132,7 +132,7 @@ public class ApprenticeAzureSearchDocument
     public bool IsPrimaryLocation { get; set; }
 
     [SimpleField]
-    public List<AddressAzureSearchDocument>? OtherAddresses { get; set; }
+    public List<OtherAddressAzureSearchDocument>? OtherAddresses { get; set; }
 
     [SimpleField]
     public string? EmploymentLocationInformation { get; set; }
@@ -305,6 +305,48 @@ public class AddressAzureSearchDocument
     public double Longitude { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string? Country { get; set; }
+}
+
+public class OtherAddressAzureSearchDocument
+{
+    public static OtherAddressAzureSearchDocument From(Address source)
+    {
+        return new OtherAddressAzureSearchDocument
+        {
+            AddressLine1 = source.AddressLine1,
+            AddressLine2 = source.AddressLine2,
+            AddressLine3 = source.AddressLine3,
+            AddressLine4 = source.AddressLine4,
+            Postcode = source.Postcode,
+            Longitude = source.Longitude,
+            Latitude = source.Latitude,
+            Country = source.Country,
+        };
+    }
+
+    [SimpleField]
+    public string? AddressLine1 { get; set; }
+
+    [SimpleField]
+    public string? AddressLine2 { get; set; }
+
+    [SimpleField]
+    public string? AddressLine3 { get; set; }
+
+    [SimpleField]
+    public string? AddressLine4 { get; set; }
+
+    [SimpleField]
+    public string? Postcode { get; set; }
+
+    [SimpleField]
+    public double Latitude { get; set; }
+
+    [SimpleField]
+    public double Longitude { get; set; }
+
+    [SimpleField]
     public string? Country { get; set; }
 }
 

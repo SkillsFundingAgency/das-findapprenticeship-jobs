@@ -31,7 +31,7 @@ public static class ApprenticeAzureSearchDocumentFactory
                     var document = MapWithoutAddress(vacancy);
                     document.Address = (AddressAzureSearchDocument)address;
                     document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
-                    document.OtherAddresses = vacancy.EmploymentLocations.Except([address]).Select(x => (AddressAzureSearchDocument)x).ToList();
+                    document.OtherAddresses = vacancy.EmploymentLocations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
                     document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";  
                     results.Add(document);
                 }
