@@ -8,7 +8,6 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 
 public class ApprenticeAzureSearchDocument
 {
-    private const string VacancySourceRecruit = "RAA";
     private const string VacancySourceNhs = "NHS";
 
     public static implicit operator ApprenticeAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
@@ -132,7 +131,7 @@ public class ApprenticeAzureSearchDocument
     public bool IsPrimaryLocation { get; set; }
 
     [SimpleField]
-    public List<OtherAddressAzureSearchDocument>? OtherAddresses { get; set; }
+    public List<OtherAddressAzureSearchDocument> OtherAddresses { get; set; } = [];
 
     [SimpleField]
     public string? EmploymentLocationInformation { get; set; }
