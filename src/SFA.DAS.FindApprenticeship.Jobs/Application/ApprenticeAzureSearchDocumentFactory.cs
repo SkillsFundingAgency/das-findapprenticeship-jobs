@@ -20,6 +20,7 @@ public static class ApprenticeAzureSearchDocumentFactory
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)address;
                 document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
+                document.AvailableWhere = nameof(AvailableWhere.OneLocation);
                 return [document];
             }
             case AvailableWhere.MultipleLocations:
@@ -32,7 +33,8 @@ public static class ApprenticeAzureSearchDocumentFactory
                     document.Address = (AddressAzureSearchDocument)address;
                     document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
                     document.OtherAddresses = vacancy.EmploymentLocations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
-                    document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";  
+                    document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
+                    document.AvailableWhere = nameof(AvailableWhere.MultipleLocations);
                     results.Add(document);
                 }
                 return results;
@@ -41,6 +43,7 @@ public static class ApprenticeAzureSearchDocumentFactory
             {
                 var document = MapWithoutAddress(vacancy);
                 document.EmploymentLocationInformation = vacancy.EmploymentLocationInformation;
+                document.AvailableWhere = nameof(AvailableWhere.AcrossEngland);
                 return [document];
             }
             default:
@@ -48,6 +51,7 @@ public static class ApprenticeAzureSearchDocumentFactory
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)vacancy.Address;
                 document.Location = GeographyPoint.Create(vacancy.Address!.Latitude, vacancy.Address.Longitude);
+                document.AvailableWhere = string.Empty;
                 return [document];
             }
         }
@@ -82,6 +86,7 @@ public static class ApprenticeAzureSearchDocumentFactory
             IsEmployerAnonymous = vacancy.IsEmployerAnonymous,
             IsPositiveAboutDisability = vacancy.IsPositiveAboutDisability,
             IsPrimaryLocation = vacancy.IsPrimaryLocation,
+            EmploymentLocationInformation = vacancy.EmploymentLocationInformation,
             IsRecruitVacancy = vacancy.IsRecruitVacancy,
             LongDescription = vacancy.LongDescription,
             NumberOfPositions = vacancy.NumberOfPositions,

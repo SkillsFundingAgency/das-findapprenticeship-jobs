@@ -13,9 +13,6 @@ public class RecruitIndexerJobHandler(
 {
     private const int PageSize = 500; 
     
-    // Define a small tolerance
-    private const double Epsilon = 1e-10;
-
     public async Task Handle()
     {
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";

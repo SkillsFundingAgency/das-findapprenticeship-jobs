@@ -25,6 +25,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         document.Id.Should().Be(liveVacancy.Id);
         document.Address.Should().BeEquivalentTo(liveVacancy.Address);
         document.Location.Should().BeEquivalentTo(new { liveVacancy.Address.Latitude, liveVacancy.Address.Longitude });
+        document.AvailableWhere.Should().Be(string.Empty);
     }
     
     [Test, MoqAutoData]
@@ -47,6 +48,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         document.Id.Should().Be(liveVacancy.Id);
         document.Address.Should().BeEquivalentTo(address);
         document.Location.Should().BeEquivalentTo(new { address.Latitude, address.Longitude });
+        document.AvailableWhere.Should().Be(nameof(AvailableWhere.OneLocation));
     }
     
     [Test, MoqAutoData]
@@ -68,6 +70,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         document.Address.Should().BeNull();
         document.Location.Should().BeNull();
         document.EmploymentLocationInformation.Should().Be(liveVacancy.EmploymentLocationInformation);
+        document.AvailableWhere.Should().Be(nameof(AvailableWhere.AcrossEngland));
     }
     
     [Test, MoqAutoData]
@@ -92,6 +95,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
             document.OtherAddresses.Should().NotContainEquivalentOf(document.Address);
             document.Location.Should().BeEquivalentTo(new { document.Address!.Latitude, document.Address.Longitude });
             document.EmploymentLocationInformation.Should().BeNull();
+            document.AvailableWhere.Should().Be(nameof(AvailableWhere.MultipleLocations));
         });
     }
     
@@ -110,6 +114,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         documents.Should().HaveCountGreaterThan(1);
         documents.Select(x => x.Id).Distinct().Count().Should().Be(documents.Count);
         documents.First().Id.Should().Be(liveVacancy.Id);
+        documents.First().AvailableWhere.Should().Be(nameof(AvailableWhere.MultipleLocations));
     }
 
     private static void AssertDocumentIsMappedWithoutAddresses(ApprenticeAzureSearchDocument document, LiveVacancy source)
@@ -165,6 +170,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
             document.Wage?.WorkingWeekDescription.Should().BeEquivalentTo(source.Wage.WorkingWeekDescription);
             document.Wage?.Duration.Should().Be(source.Wage.Duration);
             document.WageText.Should().Be(source.Wage.WageText);
+            document.EmploymentLocationInformation.Should().Be(source.EmploymentLocationInformation);
         }
     }
 }
