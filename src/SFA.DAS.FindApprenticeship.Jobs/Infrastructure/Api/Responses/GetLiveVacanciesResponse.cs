@@ -1,4 +1,6 @@
 #nullable enable
+using System.Text.Json.Serialization;
+
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetLiveVacanciesApiResponse
 {
@@ -20,6 +22,7 @@ public class LiveVacancy
     public bool IsPrimaryLocation { get; set; } = true;
     public Address? Address { get; set; }
     public List<Address>? EmploymentLocations { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
     public AvailableWhere? EmploymentLocationOption { get; set; }
     public string? EmploymentLocationInformation { get; set; }
     public string? EmployerName { get; set; }
