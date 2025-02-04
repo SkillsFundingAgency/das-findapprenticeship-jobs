@@ -25,7 +25,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         document.Id.Should().Be(liveVacancy.Id);
         document.Address.Should().BeEquivalentTo(liveVacancy.Address);
         document.Location.Should().BeEquivalentTo(new { liveVacancy.Address.Latitude, liveVacancy.Address.Longitude });
-        document.AvailableWhere.Should().Be(string.Empty);
+        document.AvailableWhere.Should().BeNull();
     }
     
     [Test, MoqAutoData]
