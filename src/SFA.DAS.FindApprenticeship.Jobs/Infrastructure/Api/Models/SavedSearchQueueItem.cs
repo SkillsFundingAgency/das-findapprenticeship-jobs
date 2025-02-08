@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models
+﻿namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
+
+public class SavedSearchQueueItem
 {
-    public class SavedSearchQueueItem
-    {
-        public string Payload { get; set; } = null!;
-    }
+    public string Payload { get; set; } = null!;
 }

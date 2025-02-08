@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 {
-    public class SavedSearch
+    public class SavedSearchCandidateVacancies
     {
         public Guid Id { get; set; }
         public UserDetails User { get; set; } = new();
@@ -15,9 +15,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public string? UnSubscribeToken { get; set; }
         public List<Vacancy> Vacancies { get; set; } = [];
 
-        public static implicit operator SavedSearch(GetSavedSearchesApiResponse.SavedSearchResult source)
+        public static implicit operator SavedSearchCandidateVacancies(GetCandidateSavedSearchResult.SavedSearchResult source)
         {
-            return new SavedSearch
+            return new SavedSearchCandidateVacancies
             {
                 Id = source.Id,
                 User = source.User,
@@ -56,7 +56,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? WageUnit { get; set; }
             public string? WageType { get; set; }
 
-            public static implicit operator Vacancy(GetSavedSearchesApiResponse.Vacancy source)
+            public static implicit operator Vacancy(GetCandidateSavedSearchResult.Vacancy source)
             {
                 return new Vacancy
                 {
@@ -88,7 +88,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 
             public string? Postcode { get; set; }
 
-            public static implicit operator Address(GetSavedSearchesApiResponse.Address source)
+            public static implicit operator Address(GetCandidateSavedSearchResult.Address source)
             {
                 return new Address
                 {
@@ -109,7 +109,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? LastName { get; set; }
             public string? Email { get; set; }
 
-            public static implicit operator UserDetails(GetSavedSearchesApiResponse.UserDetails source)
+            public static implicit operator UserDetails(GetCandidateSavedSearchResult.UserDetails source)
             {
                 return new UserDetails
                 {
@@ -127,7 +127,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public int Id { get; set; }
             public string? Name { get; set; }
 
-            public static implicit operator Category(GetSavedSearchesApiResponse.Category source)
+            public static implicit operator Category(GetCandidateSavedSearchResult.Category source)
             {
                 return new Category
                 {
@@ -142,7 +142,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public int Code { get; set; }
             public string? Name { get; set; }
 
-            public static implicit operator Level(GetSavedSearchesApiResponse.Level source)
+            public static implicit operator Level(GetCandidateSavedSearchResult.Level source)
             {
                 return new Level
                 {

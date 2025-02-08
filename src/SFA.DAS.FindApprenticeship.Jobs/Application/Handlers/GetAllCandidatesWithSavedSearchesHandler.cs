@@ -4,7 +4,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
 {
-    public class GetAllSavedSearchesNotificationHandler(
+    public class GetAllCandidatesWithSavedSearchesHandler(
         IDateTimeService dateTimeService,
         IFindApprenticeshipJobsService findApprenticeshipJobsService)
         : IGetAllCandidatesWithSavedSearchesHandler
@@ -15,25 +15,23 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
         public async Task<List<SavedSearchResult>> Handle()
         {
             var pageNumber = 1;
-            var totalPages = 100;
 
             var lastRunDateTime = dateTimeService.GetCurrentDateTime().AddDays(-7);
-            var batchSavedSearchesNotifications = new List<SavedSearchResult>();
-
-            while (pageNumber <= totalPages)
+            var savedSearchesNotifications = new List<SavedSearchResult>();
+            var savedSearchesResponse = await findApprenticeshipJobsService.GetSavedSearches(pageNumber,
+                PageSize,
+                lastRunDateTime.ToString("O"));
+            while (pageNumber <= savedSearchesResponse.TotalPages)
             {
-                var savedSearchesResponse = await findApprenticeshipJobsService.GetSavedSearches(pageNumber,
-                    PageSize,
-                    lastRunDateTime.ToString("O"));
-
                 if (savedSearchesResponse is { SavedSearchResults.Count: > 0 })
                 {
-                    totalPages = savedSearchesResponse.TotalPages;
-
-                    batchSavedSearchesNotifications =
+                    savedSearchesNotifications =
                         savedSearchesResponse.SavedSearchResults.Select(x => (SavedSearchResult)x).ToList();
 
                     pageNumber++;
+                    savedSearchesResponse = await findApprenticeshipJobsService.GetSavedSearches(pageNumber,
+                        PageSize,
+                        lastRunDateTime.ToString("O"));
                 }
                 else
                 {
@@ -41,9 +39,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
                 }
             }
             
-            batchSavedSearchesNotifications.ToList().ForEach(i => i.LastRunDate = lastRunDateTime);
+            savedSearchesNotifications.ToList().ForEach(i => i.LastRunDate = lastRunDateTime);
             
-            return batchSavedSearchesNotifications;
+            return savedSearchesNotifications;
         }
     }
 }

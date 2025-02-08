@@ -38,13 +38,13 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         await apiClient.Post<NullResponse>(new PostVacancyClosedEarlyRequest(vacancyRef));
     }
 
-    public async Task<GetSavedSearchesApiResponse> GetSavedSearches(int pageNumber,
+    public async Task<GetCandidateSavedSearchesApiResponse> GetSavedSearches(int pageNumber,
         int pageSize,
         string lastRunDateTime,
         int maxApprenticeshipSearchResultCount = 5,
         string sortOrder = "AgeDesc")
     {
-        var savedSearches = await apiClient.Get<GetSavedSearchesApiResponse>(new GetSavedSearchesApiRequest(
+        var savedSearches = await apiClient.Get<GetCandidateSavedSearchesApiResponse>(new GetSavedSearchesApiRequest(
             pageNumber,
             pageSize,
             lastRunDateTime,
@@ -52,9 +52,21 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         return savedSearches.Body;
     }
 
-    public async Task SendSavedSearchNotification(SavedSearch savedSearch)
+    public async Task SendSavedSearchNotification(SavedSearchCandidateVacancies savedSearchCandidateVacancies)
     {
-        await apiClient.PostWithResponseCode<NullResponse>(new PostSendSavedSearchNotificationApiRequest(savedSearch));
+        await apiClient.PostWithResponseCode<NullResponse>(new PostSendSavedSearchNotificationApiRequest(savedSearchCandidateVacancies));
+    }
+
+    public async Task<SavedSearchCandidateVacancies?> GetSavedSearchResultsForCandidate(SavedSearchResult request)
+    {
+        var actual = await apiClient.PostWithResponseCode<SavedSearchCandidateVacancies>(new PostGetSavedSearchResultsForCandidateRequest(request));
+        
+        if(actual.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        return actual.Body;
     }
 
     public async Task<GetInactiveCandidatesApiResponse> GetDormantCandidates(string cutOffDateTime, int pageNumber, int pageSize)

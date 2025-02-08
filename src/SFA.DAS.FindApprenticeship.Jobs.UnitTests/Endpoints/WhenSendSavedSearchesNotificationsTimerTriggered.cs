@@ -19,19 +19,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Endpoints
         [Test, MoqAutoData]
         public async Task Then_The_Index_Is_Handled(
             ILogger logger,
-            SavedSearch mockSavedSearch,
-            [Frozen] Mock<IGetAllSavedSearchesNotificationHandler> handler,
+            SavedSearchResult mockSavedSearchCandidateVacancies,
+            [Frozen] Mock<IGetAllCandidatesWithSavedSearchesHandler> handler,
             SavedSearchesNotificationsTimerTrigger sut)
         {
             var mockSavedSearchQueueItem = new SavedSearchQueueItem
             {
-                Payload = JsonSerializer.Serialize<SavedSearch>(mockSavedSearch)
+                Payload = JsonSerializer.Serialize<SavedSearchResult>(mockSavedSearchCandidateVacancies)
             };
 
-            handler.Setup(x => x.Handle()).ReturnsAsync([mockSavedSearch]);
+            handler.Setup(x => x.Handle()).ReturnsAsync([mockSavedSearchCandidateVacancies]);
 
             var collector = await sut.Run(It.IsAny<TimerInfo>());
-
+    
             handler.Verify(x => x.Handle(), Times.Once());
 
             collector.Should().BeEquivalentTo([mockSavedSearchQueueItem]);

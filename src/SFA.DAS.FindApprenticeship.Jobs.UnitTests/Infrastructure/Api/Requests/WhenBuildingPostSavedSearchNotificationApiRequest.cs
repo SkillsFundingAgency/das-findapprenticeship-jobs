@@ -10,9 +10,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Infrastructure.Api.Requests
     public class WhenBuildingPostSavedSearchNotificationApiRequest
     {
         [Test, AutoData]
-        public void Then_The_Request_Is_Built(SavedSearch savedSearch)
+        public void Then_The_Request_Is_Built(SavedSearchCandidateVacancies savedSearchCandidateVacancies)
         {
-            var actual = new PostSendSavedSearchNotificationApiRequest(savedSearch);
+            var actual = new PostSendSavedSearchNotificationApiRequest(savedSearchCandidateVacancies);
 
             actual.PostUrl.Should().Be("savedSearches/sendNotification");
         }
