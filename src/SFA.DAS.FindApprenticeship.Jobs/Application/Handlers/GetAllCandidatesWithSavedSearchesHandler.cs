@@ -7,35 +7,31 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
     public class GetAllSavedSearchesNotificationHandler(
         IDateTimeService dateTimeService,
         IFindApprenticeshipJobsService findApprenticeshipJobsService)
-        : IGetAllSavedSearchesNotificationHandler
+        : IGetAllCandidatesWithSavedSearchesHandler
     {
-        private const int MaxApprenticeshipSearchResultCount = 5;
-        private const string SortOrder = "AgeDesc";
         private const int PageSize = 1000;
 
 
-        public async Task<List<SavedSearch>> Handle()
+        public async Task<List<SavedSearchResult>> Handle()
         {
             var pageNumber = 1;
             var totalPages = 100;
 
             var lastRunDateTime = dateTimeService.GetCurrentDateTime().AddDays(-7);
-            var batchSavedSearchesNotifications = new List<SavedSearch>();
+            var batchSavedSearchesNotifications = new List<SavedSearchResult>();
 
             while (pageNumber <= totalPages)
             {
                 var savedSearchesResponse = await findApprenticeshipJobsService.GetSavedSearches(pageNumber,
                     PageSize,
-                    lastRunDateTime.ToString("O"),
-                    MaxApprenticeshipSearchResultCount,
-                    SortOrder);
+                    lastRunDateTime.ToString("O"));
 
                 if (savedSearchesResponse is { SavedSearchResults.Count: > 0 })
                 {
                     totalPages = savedSearchesResponse.TotalPages;
 
                     batchSavedSearchesNotifications =
-                        savedSearchesResponse.SavedSearchResults.Select(x => (SavedSearch)x).ToList();
+                        savedSearchesResponse.SavedSearchResults.Select(x => (SavedSearchResult)x).ToList();
 
                     pageNumber++;
                 }
@@ -44,7 +40,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
                     break;
                 }
             }
-
+            
+            batchSavedSearchesNotifications.ToList().ForEach(i => i.LastRunDate = lastRunDateTime);
+            
             return batchSavedSearchesNotifications;
         }
     }
