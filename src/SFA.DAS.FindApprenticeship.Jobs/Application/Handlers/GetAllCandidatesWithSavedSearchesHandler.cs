@@ -25,8 +25,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
             {
                 if (savedSearchesResponse is { SavedSearchResults.Count: > 0 })
                 {
-                    savedSearchesNotifications =
-                        savedSearchesResponse.SavedSearchResults.Select(x => (SavedSearchResult)x).ToList();
+                    savedSearchesNotifications.AddRange(
+                        savedSearchesResponse.SavedSearchResults.Select(x => (SavedSearchResult)x).ToList());
 
                     pageNumber++;
                     savedSearchesResponse = await findApprenticeshipJobsService.GetSavedSearches(pageNumber,
