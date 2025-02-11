@@ -109,6 +109,13 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 
             [JsonProperty("distance")]
             public double? Distance { get; set; }
+            
+            [JsonProperty("vacancySource")]
+            public string? VacancySource { get; set; }
+            [JsonProperty("wageUnit")]
+            public string? WageUnit { get; set; }
+            [JsonProperty("wageType")]
+            public string? WageType { get; set; }
         }
 
         public class Address

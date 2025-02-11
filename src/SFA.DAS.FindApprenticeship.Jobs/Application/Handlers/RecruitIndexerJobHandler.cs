@@ -4,14 +4,15 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+
 public class RecruitIndexerJobHandler(
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     IAzureSearchHelper azureSearchHelperService,
     IDateTimeService dateTimeService)
     : IRecruitIndexerJobHandler
 {
-    private const int PageSize = 500;
-
+    private const int PageSize = 500; 
+    
     public async Task Handle()
     {
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
@@ -32,17 +33,17 @@ public class RecruitIndexerJobHandler(
 
             if (liveVacancies != null || nhsLiveVacancies != null)
             {
-                if (liveVacancies.Vacancies.Any())
+                if (liveVacancies != null && liveVacancies.Vacancies.Any())
                 {
-                    batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
+                    var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
+                    batchDocuments.AddRange(documents);
                 }
 
-                if (nhsLiveVacancies.Vacancies.Any())
+                if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
                 {
-                    foreach (var vacancy in nhsLiveVacancies.Vacancies)
-                    {
-                        batchDocuments.Add((ApprenticeAzureSearchDocument)vacancy);
-                    }
+                    batchDocuments.AddRange(nhsLiveVacancies.Vacancies
+                        .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                        .Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
                 }
 
                 await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);

@@ -1,4 +1,6 @@
 #nullable enable
+using System.Text.Json.Serialization;
+
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetLiveVacanciesApiResponse
 {
@@ -17,7 +19,12 @@ public class LiveVacancy
     public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
-    public Address Address { get; set; } = null!;
+    public bool IsPrimaryLocation { get; set; } = true;
+    public Address? Address { get; set; }
+    public List<Address>? EmploymentLocations { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
+    public AvailableWhere? EmploymentLocationOption { get; set; }
+    public string? EmploymentLocationInformation { get; set; }
     public string? EmployerName { get; set; }
     public string ApprenticeshipLevel { get; set; } = null!;
     public string ApplicationMethod { get; set; } = null!;
@@ -72,7 +79,7 @@ public class Address
     public string? Postcode { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-
+    public string? Country { get; set; }
 }
 
 public class Wage
@@ -100,4 +107,11 @@ public class Qualification
     public string Subject { get; set; } = null!;
     public string Grade { get; set; } = null!;
     public string Weighting { get; set; } = null!;
+}
+
+public enum AvailableWhere
+{
+    OneLocation,
+    MultipleLocations,
+    AcrossEngland,
 }
