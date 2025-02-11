@@ -4,13 +4,17 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+
 public class RecruitIndexerJobHandler(
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     IAzureSearchHelper azureSearchHelperService,
     IDateTimeService dateTimeService)
     : IRecruitIndexerJobHandler
 {
-    private const int PageSize = 500;
+    private const int PageSize = 500; 
+    
+    // Define a small tolerance
+    private const double Epsilon = 1e-10;
 
     public async Task Handle()
     {
@@ -32,12 +36,13 @@ public class RecruitIndexerJobHandler(
 
             if (liveVacancies != null || nhsLiveVacancies != null)
             {
-                if (liveVacancies.Vacancies.Any())
+                if (liveVacancies != null && liveVacancies.Vacancies.Any())
                 {
-                    batchDocuments = liveVacancies.Vacancies.Select(a => (ApprenticeAzureSearchDocument)a).ToList();
+                    var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
+                    batchDocuments.AddRange(documents);
                 }
 
-                if (nhsLiveVacancies.Vacancies.Any())
+                if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
                 {
                     batchDocuments.AddRange(nhsLiveVacancies.Vacancies
                         .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
