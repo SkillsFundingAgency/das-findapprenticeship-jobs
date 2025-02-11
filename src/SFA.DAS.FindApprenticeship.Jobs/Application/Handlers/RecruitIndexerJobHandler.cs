@@ -5,6 +5,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+
 public class RecruitIndexerJobHandler(
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     IAzureSearchHelper azureSearchHelperService,
@@ -35,22 +36,15 @@ public class RecruitIndexerJobHandler(
             {
                 if (liveVacancies != null && liveVacancies.Vacancies.Any())
                 {
-                    var vacanciesWithOneLocation = liveVacancies.Vacancies.Where(fil => fil.OtherAddresses.Count == 0)
-                        .Select(a => (ApprenticeAzureSearchDocument) a)
-                        .ToList();
-
-                    var vacanciesWithMultipleLocations = LiveVacancyExtensions.SplitLiveVacanciesToMultipleByLocation(liveVacancies
-                        .Vacancies
-                        .Where(fil => fil.OtherAddresses.Count > 0).ToList());
-
-                    batchDocuments.AddRange(vacanciesWithOneLocation.Concat(vacanciesWithMultipleLocations.Select(a => (ApprenticeAzureSearchDocument)a)).ToList());
+                    var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
+                    batchDocuments.AddRange(documents);
                 }
                     
                 if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
                 {
                     batchDocuments.AddRange(nhsLiveVacancies.Vacancies
                         .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
-                        .Select(vacancy => (ApprenticeAzureSearchDocument)vacancy));
+                        .Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
                 }
 
                 await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);

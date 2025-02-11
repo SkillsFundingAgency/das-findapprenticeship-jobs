@@ -3,6 +3,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+
 public class VacancyClosedHandler(
     IAzureSearchHelper azureSearchHelper,
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
@@ -13,34 +14,23 @@ public class VacancyClosedHandler(
     {
         var vacancyReferenceId = $"{vacancyClosedEvent.VacancyReference}";
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
-        var indexName = alias?.Indexes?.FirstOrDefault();
+        var indexName = alias?.Indexes.FirstOrDefault();
 
-        if (!string.IsNullOrEmpty(indexName))
+        if (string.IsNullOrEmpty(indexName))
         {
-            var vacancyIds = new List<string>
-            {
-                vacancyReferenceId
-            };
-
-            var document = await azureSearchHelper.GetDocument(indexName, $"{vacancyReferenceId}");
-
-            if (document is {Value.OtherAddresses.Count: > 0})
-            {
-                var counter = 1;
-                foreach (var azureSearchDocumentKey in document.Value.OtherAddresses.Select(_ =>
-                             $"{document.Value.Id}-{counter}"))
-                {
-                    vacancyIds.Add(azureSearchDocumentKey);
-                    counter++;
-                }
-            }
-            await azureSearchHelper.DeleteDocuments(indexName, vacancyIds);
-        }
-        else
-        {
-            log.LogInformation($"Index {indexName} not found so document VAC{vacancyReferenceId} has not been deleted");
+            log.LogInformation("Index {IndexName} not found so document VAC{VacancyReference} has not been deleted", indexName, vacancyClosedEvent.VacancyReference);
+            await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
+            return;
         }
 
+        var ids = new List<string> { vacancyClosedEvent.VacancyReference.ToString() };
+        var document = await azureSearchHelper.GetDocument(indexName, ids[0]);
+        if (document is { Value.OtherAddresses.Count: > 0})
+        {
+            ids.AddRange(Enumerable.Range(1, document.Value.OtherAddresses.Count).Select(x => $"{ids[0]}-{x}"));
+        }
+
+        await azureSearchHelper.DeleteDocuments(indexName, ids);
         await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
     }
 }

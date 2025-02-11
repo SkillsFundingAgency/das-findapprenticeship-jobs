@@ -30,7 +30,6 @@ public class WhenHandlingVacancyApprovedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyApprovedHandler sut)
     {
-        liveVacancy.Value.OtherAddresses = [];
         liveVacancy.Value.StandardLarsCode = programmeId;
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
@@ -75,7 +74,7 @@ public class WhenHandlingVacancyApprovedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyApprovedHandler sut)
     {
-        liveVacancy.Value.OtherAddresses = otherAddresses;
+        liveVacancy.Value.EmploymentLocations = otherAddresses;
         liveVacancy.Value.StandardLarsCode = programmeId;
 
         var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));

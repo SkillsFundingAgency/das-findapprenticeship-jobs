@@ -31,29 +31,6 @@ public class TestDataValues
                         Latitude = 51.258114,
                         Longitude = 0.014037
                     },
-                    OtherAddresses =
-                    [
-                        new Address
-                        {
-                            AddressLine1 = "5 Pine Court",
-                            AddressLine2 = "Bristol",
-                            AddressLine3 = "Avon",
-                            AddressLine4 = null,
-                            Postcode = "BS31 2RA",
-                            Latitude = 51.40714,
-                            Longitude = -2.51436
-                        },
-                        new Address
-                        {
-                            AddressLine1 = "Cheylesmore House",
-                            AddressLine2 = "5 Quinton Rd",
-                            AddressLine3 = "Coventry",
-                            AddressLine4 = null,
-                            Postcode = "CW1 2WT",
-                            Latitude = 52.400347,
-                            Longitude = -1.507885
-                        },
-                    ],
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10000528,
                     ProviderName = "BARKING AND DAGENHAM COLLEGE",
@@ -86,7 +63,6 @@ public class TestDataValues
                         Latitude = 51.258114,
                         Longitude = 0.014037
                     },
-                    OtherAddresses = [],
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10001309,
                     ProviderName = "COVENTRY AND WARWICKSHIRE CHAMBERS OF COMMERCE TRAINING LIMITED",
@@ -120,7 +96,6 @@ public class TestDataValues
                         Latitude = 51.258114,
                         Longitude = 0.014037
                     },
-                    OtherAddresses = [],
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10000528,
                     ProviderName = "COVENTRY AND WARWICKSHIRE CHAMBERS OF COMMERCE TRAINING LIMITED",
@@ -156,27 +131,6 @@ public class TestDataValues
                         Latitude = 51.40714,
                         Longitude = -2.51436
                     },
-                    OtherAddresses =
-                    [
-                        new Address
-                        {
-                            AddressLine1 = "White Hart House High Street",
-                            AddressLine2 = "Limpsfield",
-                            Postcode = "RH8 0DT",
-                            Latitude = 51.258114,
-                            Longitude = 0.014037
-                        },
-                        new Address
-                        {
-                            AddressLine1 = "Cheylesmore House",
-                            AddressLine2 = "5 Quinton Rd",
-                            AddressLine3 = "Coventry",
-                            AddressLine4 = null,
-                            Postcode = "CW1 2WT",
-                            Latitude = 52.400347,
-                            Longitude = -1.507885
-                        },
-                    ],
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10000528,
                     ProviderName = "BARKING AND DAGENHAM COLLEGE",
@@ -211,7 +165,32 @@ public class TestDataValues
                         Latitude = 52.400347,
                         Longitude = -1.507885
                     },
-                    OtherAddresses =
+                    EmployerName = "Dashkat Consulting Limited",
+                    Ukprn = 10000528,
+                    ProviderName = "BARKING AND DAGENHAM COLLEGE",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
+                    StartDate = new DateTime(2025, 02, 01),
+                    ClosingDate = new DateTime(2025, 01, 01),
+                    Route = "",
+                    Level = 4,
+                    Wage = new Wage
+                    {
+                        Duration = 2,
+                        DurationUnit = "Year",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Competitive Salary"
+                    }
+                },
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    Title = "Vacancy 1000",
+                    ApprenticeshipTitle = "Apprenticeship title 1000",
+                    Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
+                    EmploymentLocationOption = AvailableWhere.MultipleLocations,
+                    EmploymentLocations = 
                     [
                         new Address
                         {
@@ -225,11 +204,13 @@ public class TestDataValues
                         },
                         new Address
                         {
-                            AddressLine1 = "White Hart House High Street",
-                            AddressLine2 = "Limpsfield",
-                            Postcode = "RH8 0DT",
-                            Latitude = 51.258114,
-                            Longitude = 0.014037
+                            AddressLine1 = "Cheylesmore House",
+                            AddressLine2 = "5 Quinton Rd",
+                            AddressLine3 = "Coventry",
+                            AddressLine4 = null,
+                            Postcode = "CW1 2WT",
+                            Latitude = 52.400347,
+                            Longitude = -1.507885
                         },
                     ],
                     EmployerName = "Dashkat Consulting Limited",
@@ -250,6 +231,70 @@ public class TestDataValues
                         WageType = "Competitive Salary"
                     }
                 },
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    Title = "Vacancy 1001",
+                    ApprenticeshipTitle = "Apprenticeship title 1001",
+                    Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
+                    EmploymentLocationOption = AvailableWhere.OneLocation,
+                    EmploymentLocations = 
+                    [
+                        new Address
+                        {
+                            AddressLine1 = "5 Pine Court",
+                            AddressLine2 = "Bristol",
+                            AddressLine3 = "Avon",
+                            AddressLine4 = null,
+                            Postcode = "BS31 2RA",
+                            Latitude = 51.40714,
+                            Longitude = -2.51436
+                        }
+                    ],
+                    EmployerName = "Dashkat Consulting Limited",
+                    Ukprn = 10000528,
+                    ProviderName = "BARKING AND DAGENHAM COLLEGE",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
+                    StartDate = new DateTime(2025, 02, 01),
+                    ClosingDate = new DateTime(2025, 01, 01),
+                    Route = "",
+                    Level = 4,
+                    Wage = new Wage
+                    {
+                        Duration = 2,
+                        DurationUnit = "Year",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Competitive Salary"
+                    }
+                },
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    Title = "Vacancy 1000",
+                    ApprenticeshipTitle = "Apprenticeship title 1000",
+                    Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
+                    EmploymentLocationOption = AvailableWhere.AcrossEngland,
+                    EmploymentLocationInformation = "Some information about the employment location",
+                    EmployerName = "Dashkat Consulting Limited",
+                    Ukprn = 10000528,
+                    ProviderName = "BARKING AND DAGENHAM COLLEGE",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
+                    StartDate = new DateTime(2025, 02, 01),
+                    ClosingDate = new DateTime(2025, 01, 01),
+                    Route = "",
+                    Level = 4,
+                    Wage = new Wage
+                    {
+                        Duration = 2,
+                        DurationUnit = "Year",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Competitive Salary"
+                    }
+                }
             }
     };
 
