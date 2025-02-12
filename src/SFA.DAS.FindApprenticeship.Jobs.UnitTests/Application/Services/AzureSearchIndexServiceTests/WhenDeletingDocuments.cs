@@ -3,7 +3,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Services.AzureSearchIndexServiceTests;
-public class WhenDeletingDocument
+public class WhenDeletingDocuments
 {
     [Test, MoqAutoData]
     public async Task Then_The_Api_Is_Called_And_The_Document_Is_Deleted(
