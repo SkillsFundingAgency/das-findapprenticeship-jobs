@@ -5,67 +5,10 @@ using Azure.Core.Serialization;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+
 public class ApprenticeAzureSearchDocument
 {
-    const string VacancySourceRecruit = "RAA";
-    const string VacancySourceNhs = "NHS";
-
-    public static implicit operator ApprenticeAzureSearchDocument(LiveVacancy source)
-    {
-        return new ApprenticeAzureSearchDocument
-        {
-            Description = source.Description,
-            Route = source.Route,
-            EmployerName = source.EmployerName,
-            ApprenticeshipLevel = source.ApprenticeshipLevel,
-            ApplicationMethod = source.ApplicationMethod,
-            ApplicationUrl = source.ApplicationUrl,
-            ApplicationInstructions = source.ApplicationInstructions,
-            AccountPublicHashedId = source.AccountPublicHashedId,
-            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
-            HoursPerWeek = (double)source.Wage!.WeeklyHours,
-            ProviderName = source.ProviderName,
-            StartDate = source.StartDate,
-            PostedDate = source.PostedDate,
-            ClosingDate = source.ClosingDate,
-            Title = source.Title,
-            Ukprn = source.Ukprn.ToString(),
-            VacancyReference = $"VAC{source.VacancyReference}",
-            WageText = source.Wage.WageText,
-            Wage = (WageAzureSearchDocument)source.Wage,
-            Course = (CourseAzureSearchDocument)source,
-            Address = (AddressAzureSearchDocument)source.Address,
-            Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
-            NumberOfPositions = source.NumberOfPositions,
-            LongDescription = source.LongDescription,
-            TrainingDescription = source.TrainingDescription,
-            OutcomeDescription = source.OutcomeDescription,
-            Skills = source.Skills.ToList(),
-            ThingsToConsider = source.ThingsToConsider,
-            Id = source.Id,
-            AnonymousEmployerName = source.AnonymousEmployerName,
-            IsDisabilityConfident = source.IsDisabilityConfident,
-            IsPositiveAboutDisability = source.IsPositiveAboutDisability,
-            IsEmployerAnonymous = source.IsEmployerAnonymous,
-            IsRecruitVacancy = source.IsRecruitVacancy,
-            VacancyLocationType = source.VacancyLocationType,
-            EmployerContactEmail = source.EmployerContactEmail,
-            EmployerContactName = source.EmployerContactName,
-            EmployerContactPhone = source.EmployerContactPhone,
-            ProviderContactEmail = source.ProviderContactEmail,
-            ProviderContactName = source.ProviderContactName,
-            ProviderContactPhone = source.ProviderContactPhone,
-            EmployerDescription = source.EmployerDescription,
-            EmployerWebsiteUrl = source.EmployerWebsiteUrl,
-            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
-            TypicalJobTitles = source.TypicalJobTitles,
-            AdditionalQuestion1 = source.AdditionalQuestion1,
-            AdditionalQuestion2 = source.AdditionalQuestion2,
-            AdditionalTrainingDescription = source.AdditionalTrainingDescription,
-            VacancySource = VacancySourceRecruit,
-            SearchTags = source.SearchTags
-        };
-    }
+    private const string VacancySourceNhs = "NHS";
 
     public static implicit operator ApprenticeAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
     {
@@ -91,6 +34,8 @@ public class ApprenticeAzureSearchDocument
             Wage = (WageAzureSearchDocument)source.Wage,
             Course = (CourseAzureSearchDocument)source,
             Address = (AddressAzureSearchDocument)source.Address,
+            IsPrimaryLocation = true,
+            OtherAddresses = [],
             Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
             NumberOfPositions = source.NumberOfPositions,
             LongDescription = source.LongDescription,
@@ -182,6 +127,15 @@ public class ApprenticeAzureSearchDocument
     [SearchableField]
     public AddressAzureSearchDocument? Address { get; set; }
 
+    [SimpleField(IsFilterable = true)]
+    public bool IsPrimaryLocation { get; set; }
+
+    [SimpleField]
+    public List<OtherAddressAzureSearchDocument> OtherAddresses { get; set; } = [];
+
+    [SimpleField]
+    public string? EmploymentLocationInformation { get; set; }
+    
     [SearchableField]
     public WageAzureSearchDocument? Wage { get; set; }
 
@@ -350,6 +304,48 @@ public class AddressAzureSearchDocument
     public double Longitude { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    public string? Country { get; set; }
+}
+
+public class OtherAddressAzureSearchDocument
+{
+    public static OtherAddressAzureSearchDocument From(Address source)
+    {
+        return new OtherAddressAzureSearchDocument
+        {
+            AddressLine1 = source.AddressLine1,
+            AddressLine2 = source.AddressLine2,
+            AddressLine3 = source.AddressLine3,
+            AddressLine4 = source.AddressLine4,
+            Postcode = source.Postcode,
+            Longitude = source.Longitude,
+            Latitude = source.Latitude,
+            Country = source.Country,
+        };
+    }
+
+    [SimpleField]
+    public string? AddressLine1 { get; set; }
+
+    [SimpleField]
+    public string? AddressLine2 { get; set; }
+
+    [SimpleField]
+    public string? AddressLine3 { get; set; }
+
+    [SimpleField]
+    public string? AddressLine4 { get; set; }
+
+    [SimpleField]
+    public string? Postcode { get; set; }
+
+    [SimpleField]
+    public double Latitude { get; set; }
+
+    [SimpleField]
+    public double Longitude { get; set; }
+
+    [SimpleField]
     public string? Country { get; set; }
 }
 

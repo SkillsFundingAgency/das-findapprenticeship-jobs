@@ -1,0 +1,11 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Net;
+global using System.Threading.Tasks;
+global using Microsoft.Azure.Functions.Worker;
+global using Microsoft.Extensions.Logging;
+global using FluentAssertions;
+global using NUnit.Framework;
+global using SFA.DAS.Testing.AutoFixture;
+global using Moq;
+global using AutoFixture.NUnit3;
