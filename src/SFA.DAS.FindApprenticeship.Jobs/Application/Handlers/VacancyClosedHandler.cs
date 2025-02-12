@@ -12,6 +12,7 @@ public class VacancyClosedHandler(
 {
     public async Task Handle(VacancyClosedEvent vacancyClosedEvent)
     {
+        var vacancyReferenceId = $"{vacancyClosedEvent.VacancyReference}";
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias?.Indexes.FirstOrDefault();
 

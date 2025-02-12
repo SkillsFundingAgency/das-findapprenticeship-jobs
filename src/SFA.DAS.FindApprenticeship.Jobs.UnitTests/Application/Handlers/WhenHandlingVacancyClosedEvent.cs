@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Indexes.Models;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
@@ -96,5 +97,22 @@ public class WhenHandlingVacancyClosedEvent
         ids.Should().Contain($"{id}-1");
         ids.Should().Contain($"{id}-2");
         ids.Should().Contain($"{id}-3");
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Event_Is_Ignored_If_No_Index_Is_Currently_Aliased(
+        ILogger log,
+        VacancyClosedEvent vacancyClosedEvent,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        VacancyClosedHandler sut)
+    {
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => null);
+
+        await sut.Handle(vacancyClosedEvent);
+
+        azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never());
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
     }
 }

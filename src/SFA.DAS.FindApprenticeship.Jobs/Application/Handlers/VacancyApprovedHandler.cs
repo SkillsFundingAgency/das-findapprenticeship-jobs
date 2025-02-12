@@ -1,6 +1,7 @@
 ﻿using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 
@@ -28,5 +29,4 @@ public class VacancyApprovedHandler(
             log.LogInformation("Handle VacancyApprovedEvent failed with indexName {IndexName} and vacancyId {VacancyId}", indexName, vacancyApprovedEvent.VacancyId);
         }
     }
-
 }

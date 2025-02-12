@@ -1,4 +1,5 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Domain;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Application.Extensions;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
@@ -13,6 +14,7 @@ public class RecruitIndexerJobHandler(
 {
     private const int PageSize = 500; 
     
+
     public async Task Handle()
     {
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
@@ -38,7 +40,7 @@ public class RecruitIndexerJobHandler(
                     var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
                     batchDocuments.AddRange(documents);
                 }
-
+                    
                 if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
                 {
                     batchDocuments.AddRange(nhsLiveVacancies.Vacancies
