@@ -19,7 +19,6 @@ public class LiveVacancy
     public int NumberOfPositions { get; set; }
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
-    public bool IsPrimaryLocation { get; set; } = true;
     public Address? Address { get; set; }
     public List<Address>? EmploymentLocations { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
