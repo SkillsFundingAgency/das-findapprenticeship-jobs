@@ -10,11 +10,11 @@ public class GetSavedSearchesForCandidateQueueTrigger(
     IGetGetCandidateSavedSearchHandler handler,
     ILogger<SendSavedSearchesNotificationsQueueTrigger> logger)
 {
-    [Function("SendSavedSearchesNotificationsQueueTrigger")]
+    [Function("GetSavedSearchesForCandidateQueueTrigger")]
     [QueueOutput(StorageQueueNames.SendSavedSearchNotificationAlert)]
     public async Task<SavedCandidateSearchResultQueueItem?> Run([QueueTrigger(StorageQueueNames.GetSavedSearchNotifications)] SavedSearchQueueItem queueItem)
     {
-        logger.LogInformation("Send SavedSearchesNotificationsQueueTrigger executed at {DateTime}", DateTime.UtcNow);
+        logger.LogInformation("Send GetSavedSearchesForCandidateQueueTrigger executed at {DateTime}", DateTime.UtcNow);
 
         var savedSearch = JsonSerializer.Deserialize<SavedSearchResult>(queueItem.Payload);
 
@@ -27,7 +27,7 @@ public class GetSavedSearchesForCandidateQueueTrigger(
                 : null;
         }
         
-        logger.LogInformation("Error occurred while deserializing SavedSearchQueueItem: {Item}", queueItem.Payload);
+        logger.LogInformation("Error occurred while deserializing SavedSearchResult: {Item}", queueItem.Payload);
 
         return null;
     }
