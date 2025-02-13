@@ -116,6 +116,40 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         documents.First().Id.Should().Be(liveVacancy.Id);
         documents.First().AvailableWhere.Should().Be(nameof(AvailableWhere.MultipleLocations));
     }
+    
+    [Test, MoqAutoData]
+    public void Create_Deduplicates_Anonymous_MultipleLocations_Vacancy(LiveVacancy liveVacancy)
+    {
+        // arrange
+        liveVacancy.IsEmployerAnonymous = true;
+        liveVacancy.AnonymousEmployerName = "John Smith Ltd";
+        liveVacancy.EmploymentLocationOption = AvailableWhere.MultipleLocations;
+        liveVacancy.Address = null;
+        liveVacancy.EmploymentLocationInformation = null;
+        
+        liveVacancy.EmploymentLocations = [
+            new Address { AddressLine3 = "London", Postcode = "SW1AA", Latitude = 1.2, Longitude = 2.3 },
+            new Address { AddressLine3 = "London", Postcode = "SW1AA", Latitude = 1.2, Longitude = 2.3 },
+            new Address { AddressLine3 = "London", Postcode = "SW2AA", Latitude = 1.2, Longitude = 2.3 },
+            new Address { AddressLine3 = "London", Postcode = "SW2AA", Latitude = 1.2, Longitude = 2.3 },
+        ];
+
+        // act
+        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+
+        // assert
+        documents.Should().HaveCount(2);
+        documents.Should().AllSatisfy(document =>
+        {
+            AssertDocumentIsMappedWithoutAddresses(document, liveVacancy);
+            liveVacancy.EmploymentLocations.Should().ContainEquivalentOf(document.Address);
+            document.OtherAddresses.Should().NotBeNull();
+            document.OtherAddresses.Should().HaveCount(1);
+            document.OtherAddresses.Should().NotContainEquivalentOf(document.Address);
+            document.Location.Should().BeEquivalentTo(new { document.Address!.Latitude, document.Address.Longitude });
+            document.EmploymentLocationInformation.Should().BeNull();
+        });
+    }
 
     private static void AssertDocumentIsMappedWithoutAddresses(ApprenticeAzureSearchDocument document, LiveVacancy source)
     {
