@@ -25,13 +25,14 @@ public static class ApprenticeAzureSearchDocumentFactory
             case AvailableWhere.MultipleLocations:
             {
                 var results = new List<ApprenticeAzureSearchDocument>();
+                var locations = vacancy.EmploymentLocations!.DistinctBy(FlattenAddress).ToList();
                 var count = 0;
-                foreach (var address in vacancy.EmploymentLocations!)
+                foreach (var address in locations)
                 {
                     var document = MapWithoutAddress(vacancy);
                     document.Address = (AddressAzureSearchDocument)address;
                     document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
-                    document.OtherAddresses = vacancy.EmploymentLocations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
+                    document.OtherAddresses = locations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
                     document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
                     results.Add(document);
                 }
@@ -109,5 +110,17 @@ public static class ApprenticeAzureSearchDocumentFactory
             Wage = (WageAzureSearchDocument)vacancy.Wage,
         };
     }
-
+    
+    private static string FlattenAddress(Address address)
+    {
+        List<string> lines = [
+            address.AddressLine1!,
+            address.AddressLine2!,
+            address.AddressLine3!,
+            address.AddressLine4!,
+            address.Postcode!,
+        ];
+        
+        return string.Join(",", lines.Where(x => !string.IsNullOrWhiteSpace(x))).ToLowerInvariant();
+    }
 }
