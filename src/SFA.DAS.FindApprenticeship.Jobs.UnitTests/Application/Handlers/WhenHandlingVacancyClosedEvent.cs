@@ -20,7 +20,7 @@ public class WhenHandlingVacancyClosedEvent
     {
         // arrange
         searchAlias.Indexes.Clear();
-        azureSearchHelper.Setup(x => x.GetAlias(Domain.Constants.AliasName)).ReturnsAsync(searchAlias);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(searchAlias);
         
         // act
         await sut.Handle(vacancyClosedEvent);
@@ -37,7 +37,7 @@ public class WhenHandlingVacancyClosedEvent
         VacancyClosedHandler sut)
     {
         // arrange
-        azureSearchHelper.Setup(x => x.GetAlias(Domain.Constants.AliasName))!.ReturnsAsync((SearchAlias)null!);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))!.ReturnsAsync((SearchAlias)null!);
         
         // act
         await sut.Handle(vacancyClosedEvent);
@@ -58,7 +58,7 @@ public class WhenHandlingVacancyClosedEvent
     {
         // arrange
         documentResponse.Value.OtherAddresses = null;
-        azureSearchHelper.Setup(x => x.GetAlias(Domain.Constants.AliasName)).ReturnsAsync(searchAlias);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(searchAlias);
         azureSearchHelper.Setup(x => x.GetDocument(searchAlias.Indexes.First(), vacancyClosedEvent.VacancyReference.ToString())).ReturnsAsync(documentResponse);
         
         // act
@@ -81,7 +81,7 @@ public class WhenHandlingVacancyClosedEvent
         // arrange
         var id = vacancyClosedEvent.VacancyReference.ToString();
         IEnumerable<string>? capturedIds = null;
-        azureSearchHelper.Setup(x => x.GetAlias(Domain.Constants.AliasName)).ReturnsAsync(searchAlias);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(searchAlias);
         azureSearchHelper.Setup(x => x.GetDocument(searchAlias.Indexes.First(), vacancyClosedEvent.VacancyReference.ToString())).ReturnsAsync(documentResponse);
         azureSearchHelper.Setup(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<string>>())).Callback((string _, IEnumerable<string> ids) => { capturedIds = ids; });
         

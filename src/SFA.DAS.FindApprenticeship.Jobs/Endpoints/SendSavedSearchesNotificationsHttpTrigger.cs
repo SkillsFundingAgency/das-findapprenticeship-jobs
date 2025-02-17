@@ -7,10 +7,10 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Models;
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 
 public class SendSavedSearchesNotificationsHttpTrigger(
-    IGetAllSavedSearchesNotificationHandler handler,
+    IGetAllCandidatesWithSavedSearchesHandler handler,
     ILogger<SendSavedSearchesNotificationsHttpTrigger> log)
 {
-    [QueueOutput(StorageQueueNames.SendSavedSearchNotificationAlert)]
+    [QueueOutput(StorageQueueNames.GetSavedSearchNotifications)]
     [Function("SendSavedSearchesNotificationsHttp")]
     public async Task<List<SavedSearchQueueItem>> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
     {

@@ -1,9 +1,8 @@
 ﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers
+namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
+
+public interface IGetAllCandidatesWithSavedSearchesHandler
 {
-    public interface IGetAllSavedSearchesNotificationHandler
-    {
-        Task<List<SavedSearch>> Handle();
-    }
+    Task<List<SavedSearchResult>> Handle();
 }

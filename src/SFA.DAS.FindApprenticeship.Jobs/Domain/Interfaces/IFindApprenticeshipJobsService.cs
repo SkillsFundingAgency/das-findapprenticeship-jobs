@@ -9,8 +9,9 @@ public interface IFindApprenticeshipJobsService
     Task<GetNhsLiveVacanciesApiResponse> GetNhsLiveVacancies();
     Task SendApplicationClosingSoonReminder(long vacancyReference, int daysUntilExpiry);
     Task CloseVacancyEarly(long vacancyRef);
-    Task<GetSavedSearchesApiResponse> GetSavedSearches(int pageNumber, int pageSize, string lastRunDateTime, int maxApprenticeshipSearchResultCount = 5, string sortOrder = "AgeDesc");
-    Task SendSavedSearchNotification(SavedSearch savedSearch);
+    Task<GetCandidateSavedSearchesApiResponse> GetSavedSearches(int pageNumber, int pageSize, string lastRunDateTime, int maxApprenticeshipSearchResultCount = 5, string sortOrder = "AgeDesc");
+    Task SendSavedSearchNotification(SavedSearchCandidateVacancies savedSearchCandidateVacancies);
     Task<GetInactiveCandidatesApiResponse> GetDormantCandidates(string cutOffDateTime, int pageNumber, int pageSize);
     Task UpdateCandidateStatus(string govIdentifier, string email, CandidateStatus status);
+    Task<SavedSearchCandidateVacancies?> GetSavedSearchResultsForCandidate(SavedSearchResult request);
 }

@@ -15,17 +15,17 @@ public class WhenSavedSearchesNotificationsQueueTriggered
 {
     [Test, MoqAutoData]
     public async Task Then_The_Queue_Item_Is_Processed_And_SendReminderHandler_Called(
-        SavedSearch mockSavedSearch,
+        SavedSearchCandidateVacancies mockSavedSearchCandidateVacancies,
         [Frozen] Mock<ISendSavedSearchesNotificationHandler> handler,
         SendSavedSearchesNotificationsQueueTrigger trigger)
     {
-        var mockSavedSearchQueueItem = new SavedSearchQueueItem
+        var mockSavedSearchQueueItem = new SavedCandidateSearchResultQueueItem
         {
-            Payload = JsonSerializer.Serialize<SavedSearch>(mockSavedSearch)
+            Payload = JsonSerializer.Serialize<SavedSearchCandidateVacancies>(mockSavedSearchCandidateVacancies)
         };
 
         await trigger.Run(mockSavedSearchQueueItem);
 
-        handler.Verify(x => x.Handle(It.IsAny<SavedSearch>()), Times.Once());
+        handler.Verify(x => x.Handle(It.IsAny<SavedSearchCandidateVacancies>()), Times.Once());
     }
 }
