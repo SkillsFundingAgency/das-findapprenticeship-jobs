@@ -2,23 +2,8 @@
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 {
-    public class GetSavedSearchesApiResponse
+    public class GetCandidateSavedSearchResult
     {
-        [JsonProperty("savedSearchResults")]
-        public List<SavedSearchResult> SavedSearchResults { get; set; } = new();
-
-        [JsonProperty("totalCount")]
-        public int TotalCount { get; set; }
-
-        [JsonProperty("pageIndex")]
-        public int PageIndex { get; set; }
-
-        [JsonProperty("pageSize")]
-        public int PageSize { get; set; }
-
-        [JsonProperty("totalPages")]
-        public int TotalPages { get; set; }
-
         public class SavedSearchResult
         {
             [JsonProperty("id")]
