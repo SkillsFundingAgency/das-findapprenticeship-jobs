@@ -19,6 +19,7 @@ public static class ApprenticeAzureSearchDocumentFactory
                 var address = vacancy.EmploymentLocations![0];
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)address;
+                document.IsPrimaryLocation = true;
                 document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
                 return [document];
             }
@@ -31,9 +32,10 @@ public static class ApprenticeAzureSearchDocumentFactory
                 {
                     var document = MapWithoutAddress(vacancy);
                     document.Address = (AddressAzureSearchDocument)address;
+                    document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
+                    document.IsPrimaryLocation = count == 1;
                     document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
                     document.OtherAddresses = locations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
-                    document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
                     results.Add(document);
                 }
                 return results;
@@ -42,12 +44,14 @@ public static class ApprenticeAzureSearchDocumentFactory
             {
                 var document = MapWithoutAddress(vacancy);
                 document.EmploymentLocationInformation = vacancy.EmploymentLocationInformation;
+                document.IsPrimaryLocation = true;
                 return [document];
             }
             default:
             {
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)vacancy.Address;
+                document.IsPrimaryLocation = true;
                 document.Location = GeographyPoint.Create(vacancy.Address!.Latitude, vacancy.Address.Longitude);
                 return [document];
             }
@@ -83,7 +87,6 @@ public static class ApprenticeAzureSearchDocumentFactory
             IsDisabilityConfident = vacancy.IsDisabilityConfident,
             IsEmployerAnonymous = vacancy.IsEmployerAnonymous,
             IsPositiveAboutDisability = vacancy.IsPositiveAboutDisability,
-            IsPrimaryLocation = vacancy.IsPrimaryLocation,
             IsRecruitVacancy = vacancy.IsRecruitVacancy,
             LongDescription = vacancy.LongDescription,
             NumberOfPositions = vacancy.NumberOfPositions,

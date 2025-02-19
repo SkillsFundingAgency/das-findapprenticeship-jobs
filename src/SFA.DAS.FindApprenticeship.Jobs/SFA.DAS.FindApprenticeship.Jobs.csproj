@@ -21,12 +21,12 @@
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
-		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.1.2" />
+		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 		<PackageReference Include="Azure.Search.Documents" Version="11.7.0-beta.1" />
 		<PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Azure.Core.Spatial.NewtonsoftJson" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Spatial" Version="8.1.0" />
+		<PackageReference Include="Microsoft.Spatial" Version="8.2.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.108" />
 		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
