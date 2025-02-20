@@ -12,7 +12,6 @@ public class VacancyClosedHandler(
 {
     public async Task Handle(VacancyClosedEvent vacancyClosedEvent)
     {
-        var vacancyReferenceId = $"{vacancyClosedEvent.VacancyReference}";
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias?.Indexes.FirstOrDefault();
 
@@ -27,7 +26,8 @@ public class VacancyClosedHandler(
         var document = await azureSearchHelper.GetDocument(indexName, ids[0]);
         if (document is { Value.OtherAddresses.Count: > 0})
         {
-            ids.AddRange(Enumerable.Range(1, document.Value.OtherAddresses.Count).Select(x => $"{ids[0]}-{x}"));
+            // Note: multiple locations vacancy has ids such that: xxxx, xxxx-2, xxxx-3 etc. There is no '1' document.
+            ids.AddRange(Enumerable.Range(1, document.Value.OtherAddresses.Count).Select(x => $"{ids[0]}-{x+1}"));
         }
 
         await azureSearchHelper.DeleteDocuments(indexName, ids);
