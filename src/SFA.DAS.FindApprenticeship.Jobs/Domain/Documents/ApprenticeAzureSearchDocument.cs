@@ -133,6 +133,9 @@ public class ApprenticeAzureSearchDocument
     [SimpleField]
     public List<OtherAddressAzureSearchDocument> OtherAddresses { get; set; } = [];
 
+    [SimpleField(IsFilterable = true)]
+    public string AvailableWhere { get; set; }
+
     [SimpleField]
     public string? EmploymentLocationInformation { get; set; }
     

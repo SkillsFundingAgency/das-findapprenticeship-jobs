@@ -94,9 +94,9 @@ public class WhenHandlingVacancyClosedEvent
         ids.Should().NotBeNullOrEmpty();
         ids.Should().HaveCount(documentResponse.Value.OtherAddresses!.Count + 1);
         ids.Should().Contain(id);
-        ids.Should().Contain($"{id}-1");
         ids.Should().Contain($"{id}-2");
         ids.Should().Contain($"{id}-3");
+        ids.Should().Contain($"{id}-4");
     }
 
     [Test, MoqAutoData]

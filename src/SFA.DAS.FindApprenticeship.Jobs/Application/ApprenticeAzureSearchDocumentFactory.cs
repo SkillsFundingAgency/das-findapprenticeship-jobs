@@ -19,20 +19,23 @@ public static class ApprenticeAzureSearchDocumentFactory
                 var address = vacancy.EmploymentLocations![0];
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)address;
+                document.IsPrimaryLocation = true;
                 document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
                 return [document];
             }
             case AvailableWhere.MultipleLocations:
             {
                 var results = new List<ApprenticeAzureSearchDocument>();
+                var locations = vacancy.EmploymentLocations!.DistinctBy(FlattenAddress).ToList();
                 var count = 0;
-                foreach (var address in vacancy.EmploymentLocations!)
+                foreach (var address in locations)
                 {
                     var document = MapWithoutAddress(vacancy);
                     document.Address = (AddressAzureSearchDocument)address;
+                    document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
+                    document.IsPrimaryLocation = count == 1;
                     document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
-                    document.OtherAddresses = vacancy.EmploymentLocations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
-                    document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";  
+                    document.OtherAddresses = locations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
                     results.Add(document);
                 }
                 return results;
@@ -41,12 +44,14 @@ public static class ApprenticeAzureSearchDocumentFactory
             {
                 var document = MapWithoutAddress(vacancy);
                 document.EmploymentLocationInformation = vacancy.EmploymentLocationInformation;
+                document.IsPrimaryLocation = true;
                 return [document];
             }
             default:
             {
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)vacancy.Address;
+                document.IsPrimaryLocation = true;
                 document.Location = GeographyPoint.Create(vacancy.Address!.Latitude, vacancy.Address.Longitude);
                 return [document];
             }
@@ -67,6 +72,7 @@ public static class ApprenticeAzureSearchDocumentFactory
             ApplicationMethod = vacancy.ApplicationMethod,
             ApplicationUrl = vacancy.ApplicationUrl,
             ApprenticeshipLevel = vacancy.ApprenticeshipLevel,
+            AvailableWhere = vacancy.EmploymentLocationOption?.ToString()!,
             ClosingDate = vacancy.ClosingDate,
             Course = (CourseAzureSearchDocument)vacancy,
             Description = vacancy.Description,
@@ -81,7 +87,6 @@ public static class ApprenticeAzureSearchDocumentFactory
             IsDisabilityConfident = vacancy.IsDisabilityConfident,
             IsEmployerAnonymous = vacancy.IsEmployerAnonymous,
             IsPositiveAboutDisability = vacancy.IsPositiveAboutDisability,
-            IsPrimaryLocation = vacancy.IsPrimaryLocation,
             IsRecruitVacancy = vacancy.IsRecruitVacancy,
             LongDescription = vacancy.LongDescription,
             NumberOfPositions = vacancy.NumberOfPositions,
@@ -108,5 +113,17 @@ public static class ApprenticeAzureSearchDocumentFactory
             Wage = (WageAzureSearchDocument)vacancy.Wage,
         };
     }
-
+    
+    private static string FlattenAddress(Address address)
+    {
+        List<string> lines = [
+            address.AddressLine1!,
+            address.AddressLine2!,
+            address.AddressLine3!,
+            address.AddressLine4!,
+            address.Postcode!,
+        ];
+        
+        return string.Join(",", lines.Where(x => !string.IsNullOrWhiteSpace(x))).ToLowerInvariant();
+    }
 }

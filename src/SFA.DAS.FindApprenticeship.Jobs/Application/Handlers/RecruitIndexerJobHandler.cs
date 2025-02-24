@@ -13,6 +13,7 @@ public class RecruitIndexerJobHandler(
     : IRecruitIndexerJobHandler
 {
     private const int PageSize = 500; 
+    
 
     public async Task Handle()
     {
