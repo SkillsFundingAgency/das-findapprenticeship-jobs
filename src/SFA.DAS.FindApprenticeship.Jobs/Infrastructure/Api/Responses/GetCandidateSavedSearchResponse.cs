@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 {
-    public class GetCandidateSavedSearchResult
+    public class GetCandidateSavedSearchResponse
     {
         public class SavedSearchResult
         {
@@ -81,7 +81,15 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             public string? EmployerName { get; set; }
 
             [JsonProperty("address")]
-            public Address Address { get; set; } = new();
+            public Address? Address { get; set; }
+
+            [JsonProperty("otherAddresses")]
+            public List<Address>? OtherAddresses { get; set; }
+            [JsonProperty("employmentLocationInformation")]
+            public string? EmploymentLocationInformation { get; set; }
+
+            [JsonProperty("availableWhere")]
+            public AvailableWhere? EmploymentLocationOption { get; set; }
 
             [JsonProperty("wage")]
             public string? Wage { get; set; }
