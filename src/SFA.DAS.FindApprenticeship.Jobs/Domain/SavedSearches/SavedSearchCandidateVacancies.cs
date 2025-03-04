@@ -15,7 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public string? UnSubscribeToken { get; set; }
         public List<Vacancy> Vacancies { get; set; } = [];
 
-        public static implicit operator SavedSearchCandidateVacancies(GetCandidateSavedSearchResponse.SavedSearchResult source)
+        public static implicit operator SavedSearchCandidateVacancies(GetCandidateSavedSearchResponse source)
         {
             return new SavedSearchCandidateVacancies
             {
@@ -94,7 +94,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 
             public string? Postcode { get; set; }
 
-            public static implicit operator Address?(GetCandidateSavedSearchResponse.Address? source)
+            public static implicit operator Address?(GetCandidateSavedSearchResponse.VacancyAddress? source)
             {
                 if (source == null)
                 {
