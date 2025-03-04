@@ -7,7 +7,7 @@ public class GetCandidateSavedSearchResponse
 
     [JsonPropertyName("id")] public Guid Id { get; set; }
 
-    [JsonPropertyName("userDetails")] public UserDetails User { get; set; } = new();
+    [JsonPropertyName("user")] public UserDetails User { get; set; } = new();
 
     [JsonPropertyName("categories")] public List<Category>? Categories { get; set; }
 
