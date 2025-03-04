@@ -72,7 +72,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     TrainingCourse = source.TrainingCourse,
                     Distance = source.Distance,
                     Address = source.Address,
-                    OtherAddresses = source.OtherAddresses.Select(x => (Address)x!).ToList(),
+                    OtherAddresses = source.OtherAddresses.Count > 0 ? source.OtherAddresses.Select(x => (Address)x!).ToList() : [],
                     EmploymentLocationInformation = source.EmploymentLocationInformation,
                     EmploymentLocationOption = source.EmploymentLocationOption,
                     VacancySource = source.VacancySource,

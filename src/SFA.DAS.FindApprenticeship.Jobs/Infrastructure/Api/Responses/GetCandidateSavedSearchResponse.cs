@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
 {
@@ -6,126 +6,127 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
     {
         public class SavedSearchResult
         {
-            [JsonProperty("id")]
+            [JsonPropertyName("id")]
             public Guid Id { get; set; }
             
-            [JsonProperty("userDetails")] 
+            [JsonPropertyName("userDetails")] 
             public UserDetails User { get; set; } = new();
 
-            [JsonProperty("categories")] 
+            [JsonPropertyName("categories")] 
             public List<Category>? Categories { get; set; }
 
-            [JsonProperty("levels")]
+            [JsonPropertyName("levels")]
             public List<Level>? Levels { get; set; } 
 
-            [JsonProperty("distance")]
+            [JsonPropertyName("distance")]
             public int? Distance { get; set; }
 
-            [JsonProperty("searchTerm")]
+            [JsonPropertyName("searchTerm")]
             public string? SearchTerm { get; set; }
 
-            [JsonProperty("location")]
+            [JsonPropertyName("location")]
             public string? Location { get; set; }
 
-            [JsonProperty("disabilityConfident")]
+            [JsonPropertyName("disabilityConfident")]
             public bool DisabilityConfident { get; set; }
 
-            [JsonProperty("unSubscribeToken")]
+            [JsonPropertyName("unSubscribeToken")]
             public string? UnSubscribeToken { get; set; }
 
-            [JsonProperty("vacancies")] 
+            [JsonPropertyName("vacancies")] 
             public List<Vacancy> Vacancies { get; set; } = [];
         }
 
         public class UserDetails
         {
-            [JsonProperty("id")]
+            [JsonPropertyName("id")]
             public Guid Id { get; set; }
-            [JsonProperty("firstName")]
+            [JsonPropertyName("firstName")]
             public string? FirstName { get; set; }
-            [JsonProperty("middleNames")]
+            [JsonPropertyName("middleNames")]
             public string? MiddleNames { get; set; }
-            [JsonProperty("lastName")]
+            [JsonPropertyName("lastName")]
             public string? LastName { get; set; }
-            [JsonProperty("email")]
+            [JsonPropertyName("email")]
             public string? Email { get; set; }
         }
 
         public class Category
         {
-            [JsonProperty("id")]
+            [JsonPropertyName("id")]
             public int Id { get; set; }
-            [JsonProperty("name")]
+            [JsonPropertyName("name")]
             public string? Name { get; set; }
         }
         public class Level
         {
-            [JsonProperty("code")]
+            [JsonPropertyName("code")]
             public int Code { get; set; }
-            [JsonProperty("name")]
+            [JsonPropertyName("name")]
             public string? Name { get; set; }
         }
 
         public class Vacancy
         {
-            [JsonProperty("id")]
+            [JsonPropertyName("id")]
             public string? Id { get; set; }
 
-            [JsonProperty("vacancyReference")]
+            [JsonPropertyName("vacancyReference")]
             public string? VacancyReference { get; set; }
 
-            [JsonProperty("title")]
+            [JsonPropertyName("title")]
             public string? Title { get; set; }
 
-            [JsonProperty("employerName")]
+            [JsonPropertyName("employerName")]
             public string? EmployerName { get; set; }
 
-            [JsonProperty("address")]
+            [JsonPropertyName("address")]
             public Address? Address { get; set; }
 
-            [JsonProperty("otherAddresses")] 
+            [JsonPropertyName("otherAddresses")] 
             public List<Address> OtherAddresses { get; set; } = [];
-            [JsonProperty("employmentLocationInformation")]
+            [JsonPropertyName("employmentLocationInformation")]
             public string? EmploymentLocationInformation { get; set; }
 
-            [JsonProperty("availableWhere")]
+            [JsonPropertyName("availableWhere")]
+            [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
             public AvailableWhere? EmploymentLocationOption { get; set; }
 
-            [JsonProperty("wage")]
+            [JsonPropertyName("wage")]
             public string? Wage { get; set; }
 
-            [JsonProperty("closingDate")]
+            [JsonPropertyName("closingDate")]
             public string? ClosingDate { get; set; }
 
-            [JsonProperty("trainingCourse")]
+            [JsonPropertyName("trainingCourse")]
             public string? TrainingCourse { get; set; }
 
-            [JsonProperty("distance")]
+            [JsonPropertyName("distance")]
             public double? Distance { get; set; }
             
-            [JsonProperty("vacancySource")]
+            [JsonPropertyName("vacancySource")]
             public string? VacancySource { get; set; }
-            [JsonProperty("wageUnit")]
+            [JsonPropertyName("wageUnit")]
             public string? WageUnit { get; set; }
-            [JsonProperty("wageType")]
+            [JsonPropertyName("wageType")]
             public string? WageType { get; set; }
         }
 
         public class Address
         {
-            [JsonProperty("addressLine1")]
+            [JsonPropertyName("addressLine1")]
             public string? AddressLine1 { get; set; }
 
-            [JsonProperty("addressLine2")]
+            [JsonPropertyName("addressLine2")]
             public string? AddressLine2 { get; set; }
 
-            [JsonProperty("addressLine3")]
+            [JsonPropertyName("addressLine3")]
             public string? AddressLine3 { get; set; }
 
-            [JsonProperty("addressLine4")]
+            [JsonPropertyName("addressLine4")]
             public string? AddressLine4 { get; set; }
 
-            [JsonProperty("postcode")]
+            [JsonPropertyName("postcode")]
             public string? Postcode { get; set; }
         }
     }
