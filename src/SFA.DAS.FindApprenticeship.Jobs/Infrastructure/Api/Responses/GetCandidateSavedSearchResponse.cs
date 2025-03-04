@@ -88,7 +88,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             [JsonPropertyName("employmentLocationInformation")]
             public string? EmploymentLocationInformation { get; set; }
 
-            [JsonPropertyName("availableWhere")]
+            [JsonPropertyName("employmentLocationOption")]
             [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
             public AvailableWhere? EmploymentLocationOption { get; set; }
 
