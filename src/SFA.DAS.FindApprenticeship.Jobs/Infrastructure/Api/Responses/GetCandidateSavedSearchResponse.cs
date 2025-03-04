@@ -83,8 +83,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
             [JsonProperty("address")]
             public Address? Address { get; set; }
 
-            [JsonProperty("otherAddresses")]
-            public List<Address>? OtherAddresses { get; set; }
+            [JsonProperty("otherAddresses")] 
+            public List<Address> OtherAddresses { get; set; } = [];
             [JsonProperty("employmentLocationInformation")]
             public string? EmploymentLocationInformation { get; set; }
 

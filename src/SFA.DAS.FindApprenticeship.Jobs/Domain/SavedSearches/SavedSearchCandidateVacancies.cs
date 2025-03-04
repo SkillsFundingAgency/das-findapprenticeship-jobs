@@ -43,7 +43,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? EmployerName { get; set; }
 
             public Address? Address { get; set; }
-            public List<Address>? OtherAddresses { get; set; }
+            public List<Address> OtherAddresses { get; set; } = [];
             public string? EmploymentLocationInformation { get; set; }
             public AvailableWhere? EmploymentLocationOption { get; set; }
 
@@ -72,7 +72,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     TrainingCourse = source.TrainingCourse,
                     Distance = source.Distance,
                     Address = source.Address,
-                    OtherAddresses = source.OtherAddresses?.Select(x => (Address)x).ToList(),
+                    OtherAddresses = source.OtherAddresses.Select(x => (Address)x!).ToList(),
                     EmploymentLocationInformation = source.EmploymentLocationInformation,
                     EmploymentLocationOption = source.EmploymentLocationOption,
                     VacancySource = source.VacancySource,
@@ -94,8 +94,12 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 
             public string? Postcode { get; set; }
 
-            public static implicit operator Address(GetCandidateSavedSearchResponse.Address source)
+            public static implicit operator Address?(GetCandidateSavedSearchResponse.Address? source)
             {
+                if (source == null)
+                {
+                    return null;
+                }
                 return new Address
                 {
                     AddressLine1 = source.AddressLine1,
