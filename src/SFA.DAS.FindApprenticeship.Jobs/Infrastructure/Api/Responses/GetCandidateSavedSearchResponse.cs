@@ -5,26 +5,35 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public class GetCandidateSavedSearchResponse
 {
 
-    [JsonPropertyName("id")] public Guid Id { get; set; }
+    [JsonPropertyName("id")] 
+    public Guid Id { get; set; }
 
-    [JsonPropertyName("user")] public UserDetails User { get; set; } = new();
+    [JsonPropertyName("user")] 
+    public UserDetails User { get; set; } = new();
 
-    [JsonPropertyName("categories")] public List<Category>? Categories { get; set; }
+    [JsonPropertyName("categories")] 
+    public List<Category>? Categories { get; set; }
 
-    [JsonPropertyName("levels")] public List<Level>? Levels { get; set; }
+    [JsonPropertyName("levels")] 
+    public List<Level>? Levels { get; set; }
 
-    [JsonPropertyName("distance")] public int? Distance { get; set; }
+    [JsonPropertyName("distance")] 
+    public int? Distance { get; set; }
 
-    [JsonPropertyName("searchTerm")] public string? SearchTerm { get; set; }
+    [JsonPropertyName("searchTerm")] 
+    public string? SearchTerm { get; set; }
 
-    [JsonPropertyName("location")] public string? Location { get; set; }
+    [JsonPropertyName("location")] 
+    public string? Location { get; set; }
 
     [JsonPropertyName("disabilityConfident")]
     public bool DisabilityConfident { get; set; }
 
-    [JsonPropertyName("unSubscribeToken")] public string? UnSubscribeToken { get; set; }
+    [JsonPropertyName("unSubscribeToken")] 
+    public string? UnSubscribeToken { get; set; }
 
-    [JsonPropertyName("vacancies")] public List<Vacancy> Vacancies { get; set; } = [];
+    [JsonPropertyName("vacancies")] 
+    public List<Vacancy> Vacancies { get; set; } = [];
     public class UserDetails
     {
         [JsonPropertyName("id")]
@@ -77,8 +86,7 @@ public class GetCandidateSavedSearchResponse
         public string? EmploymentLocationInformation { get; set; }
 
         [JsonPropertyName("employmentLocationOption")]
-        [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
-        public AvailableWhere? EmploymentLocationOption { get; set; }
+        public string? EmploymentLocationOption { get; set; }
 
         [JsonPropertyName("wage")]
         public string? Wage { get; set; }
