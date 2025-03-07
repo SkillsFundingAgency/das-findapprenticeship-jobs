@@ -11,8 +11,8 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     public void Create_Maps_Deprecated_Address_Style_Vacancy(LiveVacancy liveVacancy)
     {
         // arrange
-        liveVacancy.EmploymentLocationOption = null;
-        liveVacancy.EmploymentLocations = null;
+        liveVacancy.EmployerLocationOption = null;
+        liveVacancy.EmployerLocations = null;
         liveVacancy.EmploymentLocationInformation = null;
 
         // act
@@ -33,9 +33,9 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     public void Create_Maps_OneLocation_Vacancy(LiveVacancy liveVacancy)
     {
         // arrange
-        var address = liveVacancy.EmploymentLocations!.First();
-        liveVacancy.EmploymentLocationOption = AvailableWhere.OneLocation;
-        liveVacancy.EmploymentLocations = [address];
+        var address = liveVacancy.EmployerLocations!.First();
+        liveVacancy.EmployerLocationOption = AvailableWhere.OneLocation;
+        liveVacancy.EmployerLocations = [address];
         liveVacancy.EmploymentLocationInformation = null;
         liveVacancy.Address = null;
 
@@ -57,8 +57,8 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     public void Create_Maps_RecruitNationally_Vacancy(LiveVacancy liveVacancy)
     {
         // arrange
-        liveVacancy.EmploymentLocationOption = AvailableWhere.AcrossEngland;
-        liveVacancy.EmploymentLocations = null;
+        liveVacancy.EmployerLocationOption = AvailableWhere.AcrossEngland;
+        liveVacancy.EmployerLocations = null;
         liveVacancy.Address = null;
 
         // act
@@ -80,7 +80,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     public void Create_Maps_MultipleLocations_Vacancy(LiveVacancy liveVacancy)
     {
         // arrange
-        liveVacancy.EmploymentLocationOption = AvailableWhere.MultipleLocations;
+        liveVacancy.EmployerLocationOption = AvailableWhere.MultipleLocations;
         liveVacancy.Address = null;
         liveVacancy.EmploymentLocationInformation = null;
 
@@ -88,16 +88,16 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
 
         // assert
-        documents.Should().HaveCount(liveVacancy.EmploymentLocations!.Count);
+        documents.Should().HaveCount(liveVacancy.EmployerLocations!.Count);
         documents.Should().AllSatisfy(document =>
         {
             AssertDocumentIsMappedWithoutAddresses(document, liveVacancy);
-            liveVacancy.EmploymentLocations.Should().ContainEquivalentOf(document.Address);
+            liveVacancy.EmployerLocations.Should().ContainEquivalentOf(document.Address);
             document.AvailableWhere.Should().Be(nameof(AvailableWhere.MultipleLocations));
             document.EmploymentLocationInformation.Should().BeNull();
             document.Location.Should().BeEquivalentTo(new { document.Address!.Latitude, document.Address.Longitude });
             document.OtherAddresses.Should().NotBeNull();
-            document.OtherAddresses.Should().HaveCount(liveVacancy.EmploymentLocations!.Count - 1);
+            document.OtherAddresses.Should().HaveCount(liveVacancy.EmployerLocations!.Count - 1);
             document.OtherAddresses.Should().NotContainEquivalentOf(document.Address);
         });
         
@@ -109,7 +109,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     public void Create_Maps_MultipleLocations_Vacancy_With_Unique_Ids(LiveVacancy liveVacancy)
     {
         // arrange
-        liveVacancy.EmploymentLocationOption = AvailableWhere.MultipleLocations;
+        liveVacancy.EmployerLocationOption = AvailableWhere.MultipleLocations;
         liveVacancy.Address = null;
         liveVacancy.EmploymentLocationInformation = null;
 
@@ -129,11 +129,11 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         // arrange
         liveVacancy.IsEmployerAnonymous = true;
         liveVacancy.AnonymousEmployerName = "John Smith Ltd";
-        liveVacancy.EmploymentLocationOption = AvailableWhere.MultipleLocations;
+        liveVacancy.EmployerLocationOption = AvailableWhere.MultipleLocations;
         liveVacancy.Address = null;
         liveVacancy.EmploymentLocationInformation = null;
         
-        liveVacancy.EmploymentLocations = [
+        liveVacancy.EmployerLocations = [
             new Address { AddressLine3 = "London", Postcode = "SW1AA", Latitude = 1.2, Longitude = 2.3 },
             new Address { AddressLine3 = "London", Postcode = "SW1AA", Latitude = 1.2, Longitude = 2.3 },
             new Address { AddressLine3 = "London", Postcode = "SW2AA", Latitude = 1.2, Longitude = 2.3 },
@@ -148,7 +148,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         documents.Should().AllSatisfy(document =>
         {
             AssertDocumentIsMappedWithoutAddresses(document, liveVacancy);
-            liveVacancy.EmploymentLocations.Should().ContainEquivalentOf(document.Address);
+            liveVacancy.EmployerLocations.Should().ContainEquivalentOf(document.Address);
             document.EmploymentLocationInformation.Should().BeNull();
             document.Location.Should().BeEquivalentTo(new { document.Address!.Latitude, document.Address.Longitude });
             document.OtherAddresses.Should().NotBeNull();

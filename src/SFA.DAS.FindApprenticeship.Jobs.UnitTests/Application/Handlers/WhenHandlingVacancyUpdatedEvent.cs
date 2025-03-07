@@ -27,7 +27,7 @@ public class WhenHandlingVacancyUpdatedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
-        liveVacancy.Value.EmploymentLocations = otherAddresses;
+        liveVacancy.Value.EmployerLocations = otherAddresses;
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
@@ -75,7 +75,7 @@ public class WhenHandlingVacancyUpdatedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
     {
-        liveVacancy.Value.EmploymentLocations = [];
+        liveVacancy.Value.EmployerLocations = [];
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);

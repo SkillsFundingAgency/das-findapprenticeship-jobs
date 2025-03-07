@@ -16,14 +16,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         public void Then_EmploymentLocationOption_Can_Be_Deserialized(string? value, AvailableWhere? expected)
         {
             // arrange
-            var json = $"{{\"EmploymentLocationOption\":{value}}}";
+            var json = $"{{\"EmployerLocationOption\":{value}}}";
             
             // act
             var newLiveVacancy = System.Text.Json.JsonSerializer.Deserialize<LiveVacancy>(json);
 
             // assert
             newLiveVacancy.Should().NotBeNull();
-            newLiveVacancy!.EmploymentLocationOption.Should().Be(expected);
+            newLiveVacancy!.EmployerLocationOption.Should().Be(expected);
         }
         
         [Test, MoqAutoData]

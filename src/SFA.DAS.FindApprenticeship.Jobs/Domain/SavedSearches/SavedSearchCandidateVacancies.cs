@@ -43,9 +43,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? EmployerName { get; set; }
 
             public Address? Address { get; set; }
-            public List<Address> OtherAddresses { get; set; } = [];
+            public List<Address>? OtherAddresses { get; set; } = [];
             public string? EmploymentLocationInformation { get; set; }
-            public string? EmploymentLocationOption { get; set; }
+            public string? EmployerLocationOption { get; set; }
 
             public string? Wage { get; set; }
 
@@ -74,7 +74,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     Address = source.Address,
                     OtherAddresses = source.OtherAddresses.Count > 0 ? source.OtherAddresses.Select(x => (Address)x!).ToList() : [],
                     EmploymentLocationInformation = source.EmploymentLocationInformation,
-                    EmploymentLocationOption = source.EmploymentLocationOption,
+                    EmployerLocationOption = source.EmploymentLocationOption,
                     VacancySource = source.VacancySource,
                     WageUnit = source.WageUnit,
                     WageType = source.WageType

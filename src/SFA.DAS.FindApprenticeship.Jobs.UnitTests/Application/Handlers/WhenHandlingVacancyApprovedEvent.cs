@@ -74,7 +74,7 @@ public class WhenHandlingVacancyApprovedEvent
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyApprovedHandler sut)
     {
-        liveVacancy.Value.EmploymentLocations = otherAddresses;
+        liveVacancy.Value.EmployerLocations = otherAddresses;
         liveVacancy.Value.StandardLarsCode = programmeId;
 
         var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));

@@ -20,9 +20,9 @@ public class LiveVacancy
     public string ApprenticeshipTitle { get; set; } = null!;
     public string? Description { get; set; }
     public Address? Address { get; set; }
-    public List<Address>? EmploymentLocations { get; set; }
+    public List<Address>? EmployerLocations { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
-    public AvailableWhere? EmploymentLocationOption { get; set; }
+    public AvailableWhere? EmployerLocationOption { get; set; }
     public string? EmploymentLocationInformation { get; set; }
     public string? EmployerName { get; set; }
     public string ApprenticeshipLevel { get; set; } = null!;
