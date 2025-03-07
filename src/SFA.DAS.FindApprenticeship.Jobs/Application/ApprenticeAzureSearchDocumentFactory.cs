@@ -12,11 +12,11 @@ public static class ApprenticeAzureSearchDocumentFactory
     // as we now have a 1 to MANY relationship between live vacancies and azure indexed documents.
     public static IEnumerable<ApprenticeAzureSearchDocument> Create(LiveVacancy vacancy)
     {
-        switch (vacancy.EmploymentLocationOption)
+        switch (vacancy.EmployerLocationOption)
         {
             case AvailableWhere.OneLocation:
             {
-                var address = vacancy.EmploymentLocations![0];
+                var address = vacancy.EmployerLocations![0];
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)address;
                 document.IsPrimaryLocation = true;
@@ -26,7 +26,7 @@ public static class ApprenticeAzureSearchDocumentFactory
             case AvailableWhere.MultipleLocations:
             {
                 var results = new List<ApprenticeAzureSearchDocument>();
-                var locations = vacancy.EmploymentLocations!.DistinctBy(FlattenAddress).ToList();
+                var locations = vacancy.EmployerLocations!.DistinctBy(FlattenAddress).ToList();
                 var count = 0;
                 foreach (var address in locations)
                 {
@@ -72,7 +72,7 @@ public static class ApprenticeAzureSearchDocumentFactory
             ApplicationMethod = vacancy.ApplicationMethod,
             ApplicationUrl = vacancy.ApplicationUrl,
             ApprenticeshipLevel = vacancy.ApprenticeshipLevel,
-            AvailableWhere = vacancy.EmploymentLocationOption?.ToString()!,
+            AvailableWhere = vacancy.EmployerLocationOption?.ToString()!,
             ClosingDate = vacancy.ClosingDate,
             Course = (CourseAzureSearchDocument)vacancy,
             Description = vacancy.Description,

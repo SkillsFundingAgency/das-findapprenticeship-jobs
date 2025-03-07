@@ -189,8 +189,8 @@ public class TestDataValues
                     Title = "Vacancy 1000",
                     ApprenticeshipTitle = "Apprenticeship title 1000",
                     Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
-                    EmploymentLocationOption = AvailableWhere.MultipleLocations,
-                    EmploymentLocations = 
+                    EmployerLocationOption = AvailableWhere.MultipleLocations,
+                    EmployerLocations = 
                     [
                         new Address
                         {
@@ -237,8 +237,8 @@ public class TestDataValues
                     Title = "Vacancy 1001",
                     ApprenticeshipTitle = "Apprenticeship title 1001",
                     Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
-                    EmploymentLocationOption = AvailableWhere.OneLocation,
-                    EmploymentLocations = 
+                    EmployerLocationOption = AvailableWhere.OneLocation,
+                    EmployerLocations = 
                     [
                         new Address
                         {
@@ -275,7 +275,7 @@ public class TestDataValues
                     Title = "Vacancy 1000",
                     ApprenticeshipTitle = "Apprenticeship title 1000",
                     Description = "<ul>\r\n<li>API Testing</li>\r\n<li>Selenium Training</li>\r\n<li>Automation Testing</li>\r\n</ul>",
-                    EmploymentLocationOption = AvailableWhere.AcrossEngland,
+                    EmployerLocationOption = AvailableWhere.AcrossEngland,
                     EmploymentLocationInformation = "Some information about the employment location",
                     EmployerName = "Dashkat Consulting Limited",
                     Ukprn = 10000528,
