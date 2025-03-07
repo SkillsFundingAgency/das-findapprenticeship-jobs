@@ -1,63 +1,62 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses
+namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+
+public class GetCandidateSavedSearchesApiResponse
 {
-    public class GetCandidateSavedSearchesApiResponse
-    {
-        [JsonProperty("savedSearchResults")]
-        public List<SavedSearchResult> SavedSearchResults { get; set; } = new();
+    [JsonPropertyName("savedSearchResults")]
+    public List<SavedSearchResult> SavedSearchResults { get; set; } = new();
 
-        [JsonProperty("totalCount")]
-        public int TotalCount { get; set; }
+    [JsonPropertyName("totalCount")]
+    public int TotalCount { get; set; }
 
-        [JsonProperty("pageIndex")]
-        public int PageIndex { get; set; }
+    [JsonPropertyName("pageIndex")]
+    public int PageIndex { get; set; }
     
-        [JsonProperty("pageSize")]
-        public int PageSize { get; set; }
+    [JsonPropertyName("pageSize")]
+    public int PageSize { get; set; }
 
-        [JsonProperty("totalPages")]
-        public int TotalPages { get; set; }
+    [JsonPropertyName("totalPages")]
+    public int TotalPages { get; set; }
         
-        [JsonProperty("lastRunDateFilter")]
-        public DateTime LastRunDateFilter { get; set; }
+    [JsonPropertyName("lastRunDateFilter")]
+    public DateTime LastRunDateFilter { get; set; }
 
-        public class SavedSearchResult
-        {
-            [JsonProperty("id")]
-            public Guid Id { get; set; }
+    public class SavedSearchResult
+    {
+        [JsonPropertyName("id")]
+        public Guid Id { get; set; }
             
-            [JsonProperty("userId")] 
-            public Guid UserId { get; set; }
+        [JsonPropertyName("userId")] 
+        public Guid UserId { get; set; }
 
-            [JsonProperty("distance")]
-            public decimal? Distance { get; set; }
+        [JsonPropertyName("distance")]
+        public decimal? Distance { get; set; }
 
-            [JsonProperty("searchTerm")]
-            public string? SearchTerm { get; set; }
+        [JsonPropertyName("searchTerm")]
+        public string? SearchTerm { get; set; }
 
-            [JsonProperty("location")]
-            public string? Location { get; set; }
+        [JsonPropertyName("location")]
+        public string? Location { get; set; }
 
-            [JsonProperty("disabilityConfident")]
-            public bool DisabilityConfident { get; set; }
+        [JsonPropertyName("disabilityConfident")]
+        public bool DisabilityConfident { get; set; }
             
-            [JsonProperty("longitude")]
-            public string? Longitude { get; set; }
+        [JsonPropertyName("longitude")]
+        public string? Longitude { get; set; }
             
-            [JsonProperty("longitude")]
-            public string? Latitude { get; set; }
+        [JsonPropertyName("latitude")]
+        public string? Latitude { get; set; }
             
-            [JsonProperty("selectedRouteIds")] 
-            public List<int>? SelectedRouteIds { get; set; }
+        [JsonPropertyName("selectedRouteIds")] 
+        public List<int>? SelectedRouteIds { get; set; }
 
-            [JsonProperty("selectedLevelIds")]
-            public List<int>? SelectedLevelIds { get; set; } 
+        [JsonPropertyName("selectedLevelIds")]
+        public List<int>? SelectedLevelIds { get; set; } 
 
-            [JsonProperty("unSubscribeToken")]
-            public string? UnSubscribeToken { get; set; }
-
-        }
+        [JsonPropertyName("unSubscribeToken")]
+        public string? UnSubscribeToken { get; set; }
 
     }
+
 }

@@ -15,7 +15,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public string? UnSubscribeToken { get; set; }
         public List<Vacancy> Vacancies { get; set; } = [];
 
-        public static implicit operator SavedSearchCandidateVacancies(GetCandidateSavedSearchResult.SavedSearchResult source)
+        public static implicit operator SavedSearchCandidateVacancies(GetCandidateSavedSearchResponse source)
         {
             return new SavedSearchCandidateVacancies
             {
@@ -42,7 +42,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 
             public string? EmployerName { get; set; }
 
-            public Address Address { get; set; } = new();
+            public Address? Address { get; set; }
+            public List<Address> OtherAddresses { get; set; } = [];
+            public string? EmploymentLocationInformation { get; set; }
+            public string? EmploymentLocationOption { get; set; }
 
             public string? Wage { get; set; }
 
@@ -56,7 +59,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? WageUnit { get; set; }
             public string? WageType { get; set; }
 
-            public static implicit operator Vacancy(GetCandidateSavedSearchResult.Vacancy source)
+            public static implicit operator Vacancy(GetCandidateSavedSearchResponse.Vacancy source)
             {
                 return new Vacancy
                 {
@@ -69,6 +72,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     TrainingCourse = source.TrainingCourse,
                     Distance = source.Distance,
                     Address = source.Address,
+                    OtherAddresses = source.OtherAddresses.Count > 0 ? source.OtherAddresses.Select(x => (Address)x!).ToList() : [],
+                    EmploymentLocationInformation = source.EmploymentLocationInformation,
+                    EmploymentLocationOption = source.EmploymentLocationOption,
                     VacancySource = source.VacancySource,
                     WageUnit = source.WageUnit,
                     WageType = source.WageType
@@ -88,8 +94,12 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
 
             public string? Postcode { get; set; }
 
-            public static implicit operator Address(GetCandidateSavedSearchResult.Address source)
+            public static implicit operator Address?(GetCandidateSavedSearchResponse.VacancyAddress? source)
             {
+                if (source == null)
+                {
+                    return null;
+                }
                 return new Address
                 {
                     AddressLine1 = source.AddressLine1,
@@ -109,7 +119,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? LastName { get; set; }
             public string? Email { get; set; }
 
-            public static implicit operator UserDetails(GetCandidateSavedSearchResult.UserDetails source)
+            public static implicit operator UserDetails(GetCandidateSavedSearchResponse.UserDetails source)
             {
                 return new UserDetails
                 {
@@ -127,7 +137,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public int Id { get; set; }
             public string? Name { get; set; }
 
-            public static implicit operator Category(GetCandidateSavedSearchResult.Category source)
+            public static implicit operator Category(GetCandidateSavedSearchResponse.Category source)
             {
                 return new Category
                 {
@@ -142,7 +152,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public int Code { get; set; }
             public string? Name { get; set; }
 
-            public static implicit operator Level(GetCandidateSavedSearchResult.Level source)
+            public static implicit operator Level(GetCandidateSavedSearchResponse.Level source)
             {
                 return new Level
                 {
