@@ -12,7 +12,7 @@ public class RecruitIndexerJobHandler(
     IDateTimeService dateTimeService)
     : IRecruitIndexerJobHandler
 {
-    private const int PageSize = 500; 
+    private const int PageSize = 200; 
     
 
     public async Task Handle()
