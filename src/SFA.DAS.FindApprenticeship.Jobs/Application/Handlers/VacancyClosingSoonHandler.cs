@@ -6,7 +6,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class VacancyClosingSoonHandler(IFindApprenticeshipJobsService findApprenticeshipJobsService, IDateTimeService dateTimeService)
     : IVacancyClosingSoonHandler
 {
-    private const int PageSize = 500;
+    private const int PageSize = 100;
 
     public async Task<IList<long>> Handle(int daysToExpire)
     {

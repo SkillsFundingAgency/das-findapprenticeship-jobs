@@ -39,14 +39,14 @@ public class WhenHandlingVacancyClosingSoon
             TotalPages = 1
         };
 
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), dateTime.AddDays(2))).ReturnsAsync(liveVacanciesApiResponse);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 100, dateTime.AddDays(2))).ReturnsAsync(liveVacanciesApiResponse);
             
 
         var vacancies = await sut.Handle(2);
 
         using (new AssertionScope())
         {
-            findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), dateTime.AddDays(2)), Times.Exactly(liveVacanciesApiResponse.TotalPages));
+            findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), 100, dateTime.AddDays(2)), Times.Exactly(liveVacanciesApiResponse.TotalPages));
         }
 
         vacancies.Should().BeEquivalentTo(liveVacancies.Select(c => Convert.ToInt64(c.VacancyReference.Replace("VAC",""))).ToList());
@@ -57,7 +57,7 @@ public class WhenHandlingVacancyClosingSoon
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosingSoonHandler sut)
     {
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>())).ReturnsAsync(() => null);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 100, It.IsAny<DateTime>())).ReturnsAsync(() => null);
             
         var actual = await sut.Handle(5);
 
