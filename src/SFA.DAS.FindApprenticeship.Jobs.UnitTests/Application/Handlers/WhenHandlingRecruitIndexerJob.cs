@@ -60,7 +60,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
                 TotalPages = 1
             };
 
-            findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 200, null)).ReturnsAsync(liveVacanciesApiResponse);
+            findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 100, null)).ReturnsAsync(liveVacanciesApiResponse);
             findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(nhsLiveVacanciesApiResponse);
             azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
@@ -70,7 +70,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
             using (new AssertionScope())
             {
-                findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), 200, null), Times.Exactly(liveVacanciesApiResponse.TotalPages));
+                findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), 100, null), Times.Exactly(liveVacanciesApiResponse.TotalPages));
                 findApprenticeshipJobsService.Verify(x => x.GetNhsLiveVacancies(), Times.Exactly(nhsLiveVacanciesApiResponse.TotalPages));
                 azureSearchHelper.Verify(x => x.CreateIndex(expectedIndexName), Times.Once());
                 azureSearchHelper.Verify(x => x.UploadDocuments(expectedIndexName, It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(liveVacanciesApiResponse.TotalPages));
@@ -84,7 +84,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             RecruitIndexerJobHandler sut)
         {
-            findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 200, null)).ReturnsAsync(() => null);
+            findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 100, null)).ReturnsAsync(() => null);
             findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(() => null);
 
             await sut.Handle();
