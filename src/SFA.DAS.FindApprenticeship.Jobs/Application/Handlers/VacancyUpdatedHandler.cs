@@ -31,7 +31,7 @@ public class VacancyUpdatedHandler(
         // TODO - ADDRESSES!!
         if (updatedVacancy.OtherAddresses is {Count: > 0})
         {
-            var counter = 1;
+            var counter = 2;
             foreach (var azureSearchDocumentKey in updatedVacancy.OtherAddresses.Select(_ => $"{updatedVacancy.Id}-{counter}"))
             {
                 vacancyReferenceIds.Add(azureSearchDocumentKey);
