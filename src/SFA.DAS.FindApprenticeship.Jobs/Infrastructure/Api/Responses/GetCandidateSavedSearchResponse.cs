@@ -29,6 +29,9 @@ public class GetCandidateSavedSearchResponse
     [JsonPropertyName("disabilityConfident")]
     public bool DisabilityConfident { get; set; }
 
+    [JsonPropertyName("excludeNational")]
+    public bool? ExcludeNational { get; set; }
+
     [JsonPropertyName("unSubscribeToken")] 
     public string? UnSubscribeToken { get; set; }
 

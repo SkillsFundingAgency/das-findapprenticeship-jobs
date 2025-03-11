@@ -41,7 +41,10 @@ public class GetCandidateSavedSearchesApiResponse
 
         [JsonPropertyName("disabilityConfident")]
         public bool DisabilityConfident { get; set; }
-            
+
+        [JsonPropertyName("excludeNational")]
+        public bool? ExcludeNational { get; set; }
+
         [JsonPropertyName("longitude")]
         public string? Longitude { get; set; }
             

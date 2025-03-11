@@ -12,6 +12,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
         public string? SearchTerm { get; set; }
         public string? Location { get; set; }
         public bool DisabilityConfident { get; set; }
+        public bool? ExcludeNational { get; set; }
         public string? UnSubscribeToken { get; set; }
         public List<Vacancy> Vacancies { get; set; } = [];
 
@@ -27,6 +28,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                 SearchTerm = source.SearchTerm,
                 Location = source.Location,
                 DisabilityConfident = source.DisabilityConfident,
+                ExcludeNational = source.ExcludeNational,
                 UnSubscribeToken = source.UnSubscribeToken,
                 Vacancies = source.Vacancies.Select(x => (Vacancy) x).ToList()
             };

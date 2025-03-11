@@ -10,6 +10,7 @@ public class SavedSearchResult
     public string? SearchTerm { get; set; }
     public string? Location { get; set; }
     public bool DisabilityConfident { get; set; }
+    public bool? ExcludeNational { get; set; }
     public string? Longitude { get; set; }
     public string? Latitude { get; set; }
     public List<int>? SelectedLevelIds { get; set; } = [];
@@ -28,6 +29,7 @@ public class SavedSearchResult
             SearchTerm = searchResult.SearchTerm,
             Location = searchResult.Location,
             DisabilityConfident = searchResult.DisabilityConfident,
+            ExcludeNational = searchResult.ExcludeNational,
             Longitude = searchResult.Longitude,
             Latitude = searchResult.Latitude,
             SelectedLevelIds = searchResult.SelectedLevelIds,
