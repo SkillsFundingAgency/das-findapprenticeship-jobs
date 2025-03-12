@@ -21,6 +21,7 @@ public class LiveVacancy
     public string? Description { get; set; }
     public Address? Address { get; set; }
     public List<Address>? EmploymentLocations { get; set; }
+    public List<Address>? OtherAddresses { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter<AvailableWhere>))]
     public AvailableWhere? EmploymentLocationOption { get; set; }
     public string? EmploymentLocationInformation { get; set; }

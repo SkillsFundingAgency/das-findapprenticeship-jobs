@@ -28,11 +28,11 @@ public class VacancyUpdatedHandler(
 
         var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
         vacancyReferenceIds.Add(updatedVacancy.Id);
-        
-        if (updatedVacancy.EmploymentLocations is {Count: > 0})
+        // TODO - ADDRESSES!!
+        if (updatedVacancy.OtherAddresses is {Count: > 0})
         {
-            var counter = 1;
-            foreach (var azureSearchDocumentKey in updatedVacancy.EmploymentLocations.Select(_ => $"{updatedVacancy.Id}-{counter}"))
+            var counter = 2;
+            foreach (var azureSearchDocumentKey in updatedVacancy.OtherAddresses.Select(_ => $"{updatedVacancy.Id}-{counter}"))
             {
                 vacancyReferenceIds.Add(azureSearchDocumentKey);
                 counter++;
