@@ -12,7 +12,7 @@ public class RecruitIndexerJobHandler(
     IDateTimeService dateTimeService)
     : IRecruitIndexerJobHandler
 {
-    private const int PageSize = 100; 
+    private const int PageSize = 500; 
     
 
     public async Task Handle()
@@ -29,25 +29,14 @@ public class RecruitIndexerJobHandler(
         while (pageNo <= totalPages)
         {
             var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize);
-            var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
+            
 
-            totalPages = Math.Max(liveVacancies?.TotalPages ?? 0, nhsLiveVacancies?.TotalPages ?? 0);
+            totalPages = liveVacancies?.TotalPages ?? 0;
 
-            if (liveVacancies != null || nhsLiveVacancies != null)
+            if (liveVacancies != null && liveVacancies.Vacancies.Any())
             {
-                if (liveVacancies != null && liveVacancies.Vacancies.Any())
-                {
-                    var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
-                    batchDocuments.AddRange(documents);
-                }
-                    
-                if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
-                {
-                    batchDocuments.AddRange(nhsLiveVacancies.Vacancies
-                        .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
-                        .Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
-                }
-
+                var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
+                batchDocuments.AddRange(documents);
                 await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
                 pageNo++;
                 updateAlias = true;
@@ -56,6 +45,16 @@ public class RecruitIndexerJobHandler(
             {
                 break;
             }
+        }
+        
+        var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
+        if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
+        {
+            batchDocuments.AddRange(nhsLiveVacancies.Vacancies
+                .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                .Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
+            await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
+            updateAlias = true;
         }
 
         if (updateAlias)
