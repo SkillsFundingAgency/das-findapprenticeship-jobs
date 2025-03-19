@@ -22,7 +22,7 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         return liveVacancy.Body;
     }
 
-    public async Task<GetNhsLiveVacanciesApiResponse> GetNhsLiveVacancies()
+    public async Task<GetNhsLiveVacanciesApiResponse?> GetNhsLiveVacancies()
     {
         var liveVacancies = await apiClient.Get<GetNhsLiveVacanciesApiResponse>(new GetNhsLiveVacanciesApiRequest());
         return liveVacancies.Body;
