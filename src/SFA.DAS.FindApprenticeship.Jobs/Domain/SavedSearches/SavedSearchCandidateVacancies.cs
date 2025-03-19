@@ -52,6 +52,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
             public string? Wage { get; set; }
 
             public string? ClosingDate { get; set; }
+            public string? StartDate { get; set; }
 
             public string? TrainingCourse { get; set; }
 
@@ -71,6 +72,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches
                     EmployerName = source.EmployerName,
                     Wage = source.Wage,
                     ClosingDate = source.ClosingDate,
+                    StartDate = source.StartDate,
                     TrainingCourse = source.TrainingCourse,
                     Distance = source.Distance,
                     Address = source.Address,

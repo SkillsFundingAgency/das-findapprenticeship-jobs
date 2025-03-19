@@ -96,6 +96,9 @@ public class GetCandidateSavedSearchResponse
 
         [JsonPropertyName("closingDate")]
         public string? ClosingDate { get; set; }
+        
+        [JsonPropertyName("startDate")]
+        public string? StartDate { get; set; }
 
         [JsonPropertyName("trainingCourse")]
         public string? TrainingCourse { get; set; }
