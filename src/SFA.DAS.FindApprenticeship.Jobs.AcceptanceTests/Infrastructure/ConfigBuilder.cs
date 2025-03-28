@@ -12,7 +12,7 @@ public static class ConfigBuilder
             InitialData = new[]
     {
                 new KeyValuePair<string, string>("ConfigurationStorageConnectionString", "UseDevelopmentStorage=true;"),
-                new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.FindApprenticeship.Jobs"),
+                new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.FindApprenticeship.Jobs,SFA.DAS.Encoding"),
                 new KeyValuePair<string, string>("EnvironmentName", "DEV"),
                 new KeyValuePair<string, string>("Version", "1.0"),
                 new KeyValuePair<string, string>("ApimBaseUrl", "http://localhost:1234"),

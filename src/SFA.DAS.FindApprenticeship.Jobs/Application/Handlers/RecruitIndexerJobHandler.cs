@@ -9,11 +9,12 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 public class RecruitIndexerJobHandler(
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     IAzureSearchHelper azureSearchHelperService,
-    IDateTimeService dateTimeService)
+    IDateTimeService dateTimeService,
+    IApprenticeAzureSearchDocumentFactory recruitDocumentFactory,
+    INhsAzureSearchDocumentFactory nhsDocumentFactory)
     : IRecruitIndexerJobHandler
 {
     private const int PageSize = 500; 
-    
 
     public async Task Handle()
     {
@@ -29,13 +30,11 @@ public class RecruitIndexerJobHandler(
         while (pageNo <= totalPages)
         {
             var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize);
-            
-
             totalPages = liveVacancies?.TotalPages ?? 0;
 
             if (liveVacancies != null && liveVacancies.Vacancies.Any())
             {
-                var documents = liveVacancies.Vacancies.SelectMany(ApprenticeAzureSearchDocumentFactory.Create);
+                var documents = liveVacancies.Vacancies.SelectMany(recruitDocumentFactory.Create);
                 batchDocuments.AddRange(documents);
                 await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
                 pageNo++;
@@ -52,7 +51,7 @@ public class RecruitIndexerJobHandler(
         {
             batchDocuments.AddRange(nhsLiveVacancies.Vacancies
                 .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
-                .Select(vacancy => (ApprenticeAzureSearchDocument) vacancy));
+                .Select(nhsDocumentFactory.Create));
             await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
             updateAlias = true;
         }
