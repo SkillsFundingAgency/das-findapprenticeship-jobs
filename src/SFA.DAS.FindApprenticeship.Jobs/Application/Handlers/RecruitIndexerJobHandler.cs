@@ -1,5 +1,4 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Application.Extensions;
-using SFA.DAS.FindApprenticeship.Jobs.Domain;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
@@ -10,8 +9,7 @@ public class RecruitIndexerJobHandler(
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     IAzureSearchHelper azureSearchHelperService,
     IDateTimeService dateTimeService,
-    IApprenticeAzureSearchDocumentFactory recruitDocumentFactory,
-    INhsAzureSearchDocumentFactory nhsDocumentFactory)
+    IApprenticeAzureSearchDocumentFactory recruitDocumentFactory)
     : IRecruitIndexerJobHandler
 {
     private const int PageSize = 500; 
@@ -19,40 +17,40 @@ public class RecruitIndexerJobHandler(
     public async Task Handle()
     {
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
-
         await azureSearchHelperService.CreateIndex(indexName);
 
         var pageNo = 1;
         var totalPages = 100;
         var updateAlias = false;
-        var batchDocuments = new List<ApprenticeAzureSearchDocument>();
-
         while (pageNo <= totalPages)
         {
             var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize);
             totalPages = liveVacancies?.TotalPages ?? 0;
 
-            if (liveVacancies != null && liveVacancies.Vacancies.Any())
-            {
-                var documents = liveVacancies.Vacancies.SelectMany(recruitDocumentFactory.Create);
-                batchDocuments.AddRange(documents);
-                await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
-                pageNo++;
-                updateAlias = true;
-            }
-            else
+            var vacancies = liveVacancies?.Vacancies.ToList() ?? [];
+            if (vacancies is not { Count: >0 })
             {
                 break;
             }
+            
+            var documents = vacancies
+                .SelectMany(recruitDocumentFactory.Create)
+                .ToList();
+            
+            await azureSearchHelperService.UploadDocuments(indexName, documents);
+            pageNo++;
+            updateAlias = true;
         }
         
         var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
         if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
         {
-            batchDocuments.AddRange(nhsLiveVacancies.Vacancies
+            var documents = nhsLiveVacancies.Vacancies
                 .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
-                .Select(nhsDocumentFactory.Create));
-            await azureSearchHelperService.UploadDocuments(indexName, batchDocuments);
+                .Select(x => (ApprenticeAzureSearchDocument)x)
+                .ToList();
+            
+            await azureSearchHelperService.UploadDocuments(indexName, documents);
             updateAlias = true;
         }
 

@@ -55,7 +55,6 @@ var host = new HostBuilder()
         services.AddSingleton(new FunctionEnvironment(environmentName));
 
         services.AddTransient<IApprenticeAzureSearchDocumentFactory, ApprenticeAzureSearchDocumentFactory>();
-        services.AddTransient<INhsAzureSearchDocumentFactory, NhsAzureSearchDocumentFactory>();
         services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();
         services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();

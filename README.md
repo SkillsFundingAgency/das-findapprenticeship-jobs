@@ -40,7 +40,7 @@ local.settings.json file
     "NServiceBusConnectionString": "UseLearningEndpoint=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
-    "ConfigNames": "SFA.DAS.FindApprenticeship.Jobs",
+    "ConfigNames": "SFA.DAS.FindApprenticeship.Jobs,SFA.DAS.Encoding",
     "EnvironmentName": "LOCAL"
   }
 } 
