@@ -165,7 +165,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
-        encodingService.Setup(x => x.Decode(liveVacancy.AccountPublicHashedId, EncodingType.PublicAccountId)).Returns(888);
+        encodingService.Setup(x => x.Decode(liveVacancy.AccountPublicHashedId, EncodingType.AccountId)).Returns(888);
         encodingService.Setup(x => x.Decode(liveVacancy.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(999);
 
         // act
