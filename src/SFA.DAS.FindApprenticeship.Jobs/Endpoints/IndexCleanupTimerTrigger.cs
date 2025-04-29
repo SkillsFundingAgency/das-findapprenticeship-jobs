@@ -7,7 +7,14 @@ public class IndexCleanupTimerTrigger(IIndexCleanupJobHandler handler, ILogger<I
     [Function("IndexCleanupTimerTrigger")]
     public async Task Run([TimerTrigger("0 */60 * * * *")] TimerInfo myTimer)
     {
-        log.LogInformation($"IndexCleanupTimerTrigger function executed at: {DateTime.UtcNow}");
-        await handler.Handle();
+        if (DateTime.UtcNow.Hour >= 6 && DateTime.UtcNow.Hour <= 20)
+        {
+            log.LogInformation($"IndexCleanupTimerTrigger function executed at: {DateTime.UtcNow}");
+            await handler.Handle();
+        }
+        else
+        {
+            log.LogInformation($"IndexCleanupTimerTrigger function skipping executing at: {DateTime.UtcNow}");
+        }
     }
 }
