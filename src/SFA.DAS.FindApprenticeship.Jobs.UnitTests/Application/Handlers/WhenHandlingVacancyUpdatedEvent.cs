@@ -41,16 +41,8 @@ public class WhenHandlingVacancyUpdatedEvent
             Times.Once());
     }
 
-    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, LiveVacancy liveVacancy)
-    {
-        var updatedDocument = updatedDocuments.FirstOrDefault()!;
-
-        return updatedDocument.StartDate == liveVacancy.StartDate && updatedDocument.ClosingDate == liveVacancy.ClosingDate;
-    }
-
     [Test, MoqAutoData]
     public async Task Then_The_Event_Is_Ignored_If_No_Index_Is_Currently_Aliased(
-        ILogger log,
         LiveVacancyUpdatedEvent vacancyUpdatedEvent,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         VacancyUpdatedHandler sut)
@@ -66,7 +58,6 @@ public class WhenHandlingVacancyUpdatedEvent
 
     [Test, MoqAutoData]
     public async Task Then_OtherAddresses_Are_Null_The_Vacancy_Is_Updated_In_The_Index(
-        ILogger log,
         LiveVacancyUpdatedEvent vacancyUpdatedEvent,
         string indexName,
         Response<ApprenticeAzureSearchDocument> document,
@@ -80,12 +71,36 @@ public class WhenHandlingVacancyUpdatedEvent
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
-            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
+            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
 
         await sut.Handle(vacancyUpdatedEvent);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
                 It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => AssertDocumentProperties(d, liveVacancy.Value))),
             Times.Exactly(1));
+    }
+    
+    [Test, MoqAutoData]
+    public async Task Then_The_Event_Is_Ignored_If_No_Document_Is_Found(
+        string indexName,
+        LiveVacancyUpdatedEvent vacancyUpdatedEvent,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        VacancyUpdatedHandler sut)
+    {
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
+        azureSearchHelper.Setup(x => x.GetDocument(indexName, It.IsAny<string>())).ReturnsAsync((Response<ApprenticeAzureSearchDocument>?)null);
+
+        await sut.Handle(vacancyUpdatedEvent);
+
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()),
+            Times.Never());
+    }
+    
+    private static bool AssertDocumentProperties(IEnumerable<ApprenticeAzureSearchDocument> updatedDocuments, LiveVacancy liveVacancy)
+    {
+        var updatedDocument = updatedDocuments.FirstOrDefault()!;
+
+        return updatedDocument.StartDate == liveVacancy.StartDate && updatedDocument.ClosingDate == liveVacancy.ClosingDate;
     }
 }

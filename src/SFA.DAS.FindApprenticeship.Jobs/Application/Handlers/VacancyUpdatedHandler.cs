@@ -51,10 +51,18 @@ public class VacancyUpdatedHandler(
         foreach (var vacancyReferenceId in vacancyReferenceIds)
         {
             var document = await azureSearchHelper.GetDocument(indexName, vacancyReferenceId);
+            if (document == null)
+            {
+                continue;
+            }
             document.Value.ClosingDate = closingDate;
             document.Value.StartDate = startDate;
             documents.Add(document);
         }
-        await azureSearchHelper.UploadDocuments(indexName, documents);
+
+        if (documents.Count > 0)
+        {
+            await azureSearchHelper.UploadDocuments(indexName, documents);    
+        }
     }
 }

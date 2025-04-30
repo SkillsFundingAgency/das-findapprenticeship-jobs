@@ -24,13 +24,17 @@ public class VacancyClosedHandler(
 
         var ids = new List<string> { vacancyClosedEvent.VacancyReference.ToString() };
         var document = await azureSearchHelper.GetDocument(indexName, ids[0]);
-        if (document is { Value.OtherAddresses.Count: > 0})
+        if (document != null)
         {
-            // Note: multiple locations vacancy has ids such that: xxxx, xxxx-2, xxxx-3 etc. There is no '1' document.
-            ids.AddRange(Enumerable.Range(1, document.Value.OtherAddresses.Count).Select(x => $"{ids[0]}-{x+1}"));
-        }
+            if (document is { Value.OtherAddresses.Count: > 0})
+            {
+                // Note: multiple locations vacancy has ids such that: xxxx, xxxx-2, xxxx-3 etc. There is no '1' document.
+                ids.AddRange(Enumerable.Range(1, document.Value.OtherAddresses.Count).Select(x => $"{ids[0]}-{x+1}"));
+            }
 
-        await azureSearchHelper.DeleteDocuments(indexName, ids);
+            await azureSearchHelper.DeleteDocuments(indexName, ids);
+        }
+        
         await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
     }
 }
