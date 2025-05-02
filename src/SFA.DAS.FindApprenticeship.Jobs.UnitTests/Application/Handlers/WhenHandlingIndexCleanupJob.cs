@@ -14,7 +14,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
     public class WhenHandlingIndexCleanupJob
     {
         [Test, MoqAutoData]
-        public async Task Then_Indexes_Older_Than_6_Hours_Are_Deleted(
+        public async Task Then_Indexes_Older_Than_12_Hours_Are_Deleted(
             ILogger log,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -24,8 +24,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
             var indexes = new List<SearchIndex>
             {
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(6, 1, 0)))),
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(7, 0, 0)))),
+                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(12, 1, 0)))),
+                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(13, 0, 0)))),
                 new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(48, 0, 0))))
             };
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         }
 
         [Test, MoqAutoData]
-        public async Task Then_Indexes_6_Hours_Old_Or_Less_Are_Retained(
+        public async Task Then_Indexes_12_Hours_Old_Or_Less_Are_Retained(
             ILogger log,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -53,7 +53,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             var indexes = new List<SearchIndex>
             {
                 new SearchIndex(GetIndexName(effectiveDate)),
-                new SearchIndex(GetIndexName(effectiveDate.Subtract(new TimeSpan(6, 0, 0))))
+                new SearchIndex(GetIndexName(effectiveDate.Subtract(new TimeSpan(12, 0, 0))))
             };
 
             azureSearchHelper.Setup(x => x.GetIndexes())
