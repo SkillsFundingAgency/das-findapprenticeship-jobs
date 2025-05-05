@@ -115,4 +115,21 @@ public class WhenHandlingVacancyClosedEvent
         azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never());
         findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
     }
+    
+    [Test, MoqAutoData]
+    public async Task Then_The_Document_Is_Not_Deleted_If_The_Vacancy_Is_Not_Found(
+        SearchAlias searchAlias,
+        VacancyClosedEvent vacancyClosedEvent,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        VacancyClosedHandler sut)
+    {
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(searchAlias);
+        azureSearchHelper.Setup(x => x.GetDocument(searchAlias.Indexes.First(), vacancyClosedEvent.VacancyReference.ToString())).ReturnsAsync((Response<ApprenticeAzureSearchDocument>?)null);
+
+        await sut.Handle(vacancyClosedEvent);
+
+        azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never());
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+    }
 }

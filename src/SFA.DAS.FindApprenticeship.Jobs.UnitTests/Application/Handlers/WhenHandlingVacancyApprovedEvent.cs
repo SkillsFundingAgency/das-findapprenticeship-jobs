@@ -24,7 +24,6 @@ public class WhenHandlingVacancyApprovedEvent
         VacancyApprovedEvent vacancyApprovedEvent,
         string indexName,
         int programmeId,
-        Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
@@ -33,7 +32,6 @@ public class WhenHandlingVacancyApprovedEvent
         liveVacancy.Value.StandardLarsCode = programmeId;
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
-        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 
@@ -68,7 +66,6 @@ public class WhenHandlingVacancyApprovedEvent
         VacancyApprovedEvent vacancyApprovedEvent,
         string indexName,
         int programmeId,
-        Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
@@ -77,10 +74,7 @@ public class WhenHandlingVacancyApprovedEvent
         liveVacancy.Value.EmploymentLocations = otherAddresses;
         liveVacancy.Value.StandardLarsCode = programmeId;
 
-        var originalDocument = JsonSerializer.Deserialize<ApprenticeAzureSearchDocument>(JsonSerializer.Serialize(document.Value));
-
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
-        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
 

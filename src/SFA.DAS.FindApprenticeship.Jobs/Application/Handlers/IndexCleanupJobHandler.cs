@@ -11,7 +11,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers
         private readonly IAzureSearchHelper _azureSearchHelperService;
         private readonly IDateTimeService _dateTimeService;
         private readonly ILogger<IndexCleanupJobHandler> _log;
-        private readonly TimeSpan _indexDeletionAgeThreshold = new(0, 6, 0, 0);
+        private readonly TimeSpan _indexDeletionAgeThreshold = new(0, 12, 0, 0);
 
         public IndexCleanupJobHandler(IAzureSearchHelper azureSearchHelperService, IDateTimeService dateTimeService, ILogger<IndexCleanupJobHandler> log)
         {

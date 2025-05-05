@@ -142,7 +142,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string indexName, string vacancyReference)
+    public async Task<Response<ApprenticeAzureSearchDocument>?> GetDocument(string indexName, string vacancyReference)
     {
         try
         {
@@ -152,8 +152,9 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when requesting document {VacancyReference}", vacancyReference);
-            throw new RequestFailedException($"Failure returned when requesting document {vacancyReference}", ex);
         }
+
+        return null;
     }
 
     public async Task UpdateAlias(string aliasName, string indexName)

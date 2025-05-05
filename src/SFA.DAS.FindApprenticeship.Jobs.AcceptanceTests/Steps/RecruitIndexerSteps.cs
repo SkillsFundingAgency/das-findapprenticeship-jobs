@@ -27,7 +27,7 @@ public class RecruitIndexerSteps
     [Given(@"I invoke the recruit indexer function")]
     public async Task GivenIInvokeTheRecruitIndexerFunction()
     {
-        var recruitIndexerFunction = new RecruitIndexerTimerTrigger(It.IsAny<RecruitIndexerJobHandler>(), It.IsAny<ILogger<RecruitIndexerTimerTrigger>>());
+        var recruitIndexerFunction = new RecruitIndexerTimerTrigger(It.IsAny<RecruitIndexerJobHandler>(), It.IsAny<ILogger<RecruitIndexerTimerTrigger>>(), null);
         await recruitIndexerFunction.Run(It.IsAny<TimerInfo>());
     }
 
