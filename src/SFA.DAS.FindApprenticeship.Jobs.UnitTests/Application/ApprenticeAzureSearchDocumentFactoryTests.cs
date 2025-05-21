@@ -1,4 +1,5 @@
 ﻿using FluentAssertions.Execution;
+using SFA.DAS.Encoding;
 using SFA.DAS.FindApprenticeship.Jobs.Application;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
@@ -8,7 +9,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application;
 public class ApprenticeAzureSearchDocumentFactoryTests
 {
     [Test, MoqAutoData]
-    public void Create_Maps_Deprecated_Address_Style_Vacancy(LiveVacancy liveVacancy)
+    public void Create_Maps_Deprecated_Address_Style_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
         liveVacancy.EmploymentLocationOption = null;
@@ -16,7 +17,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         liveVacancy.EmploymentLocationInformation = null;
 
         // act
-        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+        var documents = sut.Create(liveVacancy).ToList();
 
         // assert
         documents.Should().HaveCount(1);
@@ -30,7 +31,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     }
     
     [Test, MoqAutoData]
-    public void Create_Maps_OneLocation_Vacancy(LiveVacancy liveVacancy)
+    public void Create_Maps_OneLocation_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
         var address = liveVacancy.EmploymentLocations!.First();
@@ -40,7 +41,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         liveVacancy.Address = null;
 
         // act
-        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+        var documents = sut.Create(liveVacancy).ToList();
 
         // assert
         documents.Should().HaveCount(1);
@@ -54,7 +55,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     }
     
     [Test, MoqAutoData]
-    public void Create_Maps_RecruitNationally_Vacancy(LiveVacancy liveVacancy)
+    public void Create_Maps_RecruitNationally_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
         liveVacancy.EmploymentLocationOption = AvailableWhere.AcrossEngland;
@@ -62,7 +63,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         liveVacancy.Address = null;
 
         // act
-        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+        var documents = sut.Create(liveVacancy).ToList();
 
         // assert
         documents.Should().HaveCount(1);
@@ -77,7 +78,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     }
     
     [Test, MoqAutoData]
-    public void Create_Maps_MultipleLocations_Vacancy(LiveVacancy liveVacancy)
+    public void Create_Maps_MultipleLocations_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
         liveVacancy.EmploymentLocationOption = AvailableWhere.MultipleLocations;
@@ -85,7 +86,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         liveVacancy.EmploymentLocationInformation = null;
 
         // act
-        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+        var documents = sut.Create(liveVacancy).ToList();
 
         // assert
         documents.Should().HaveCount(liveVacancy.EmploymentLocations!.Count);
@@ -106,7 +107,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     }
     
     [Test, MoqAutoData]
-    public void Create_Maps_MultipleLocations_Vacancy_With_Unique_Ids(LiveVacancy liveVacancy)
+    public void Create_Maps_MultipleLocations_Vacancy_With_Unique_Ids(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
         liveVacancy.EmploymentLocationOption = AvailableWhere.MultipleLocations;
@@ -114,7 +115,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         liveVacancy.EmploymentLocationInformation = null;
 
         // act
-        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+        var documents = sut.Create(liveVacancy).ToList();
 
         // assert
         documents.Should().HaveCountGreaterThan(1);
@@ -124,7 +125,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
     }
     
     [Test, MoqAutoData]
-    public void Create_Deduplicates_Anonymous_MultipleLocations_Vacancy(LiveVacancy liveVacancy)
+    public void Create_Deduplicates_Anonymous_MultipleLocations_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
         liveVacancy.IsEmployerAnonymous = true;
@@ -141,7 +142,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         ];
 
         // act
-        var documents = ApprenticeAzureSearchDocumentFactory.Create(liveVacancy).ToList();
+        var documents = sut.Create(liveVacancy).ToList();
 
         // assert
         documents.Should().HaveCount(2);
@@ -155,6 +156,24 @@ public class ApprenticeAzureSearchDocumentFactoryTests
             document.OtherAddresses.Should().HaveCount(1);
             document.OtherAddresses.Should().NotContainEquivalentOf(document.Address);
         });
+    }
+    
+    [Test, MoqAutoData]
+    public void Create_Decodes_The_Account_And_Legal_Entity_Hashes(
+        LiveVacancy liveVacancy,
+        [Frozen] Mock<IEncodingService> encodingService,
+        ApprenticeAzureSearchDocumentFactory sut)
+    {
+        // arrange
+        encodingService.Setup(x => x.Decode(liveVacancy.AccountPublicHashedId, EncodingType.AccountId)).Returns(888);
+        encodingService.Setup(x => x.Decode(liveVacancy.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(999);
+
+        // act
+        var searchDocument = sut.Create(liveVacancy).ToList().First();
+
+        // assert
+        searchDocument.AccountId.Should().Be(888);
+        searchDocument.AccountLegalEntityId.Should().Be(999);
     }
 
     private static void AssertDocumentIsMappedWithoutAddresses(ApprenticeAzureSearchDocument document, LiveVacancy source)

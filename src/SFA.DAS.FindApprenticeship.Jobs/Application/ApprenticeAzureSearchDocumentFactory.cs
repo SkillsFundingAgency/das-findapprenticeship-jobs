@@ -1,16 +1,22 @@
 ﻿using Microsoft.Spatial;
+using SFA.DAS.Encoding;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application;
 
-public static class ApprenticeAzureSearchDocumentFactory
+public interface IApprenticeAzureSearchDocumentFactory
+{
+    IEnumerable<ApprenticeAzureSearchDocument> Create(LiveVacancy vacancy);
+}
+
+public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingService): IApprenticeAzureSearchDocumentFactory
 {
     private const string VacancySourceRecruit = "RAA";
     
     // IMPORTANT: this method replaces the implicit cast function on the ApprenticeAzureSearchDocument
     // as we now have a 1 to MANY relationship between live vacancies and azure indexed documents.
-    public static IEnumerable<ApprenticeAzureSearchDocument> Create(LiveVacancy vacancy)
+    public IEnumerable<ApprenticeAzureSearchDocument> Create(LiveVacancy vacancy)
     {
         switch (vacancy.EmploymentLocationOption)
         {
@@ -58,10 +64,15 @@ public static class ApprenticeAzureSearchDocumentFactory
         }
     }
     
-    private static ApprenticeAzureSearchDocument MapWithoutAddress(LiveVacancy vacancy)
+    private ApprenticeAzureSearchDocument MapWithoutAddress(LiveVacancy vacancy)
     {
+        var accountId = encodingService.Decode(vacancy.AccountPublicHashedId, EncodingType.AccountId);
+        var accountLegalEntityId = encodingService.Decode(vacancy.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId);
+        
         return new ApprenticeAzureSearchDocument
         {
+            AccountId = accountId,
+            AccountLegalEntityId = accountLegalEntityId,
             AccountLegalEntityPublicHashedId = vacancy.AccountLegalEntityPublicHashedId,
             AccountPublicHashedId = vacancy.AccountPublicHashedId,
             AdditionalQuestion1 = vacancy.AdditionalQuestion1,

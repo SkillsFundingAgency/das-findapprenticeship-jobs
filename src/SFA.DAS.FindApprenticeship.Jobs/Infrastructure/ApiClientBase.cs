@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using System.Text.Json;
-using System.Text;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 public abstract class ApiClientBase
@@ -33,7 +32,7 @@ public abstract class ApiClientBase
 
     public async Task<ApiResponse<TResponse>> PostWithResponseCode<TResponse>(IPostApiRequestWithData request)
     {
-        var stringContent = new StringContent(JsonSerializer.Serialize(request.Data), Encoding.UTF8, "application/json");
+        var stringContent = new StringContent(JsonSerializer.Serialize(request.Data), System.Text.Encoding.UTF8, "application/json");
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
         requestMessage.Content = stringContent;

@@ -1,14 +1,14 @@
 ﻿using Esfa.Recruit.Vacancies.Client.Domain.Events;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 
 public class VacancyApprovedHandler(
     IAzureSearchHelper azureSearchHelper,
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
-    ILogger<VacancyApprovedHandler> log)
+    ILogger<VacancyApprovedHandler> log,
+    IApprenticeAzureSearchDocumentFactory documentFactory)
     : IVacancyApprovedHandler
 {
     public async Task Handle(VacancyApprovedEvent vacancyApprovedEvent)
@@ -21,7 +21,7 @@ public class VacancyApprovedHandler(
         var approvedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString());
         if (approvedVacancy is not null && !string.IsNullOrEmpty(indexName))
         {
-            var documents = ApprenticeAzureSearchDocumentFactory.Create(approvedVacancy);
+            var documents = documentFactory.Create(approvedVacancy);
             await azureSearchHelper.UploadDocuments(indexName, documents);
         }
         else

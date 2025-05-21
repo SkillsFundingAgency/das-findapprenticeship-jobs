@@ -6,7 +6,7 @@
     "NServiceBusConnectionString": "UseLearningEndpoint=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
-    "ConfigNames": "SFA.DAS.FindApprenticeship.Jobs",
+    "ConfigNames": "SFA.DAS.FindApprenticeship.Jobs,SFA.DAS.Encoding",
     "EnvironmentName": "LOCAL",
     "AzureFunctionsJobHost:Logging:LogLevel:Host": "Information"
   },

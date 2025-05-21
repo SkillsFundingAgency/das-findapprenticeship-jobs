@@ -8,6 +8,8 @@ using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Api.Common.Interfaces;
+using SFA.DAS.Encoding;
+using SFA.DAS.FindApprenticeship.Jobs.Application;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
@@ -42,10 +44,17 @@ var host = new HostBuilder()
 
         services.Configure<FindApprenticeshipJobsConfiguration>(configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
         services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
+        
+        // Configure the DAS Encoding service
+        var dasEncodingConfig = new EncodingConfig { Encodings = [] };
+        context.Configuration.GetSection(nameof(dasEncodingConfig.Encodings)).Bind(dasEncodingConfig.Encodings);
+        services.AddSingleton(dasEncodingConfig);
+        services.AddSingleton<IEncodingService, EncodingService>();
 
         var environmentName = configuration["Values:EnvironmentName"] ?? configuration["EnvironmentName"];
         services.AddSingleton(new FunctionEnvironment(environmentName));
 
+        services.AddTransient<IApprenticeAzureSearchDocumentFactory, ApprenticeAzureSearchDocumentFactory>();
         services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();
         services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
