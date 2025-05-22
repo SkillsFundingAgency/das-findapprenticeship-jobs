@@ -27,6 +27,7 @@ public class LiveVacancy
     public string? EmploymentLocationInformation { get; set; }
     public string? EmployerName { get; set; }
     public string ApprenticeshipLevel { get; set; } = null!;
+    public ApprenticeshipTypes? ApprenticeshipType { get; set; }
     public string ApplicationMethod { get; set; } = null!;
     public string? ApplicationUrl { get; set; }
     public string? ApplicationInstructions { get; set; }
@@ -114,4 +115,11 @@ public enum AvailableWhere
     OneLocation,
     MultipleLocations,
     AcrossEngland,
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ApprenticeshipTypes
+{
+    Standard,
+    Foundation,
 }

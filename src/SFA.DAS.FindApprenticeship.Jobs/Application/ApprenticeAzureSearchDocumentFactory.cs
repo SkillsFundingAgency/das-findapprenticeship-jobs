@@ -83,6 +83,7 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
             ApplicationMethod = vacancy.ApplicationMethod,
             ApplicationUrl = vacancy.ApplicationUrl,
             ApprenticeshipLevel = vacancy.ApprenticeshipLevel,
+            ApprenticeshipType = vacancy.ApprenticeshipType?.ToString() ?? nameof(ApprenticeshipTypes.Standard),
             AvailableWhere = vacancy.EmploymentLocationOption?.ToString()!,
             ClosingDate = vacancy.ClosingDate,
             Course = (CourseAzureSearchDocument)vacancy,
