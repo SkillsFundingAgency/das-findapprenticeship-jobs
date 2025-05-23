@@ -66,7 +66,7 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
     
     private ApprenticeAzureSearchDocument MapWithoutAddress(LiveVacancy vacancy)
     {
-        var accountId = encodingService.Decode(vacancy.AccountPublicHashedId, EncodingType.AccountId);
+        var accountId = encodingService.Decode(vacancy.AccountPublicHashedId, EncodingType.PublicAccountId);
         var accountLegalEntityId = encodingService.Decode(vacancy.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId);
         
         return new ApprenticeAzureSearchDocument
