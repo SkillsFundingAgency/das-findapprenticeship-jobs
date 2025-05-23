@@ -8,6 +8,25 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application;
 
 public class ApprenticeAzureSearchDocumentFactoryTests
 {
+    [Test]
+    [MoqInlineAutoData(ApprenticeshipTypes.Standard)]
+    [MoqInlineAutoData(ApprenticeshipTypes.Foundation)]
+    [MoqInlineAutoData(null)]
+    public void Create_Maps_Deprecated_Address_Style_Vacancy(ApprenticeshipTypes? apprenticeshipType, LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
+    {
+        // arrange
+        liveVacancy.ApprenticeshipType = apprenticeshipType;
+        liveVacancy.EmploymentLocationOption = AvailableWhere.OneLocation;
+
+        // act
+        var documents = sut.Create(liveVacancy).ToList();
+
+        // assert
+        documents.Should().HaveCount(1);
+        var document = documents.Single();
+        AssertDocumentIsMappedWithoutAddresses(document, liveVacancy);
+    }
+    
     [Test, MoqAutoData]
     public void Create_Maps_Deprecated_Address_Style_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
@@ -189,6 +208,7 @@ public class ApprenticeAzureSearchDocumentFactoryTests
             document.AnonymousEmployerName.Should().Be(source.AnonymousEmployerName);
             document.ApplicationMethod.Should().Be(source.ApplicationMethod);
             document.ApprenticeshipLevel.Should().Be(source.ApprenticeshipLevel);
+            document.ApprenticeshipType.Should().Be(source.ApprenticeshipType?.ToString() ?? nameof(ApprenticeshipTypes.Standard));
             document.ClosingDate.Should().Be(source.ClosingDate);
             document.Course.Level.Should().Be(source.Level.ToString());
             document.Course.LarsCode.Should().Be(source.StandardLarsCode);
@@ -228,7 +248,6 @@ public class ApprenticeAzureSearchDocumentFactoryTests
             document.Wage?.WorkingWeekDescription.Should().BeEquivalentTo(source.Wage.WorkingWeekDescription);
             document.Wage?.Duration.Should().Be(source.Wage.Duration);
             document.WageText.Should().Be(source.Wage.WageText);
-            document.EmploymentLocationInformation.Should().Be(source.EmploymentLocationInformation);
         }
     }
 }
