@@ -8,15 +8,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application;
 
 public class ApprenticeAzureSearchDocumentFactoryTests
 {
-    [Test]
-    [MoqInlineAutoData(ApprenticeshipTypes.Standard)]
-    [MoqInlineAutoData(ApprenticeshipTypes.Foundation)]
-    [MoqInlineAutoData(null)]
-    public void Create_Maps_Deprecated_Address_Style_Vacancy(ApprenticeshipTypes? apprenticeshipType, LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
+    [Test, MoqAutoData]
+    public void Create_Maps_Foundation_Vacancy(LiveVacancy liveVacancy, ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
-        liveVacancy.ApprenticeshipType = apprenticeshipType;
         liveVacancy.EmploymentLocationOption = AvailableWhere.OneLocation;
+        liveVacancy.ApprenticeshipType = ApprenticeshipTypes.Foundation;
+        liveVacancy.Skills = null;
+        liveVacancy.Qualifications = null;
 
         // act
         var documents = sut.Create(liveVacancy).ToList();
@@ -229,10 +228,19 @@ public class ApprenticeAzureSearchDocumentFactoryTests
             document.NumberOfPositions.Should().Be(source.NumberOfPositions);
             document.OutcomeDescription.Should().Be(source.OutcomeDescription);
             document.ProviderName.Should().BeEquivalentTo(source.ProviderName);
-            document.Qualifications.Should().BeEquivalentTo(source.Qualifications, opt => opt.Excluding(x => x.Weighting));
             document.Route.Should().BeEquivalentTo(source.Route);
             document.PostedDate.Should().Be(source.PostedDate);
-            document.Skills.Should().BeEquivalentTo(source.Skills);
+
+            if (source.ApprenticeshipType == ApprenticeshipTypes.Foundation)
+            {
+                document.Skills.Should().BeNullOrEmpty();
+                document.Qualifications.Should().BeNullOrEmpty();
+            }
+            else
+            {
+                document.Skills.Should().BeEquivalentTo(source.Skills);
+                document.Qualifications.Should().BeEquivalentTo(source.Qualifications, opt => opt.Excluding(x => x.Weighting));
+            }
             document.StartDate.Should().Be(source.StartDate);
             document.ThingsToConsider.Should().Be(source.ThingsToConsider);
             document.Title.Should().BeEquivalentTo(source.Title);
