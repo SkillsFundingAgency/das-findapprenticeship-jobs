@@ -23,6 +23,7 @@ public class ApprenticeAzureSearchDocument
             ApplicationMethod = source.ApplicationMethod,
             ApplicationUrl = source.ApplicationUrl,
             ApprenticeshipLevel = source.ApprenticeshipLevel,
+            ApprenticeshipType = nameof(ApprenticeshipTypes.Standard),
             ClosingDate = source.ClosingDate,
             Course = (CourseAzureSearchDocument)source,
             Description = source.Description,
@@ -89,7 +90,10 @@ public class ApprenticeAzureSearchDocument
     public long AccountLegalEntityId { get; set; }
     
     [SimpleField(IsFilterable = true)]
-    public string ApprenticeshipLevel { get; set; } = null!;
+    public string ApprenticeshipLevel { get; init; } = null!;
+    
+    [SimpleField(IsFilterable = true, IsSortable = false, IsFacetable = true)]
+    public required string ApprenticeshipType { get; set; }
 
     [SimpleField]
     public string ApplicationMethod { get; set; } = null!;
