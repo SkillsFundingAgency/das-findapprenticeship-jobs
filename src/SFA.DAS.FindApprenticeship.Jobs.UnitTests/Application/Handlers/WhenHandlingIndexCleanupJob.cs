@@ -1,122 +1,135 @@
-﻿using AutoFixture.NUnit3;
-using Azure.Search.Documents.Indexes.Models;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NUnit.Framework;
+﻿using Azure.Search.Documents.Indexes.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
+
+[TestFixture]
+public class WhenHandlingIndexCleanupJob
 {
-    [TestFixture]
-    public class WhenHandlingIndexCleanupJob
+    private static string GetIndexName(DateTime date)
     {
-        [Test, MoqAutoData]
-        public async Task Then_Indexes_Older_Than_12_Hours_Are_Deleted(
-            ILogger log,
-            [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-            [Frozen] Mock<IDateTimeService> dateTimeService,
-            IndexCleanupJobHandler handler)
-        {
-            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(DateTime.UtcNow);
+        return $"{Constants.IndexPrefix}{date.ToString(Constants.IndexDateSuffixFormat)}";
+    }
+    
+    [Test, MoqAutoData]
+    public async Task Then_The_Oldest_Indexes_Are_Deleted(
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        IndexCleanupJobHandler sut)
+    {
+        // arrange
+        var now = DateTime.UtcNow;
+        var indexes = Enumerable.Range(1, 8).Select(x => new SearchIndex(GetIndexName(now.Subtract(new TimeSpan(0, x, 0))))).ToArray();
+        var indexName1 = indexes[^1].Name;
+        var indexName2 = indexes[^2].Name;
+        
+        new Random().Shuffle(indexes);
+        azureSearchHelper.Setup(x => x.GetIndexes()).ReturnsAsync(() => indexes.ToList());
 
-            var indexes = new List<SearchIndex>
-            {
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(12, 1, 0)))),
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(13, 0, 0)))),
-                new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(48, 0, 0))))
-            };
+        // act
+        await sut.Handle();
 
-            azureSearchHelper.Setup(x => x.GetIndexes())
-                .ReturnsAsync(() => indexes);
+        // assert
+        azureSearchHelper.Verify(x => x.DeleteIndex(indexName1), Times.Once);
+        azureSearchHelper.Verify(x => x.DeleteIndex(indexName2), Times.Once);
+    }
 
-            await handler.Handle();
+    private static readonly object[] DeletionTestCases = [
+        new object[] { 1, Times.Never() },
+        new object[] { 2, Times.Never() },
+        new object[] { 3, Times.Never() },
+        new object[] { 4, Times.Never() },
+        new object[] { 5, Times.Never() },
+        new object[] { 6, Times.Never() },
+        new object[] { 7, Times.Once() },
+        new object[] { 8, Times.Exactly(2) },
+        new object[] { 9, Times.Exactly(3) },
+        new object[] { 10, Times.Exactly(4) },
+    ];
+    
+    [TestCaseSource(nameof(DeletionTestCases))]
+    public async Task Then_The_Correct_Number_Of_Deletions_Occur(
+        int count,
+        Times when)
+    {
+        // arrange
+        var azureSearchHelper = new Mock<IAzureSearchHelper>();
+        var sut = new IndexCleanupJobHandler(azureSearchHelper.Object, Mock.Of<ILogger<IndexCleanupJobHandler>>());
+        var now = DateTime.UtcNow;
+        var indexes = Enumerable.Range(1, count).Select(x => new SearchIndex(GetIndexName(now.Subtract(new TimeSpan(0, x, 0))))).ToArray();
+        
+        new Random().Shuffle(indexes);
+        azureSearchHelper.Setup(x => x.GetIndexes()).ReturnsAsync(() => indexes.ToList());
 
-            azureSearchHelper.Verify(x => x.DeleteIndex(indexes[0].Name), Times.Once);
-            azureSearchHelper.Verify(x => x.DeleteIndex(indexes[1].Name), Times.Once);
-            azureSearchHelper.Verify(x => x.DeleteIndex(indexes[2].Name), Times.Once);
-        }
+        // act
+        await sut.Handle();
 
-        [Test, MoqAutoData]
-        public async Task Then_Indexes_12_Hours_Old_Or_Less_Are_Retained(
-            ILogger log,
-            [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-            [Frozen] Mock<IDateTimeService> dateTimeService,
-            IndexCleanupJobHandler handler)
-        {
-            var effectiveDate = DateTime.UtcNow;
+        // assert
+        azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), when);
+    }
 
-            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(effectiveDate);
+    [Test, MoqAutoData]
+    public async Task Then_The_Aliased_Index_Is_Not_Removed_Even_If_It_Is_The_Oldest(
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        IndexCleanupJobHandler sut)
+    {
+        // arrange
+        var now = DateTime.UtcNow;
+        var indexes = Enumerable.Range(1, 10).Select(x => new SearchIndex(GetIndexName(now.Subtract(new TimeSpan(0, x, 0))))).ToArray();
+        var oldestIndexName = indexes[^1].Name;
+        
+        new Random().Shuffle(indexes);
+        azureSearchHelper.Setup(x => x.GetIndexes()).ReturnsAsync(() => indexes.ToList());
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(() => new SearchAlias(Constants.AliasName, [oldestIndexName]));
 
-            var indexes = new List<SearchIndex>
-            {
-                new SearchIndex(GetIndexName(effectiveDate)),
-                new SearchIndex(GetIndexName(effectiveDate.Subtract(new TimeSpan(12, 0, 0))))
-            };
+        // act
+        await sut.Handle();
 
-            azureSearchHelper.Setup(x => x.GetIndexes())
-                .ReturnsAsync(() => indexes);
+        // assert
+        azureSearchHelper.Verify(x => x.DeleteIndex(oldestIndexName), Times.Never);
+    }
+        
+    [Test, MoqAutoData]
+    public async Task Then_Indexes_Not_Conforming_To_Name_Convention_Are_Retained(
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        IndexCleanupJobHandler sut)
+    {
+        // arrange
+        var indexes = Enumerable.Range(1, 3).Select(x => new SearchIndex($"another_index_{x}")).ToArray();
+        indexes = indexes.Append(new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0))))).ToArray();
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexes[^1].Name]));
+        
+        new Random().Shuffle(indexes);
+        azureSearchHelper.Setup(x => x.GetIndexes()).ReturnsAsync(() => indexes.ToList());
 
-            await handler.Handle();
+        // act
+        await sut.Handle();
 
-            azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
-        }
+        // assert
+        azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
+    }
+    
+    [TestCase(12)]
+    [TestCase(13)]
+    [TestCase(14)]
+    public async Task If_Critical_Index_Threshold_Met_And_No_Indexes_Are_Deleted_Then_LogCritical_Is_Called(int indexCount)
+    {
+        // arrange
+        var log = new Mock<ILogger<IndexCleanupJobHandler>>();
+        var azureSearchHelper = new Mock<IAzureSearchHelper>();
+        var sut = new IndexCleanupJobHandler(azureSearchHelper.Object, log.Object);
+        var indexes = Enumerable.Range(1, indexCount).Select(x => new SearchIndex($"hogging_index_{x}")).ToArray();
+        indexes = indexes.Append(new SearchIndex(GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0))))).ToArray();
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexes[^1].Name]));
+        
+        new Random().Shuffle(indexes);
+        azureSearchHelper.Setup(x => x.GetIndexes()).ReturnsAsync(() => indexes.ToList());
 
-        [Test, MoqAutoData]
-        public async Task Then_Indexes_Not_Conforming_To_Name_Convention_Are_Retained(
-            ILogger log,
-            [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-            [Frozen] Mock<IDateTimeService> dateTimeService,
-            IndexCleanupJobHandler handler)
-        {
-            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(DateTime.UtcNow);
+        // act
+        await sut.Handle();
 
-            var indexes = new List<SearchIndex>
-            {
-                new SearchIndex("just_another_index"),
-                new SearchIndex("apprenticeships_"),
-                new SearchIndex("apprenticeships_index"),
-            };
-
-            azureSearchHelper.Setup(x => x.GetIndexes())
-                .ReturnsAsync(() => indexes);
-
-            await handler.Handle();
-
-            azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
-        }
-
-
-        [Test, MoqAutoData]
-        public async Task Then_The_Index_Currently_Aliased_Is_Retained_Irrespective_Of_Age(
-            ILogger log,
-            [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-            [Frozen] Mock<IDateTimeService> dateTimeService,
-            IndexCleanupJobHandler handler)
-        {
-            var indexName = GetIndexName(DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0, 0)));
-
-            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(DateTime.UtcNow);
-
-            azureSearchHelper.Setup(x => x.GetIndexes())
-                .ReturnsAsync(() => new List<SearchIndex>
-                {
-                    new SearchIndex(indexName),
-                });
-
-            azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
-                .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
-
-            await handler.Handle();
-
-            azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
-        }
-
-        private string GetIndexName(DateTime date)
-        {
-            return $"{Constants.IndexPrefix}{date.ToString(Constants.IndexDateSuffixFormat)}";
-        }
+        // assert
+        log.Verify(x => x.Log(LogLevel.Critical, 0, It.IsAny<It.IsAnyType>(), null, It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
     }
 }
