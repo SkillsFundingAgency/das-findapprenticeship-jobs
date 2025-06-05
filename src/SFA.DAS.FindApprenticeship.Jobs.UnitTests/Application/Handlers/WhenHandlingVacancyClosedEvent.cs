@@ -26,7 +26,7 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
         
         // assert
-        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value), Times.Once);
         azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<string>>()), Times.Never);
     }
     [Test, MoqAutoData]
@@ -43,7 +43,7 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
         
         // assert
-        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value), Times.Once);
         azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<string>>()), Times.Never);
     }
     
@@ -65,7 +65,7 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
         
         // assert
-        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value), Times.Once);
         azureSearchHelper.Verify(x => x.DeleteDocuments(searchAlias.Indexes.First(), It.IsAny<IEnumerable<string>>()), Times.Once);
     }
     
@@ -89,7 +89,7 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
         
         // assert
-        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value), Times.Once);
         var ids = capturedIds?.ToList();
         ids.Should().NotBeNullOrEmpty();
         ids.Should().HaveCount(documentResponse.Value.OtherAddresses!.Count + 1);
@@ -113,7 +113,7 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
 
         azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never());
-        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value), Times.Once);
     }
     
     [Test, MoqAutoData]
@@ -130,6 +130,6 @@ public class WhenHandlingVacancyClosedEvent
         await sut.Handle(vacancyClosedEvent);
 
         azureSearchHelper.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never());
-        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference), Times.Once);
+        findApprenticeshipJobsService.Verify(x => x.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value), Times.Once);
     }
 }
