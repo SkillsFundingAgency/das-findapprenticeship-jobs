@@ -1,4 +1,5 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Domain;
+﻿using SFA.DAS.Common.Domain.Models;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Candidate;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
@@ -16,9 +17,9 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
     }
 
 
-    public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(string vacancyReference)
+    public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference)
     {
-        var liveVacancy = await apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference));
+        var liveVacancy = await apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference.ToShortString()));
         return liveVacancy.Body;
     }
 
@@ -28,14 +29,14 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         return liveVacancies.Body;
     }
 
-    public async Task SendApplicationClosingSoonReminder(long vacancyRef, int daysUntilExpiry)
+    public async Task SendApplicationClosingSoonReminder(VacancyReference vacancyReference, int daysUntilExpiry)
     {
-        await apiClient.Post<NullResponse>(new PostSendApplicationClosingSoonRequest(vacancyRef, daysUntilExpiry));
+        await apiClient.Post<NullResponse>(new PostSendApplicationClosingSoonRequest(vacancyReference.Value, daysUntilExpiry));
     }
 
-    public async Task CloseVacancyEarly(long vacancyRef)
+    public async Task CloseVacancyEarly(VacancyReference vacancyRef)
     {
-        await apiClient.Post<NullResponse>(new PostVacancyClosedEarlyRequest(vacancyRef));
+        await apiClient.Post<NullResponse>(new PostVacancyClosedEarlyRequest(vacancyRef.Value));
     }
 
     public async Task<GetCandidateSavedSearchesApiResponse> GetSavedSearches(int pageNumber,

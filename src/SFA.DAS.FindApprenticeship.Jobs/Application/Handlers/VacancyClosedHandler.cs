@@ -18,7 +18,7 @@ public class VacancyClosedHandler(
         if (string.IsNullOrEmpty(indexName))
         {
             log.LogInformation("Index {IndexName} not found so document VAC{VacancyReference} has not been deleted", indexName, vacancyClosedEvent.VacancyReference);
-            await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
+            await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value);
             return;
         }
 
@@ -35,6 +35,6 @@ public class VacancyClosedHandler(
             await azureSearchHelper.DeleteDocuments(indexName, ids);
         }
         
-        await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference);
+        await findApprenticeshipJobsService.CloseVacancyEarly(vacancyClosedEvent.VacancyReference.Value);
     }
 }

@@ -29,7 +29,7 @@ public class WhenHandlingVacancyUpdatedEvent
     {
         liveVacancy.Value.OtherAddresses = otherAddresses;
 
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToShortString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
@@ -68,7 +68,7 @@ public class WhenHandlingVacancyUpdatedEvent
     {
         liveVacancy.Value.EmploymentLocations = [];
 
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToShortString())).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetDocument(indexName, $"{vacancyUpdatedEvent.VacancyReference}")).ReturnsAsync(document);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
