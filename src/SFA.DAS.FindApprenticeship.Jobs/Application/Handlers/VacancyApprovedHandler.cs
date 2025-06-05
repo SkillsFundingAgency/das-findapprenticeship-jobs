@@ -18,7 +18,7 @@ public class VacancyApprovedHandler(
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias?.Indexes.FirstOrDefault();
 
-        var approvedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToShortString());
+        var approvedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference);
         if (approvedVacancy is not null && !string.IsNullOrEmpty(indexName))
         {
             var documents = documentFactory.Create(approvedVacancy);
