@@ -43,6 +43,6 @@ public class GetVacanciesClosingSoonHttpTrigger(IVacancyClosingSoonHandler handl
 
 public class VacancyQueueItem
 {
-    public VacancyReference VacancyReference { get; set; }
+    public long VacancyReference { get; set; }
     public int DaysToExpire { get; set; }
 }

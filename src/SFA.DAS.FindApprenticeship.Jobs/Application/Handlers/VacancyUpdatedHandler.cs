@@ -22,11 +22,11 @@ public class VacancyUpdatedHandler(
 
         if (string.IsNullOrWhiteSpace(indexName))
         {
-            log.LogWarning($"Unable to update vacancy reference {vacancyUpdatedEvent.VacancyReference.ToShortString()} - no index is aliased");
+            log.LogWarning($"Unable to update vacancy reference {vacancyUpdatedEvent.VacancyReference} - no index is aliased");
             return;
         }
 
-        var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToShortString());
+        var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference);
         vacancyReferenceIds.Add(updatedVacancy.Id);
         // TODO - ADDRESSES!!
         if (updatedVacancy.OtherAddresses is {Count: > 0})
