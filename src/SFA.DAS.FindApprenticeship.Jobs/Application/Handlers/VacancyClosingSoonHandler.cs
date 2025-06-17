@@ -18,7 +18,6 @@ public class VacancyClosingSoonHandler(IFindApprenticeshipJobsService findAppren
         while (pageNo <= totalPages)
         {
             var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize, dateToUse);
-            
 
             totalPages = liveVacancies?.TotalPages ?? 0;
 

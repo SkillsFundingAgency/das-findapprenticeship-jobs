@@ -29,7 +29,7 @@ public class WhenHandlingVacancyApprovedEvent
         // arrange
         liveVacancy.Value.StandardLarsCode = programmeId;
 
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString())).ReturnsAsync(liveVacancy);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
@@ -79,7 +79,7 @@ public class WhenHandlingVacancyApprovedEvent
         liveVacancy.EmploymentLocations = otherAddresses;
         liveVacancy.StandardLarsCode = programmeId;
 
-        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference.ToString()))
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference))
             .ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
