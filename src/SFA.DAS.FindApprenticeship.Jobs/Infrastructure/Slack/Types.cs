@@ -22,4 +22,4 @@ public record HeaderBlock(SlackTextBlock Text) : Block(BlockTypes.Header);
 public record SectionBlock(SlackTextBlock Text) : Block(BlockTypes.Section);
 public record DividerBlock() : Block(BlockTypes.Divider);
 
-public record struct SlackMessage(string Channel, List<Block>? Blocks = null);
+public record SlackMessage(string Channel, List<Block>? Blocks = null);
