@@ -10,7 +10,7 @@ public class ApprenticeAzureSearchDocument
 {
     private const string VacancySourceNhs = "NHS";
     
-    public static implicit operator ApprenticeAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
+    public static implicit operator ApprenticeAzureSearchDocument(ExternalLiveVacancy source)
     {
         return new ApprenticeAzureSearchDocument
         {
@@ -254,7 +254,7 @@ public class CourseAzureSearchDocument
         };
     }
 
-    public static implicit operator CourseAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
+    public static implicit operator CourseAzureSearchDocument(ExternalLiveVacancy source)
     {
         return new CourseAzureSearchDocument
         {

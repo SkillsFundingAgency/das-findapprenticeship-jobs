@@ -29,6 +29,12 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         return liveVacancies.Body;
     }
 
+    public async Task<GetCivilServiceLiveVacanciesApiResponse?> GetCivilServiceLiveVacancies()
+    {
+        var liveVacancies = await apiClient.Get<GetCivilServiceLiveVacanciesApiResponse>(new GetCivilServiceVacanciesApiRequest());
+        return liveVacancies.Body;
+    }
+
     public async Task SendApplicationClosingSoonReminder(VacancyReference vacancyReference, int daysUntilExpiry)
     {
         await apiClient.Post<NullResponse>(new PostSendApplicationClosingSoonRequest(vacancyReference.Value, daysUntilExpiry));

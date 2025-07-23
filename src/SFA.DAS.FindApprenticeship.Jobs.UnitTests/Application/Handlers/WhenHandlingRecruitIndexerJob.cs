@@ -29,7 +29,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         [Test, MoqAutoData]
         public async Task Then_The_LiveVacancies_Are_Retrieved_And_Index_Is_Created(
             List<LiveVacancy> liveVacancies,
-            List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsLiveVacancies,
+            List<ExternalLiveVacancy> nhsLiveVacancies,
+            List<ExternalLiveVacancy> civilServiceLiveVacancies,
             [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -60,8 +61,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
                 TotalPages = 1
             };
 
+            var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse()
+            {
+                Vacancies = civilServiceLiveVacancies,
+                PageNo = 1,
+                PageSize = liveVacancies.Count,
+                TotalLiveVacancies = liveVacancies.Count,
+                TotalLiveVacanciesReturned = liveVacancies.Count,
+                TotalPages = 1
+            };
+
             findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 500, null)).ReturnsAsync(liveVacanciesApiResponse);
             findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(nhsLiveVacanciesApiResponse);
+            findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(civilServiceLiveVacanciesApiResponse);
             azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);
@@ -72,8 +84,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             {
                 findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), 500, null), Times.Exactly(liveVacanciesApiResponse.TotalPages));
                 findApprenticeshipJobsService.Verify(x => x.GetNhsLiveVacancies(), Times.Exactly(nhsLiveVacanciesApiResponse.TotalPages));
+                findApprenticeshipJobsService.Verify(x => x.GetCivilServiceLiveVacancies(), Times.Exactly(1));
                 azureSearchHelper.Verify(x => x.CreateIndex(expectedIndexName), Times.Once());
-                azureSearchHelper.Verify(x => x.UploadDocuments(expectedIndexName, It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(2));
+                azureSearchHelper.Verify(x => x.UploadDocuments(expectedIndexName, It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(3));
                 azureSearchHelper.Verify(x => x.UpdateAlias(Constants.AliasName, expectedIndexName), Times.Once);
             }
         }
@@ -86,6 +99,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         {
             findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 500, null)).ReturnsAsync(() => null);
             findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(() => null);
+            findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(() => null);
 
             await sut.Handle();
 
@@ -102,7 +116,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         public async Task Handle_Should_Add_NhsLiveVacancies_With_EnglandOnly_Address_To_BatchDocuments(
             string countryName,
             List<LiveVacancy> liveVacancies,
-            GetNhsLiveVacanciesApiResponse.NhsLiveVacancy nhsLiveVacancy,
+            ExternalLiveVacancy nhsLiveVacancy,
             [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -127,7 +141,17 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
             var nhsLiveVacanciesApiResponse = new GetNhsLiveVacanciesApiResponse
             {
-                Vacancies = new List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy>{nhsLiveVacancy},
+                Vacancies = new List<ExternalLiveVacancy> {nhsLiveVacancy},
+                PageNo = 1,
+                PageSize = liveVacancies.Count,
+                TotalLiveVacancies = liveVacancies.Count,
+                TotalLiveVacanciesReturned = liveVacancies.Count,
+                TotalPages = 1
+            };
+
+            var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse()
+            {
+                Vacancies = [],
                 PageNo = 1,
                 PageSize = liveVacancies.Count,
                 TotalLiveVacancies = liveVacancies.Count,
@@ -137,6 +161,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
             findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), null)).ReturnsAsync(liveVacanciesApiResponse);
             findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(nhsLiveVacanciesApiResponse);
+            findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(civilServiceLiveVacanciesApiResponse);
             azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);

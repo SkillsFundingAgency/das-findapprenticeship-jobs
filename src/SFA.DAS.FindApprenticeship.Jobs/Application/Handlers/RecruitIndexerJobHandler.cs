@@ -12,7 +12,7 @@ public class RecruitIndexerJobHandler(
     IApprenticeAzureSearchDocumentFactory recruitDocumentFactory)
     : IRecruitIndexerJobHandler
 {
-    private const int PageSize = 500; 
+    private const int PageSize = 500;
 
     public async Task Handle()
     {
@@ -28,20 +28,21 @@ public class RecruitIndexerJobHandler(
             totalPages = liveVacancies?.TotalPages ?? 0;
 
             var vacancies = liveVacancies?.Vacancies.ToList() ?? [];
-            if (vacancies is not { Count: >0 })
+            if (vacancies is not { Count: > 0 })
             {
                 break;
             }
-            
+
             var documents = vacancies
                 .SelectMany(recruitDocumentFactory.Create)
                 .ToList();
-            
+
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             pageNo++;
             updateAlias = true;
         }
-        
+
+        // Retrieve NHS live vacancies
         var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
         if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
         {
@@ -49,7 +50,18 @@ public class RecruitIndexerJobHandler(
                 .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
                 .Select(x => (ApprenticeAzureSearchDocument)x)
                 .ToList();
-            
+
+            await azureSearchHelperService.UploadDocuments(indexName, documents);
+            updateAlias = true;
+        }
+
+        // Retrieve Civil Service live vacancies
+        var civilServiceLiveVacancies = await findApprenticeshipJobsService.GetCivilServiceLiveVacancies();
+        if (civilServiceLiveVacancies != null && civilServiceLiveVacancies.Vacancies.Any())
+        {
+            var documents = civilServiceLiveVacancies.Vacancies
+                .Select(x => (ApprenticeAzureSearchDocument)x)
+                .ToList();
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             updateAlias = true;
         }

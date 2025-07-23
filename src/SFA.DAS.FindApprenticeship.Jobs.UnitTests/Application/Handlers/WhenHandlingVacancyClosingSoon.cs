@@ -1,13 +1,8 @@
 using AutoFixture;
-using AutoFixture.NUnit3;
-using FluentAssertions;
 using FluentAssertions.Execution;
-using Moq;
-using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
 
@@ -17,7 +12,7 @@ public class WhenHandlingVacancyClosingSoon
     public async Task Then_The_LiveVacancies_On_That_Closing_Day_Are_Retrieved(
         DateTime dateTime,
         List<LiveVacancy> liveVacancies,
-        List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsLiveVacancies,
+        List<ExternalLiveVacancy> nhsLiveVacancies,
         [Frozen] Mock<IDateTimeService> dateTimeService,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         VacancyClosingSoonHandler sut)
