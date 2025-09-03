@@ -60,6 +60,8 @@ public class GetCandidateSavedSearchesApiResponse
         [JsonPropertyName("unSubscribeToken")]
         public string? UnSubscribeToken { get; set; }
 
+        [JsonPropertyName("selectedApprenticeshipTypes")]
+        public List<ApprenticeshipTypes>? SelectedApprenticeshipTypes { get; set; }
     }
 
 }
