@@ -37,6 +37,10 @@ public class GetCandidateSavedSearchResponse
 
     [JsonPropertyName("vacancies")] 
     public List<Vacancy> Vacancies { get; set; } = [];
+    
+    [JsonPropertyName("apprenticeshipTypes")] 
+    public List<ApprenticeshipTypes>? ApprenticeshipTypes { get; set; }
+    
     public class UserDetails
     {
         [JsonPropertyName("id")]
@@ -85,6 +89,7 @@ public class GetCandidateSavedSearchResponse
 
         [JsonPropertyName("otherAddresses")] 
         public List<VacancyAddress> OtherAddresses { get; set; } = [];
+        
         [JsonPropertyName("employmentLocationInformation")]
         public string? EmploymentLocationInformation { get; set; }
 
@@ -108,12 +113,15 @@ public class GetCandidateSavedSearchResponse
             
         [JsonPropertyName("vacancySource")]
         public string? VacancySource { get; set; }
+        
         [JsonPropertyName("wageUnit")]
         public string? WageUnit { get; set; }
+        
         [JsonPropertyName("wageType")]
         public string? WageType { get; set; }
-            
-            
+        
+        [JsonPropertyName("apprenticeshipType")]
+        public ApprenticeshipTypes? ApprenticeshipType { get; set; }
     }
     public class VacancyAddress
     {

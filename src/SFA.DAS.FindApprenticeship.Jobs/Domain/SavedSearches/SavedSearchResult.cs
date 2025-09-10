@@ -17,6 +17,7 @@ public class SavedSearchResult
     public List<int>? SelectedRouteIds { get; set; } = [];
     public string? UnSubscribeToken { get; set; }
     public DateTime LastRunDate { get; set; }
+    public List<ApprenticeshipTypes>? SelectedApprenticeshipTypes { get; set; }
 
     public static implicit operator SavedSearchResult(
         GetCandidateSavedSearchesApiResponse.SavedSearchResult searchResult)
@@ -34,7 +35,8 @@ public class SavedSearchResult
             Latitude = searchResult.Latitude,
             SelectedLevelIds = searchResult.SelectedLevelIds,
             SelectedRouteIds = searchResult.SelectedRouteIds,
-            UnSubscribeToken = searchResult.UnSubscribeToken
+            UnSubscribeToken = searchResult.UnSubscribeToken,
+            SelectedApprenticeshipTypes = searchResult.SelectedApprenticeshipTypes,
         };
     }
 }
