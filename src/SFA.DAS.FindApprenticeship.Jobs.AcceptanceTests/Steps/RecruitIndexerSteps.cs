@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Reqnroll;
 using SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
@@ -11,7 +12,6 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
-using TechTalk.SpecFlow;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.Steps;
 
