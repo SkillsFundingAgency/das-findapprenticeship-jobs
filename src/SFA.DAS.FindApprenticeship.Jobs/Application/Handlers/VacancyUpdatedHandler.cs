@@ -26,7 +26,7 @@ public class VacancyUpdatedHandler(
             return;
         }
 
-        var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference.ToString());
+        var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference);
         vacancyReferenceIds.Add(updatedVacancy.Id);
         // TODO - ADDRESSES!!
         if (updatedVacancy.OtherAddresses is {Count: > 0})
