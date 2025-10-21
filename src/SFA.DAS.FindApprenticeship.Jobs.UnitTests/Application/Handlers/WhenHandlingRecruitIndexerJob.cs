@@ -1,10 +1,10 @@
 ﻿using FluentAssertions.Execution;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-using SFA.DAS.FindApprenticeship.Jobs.Application.Indexing;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;

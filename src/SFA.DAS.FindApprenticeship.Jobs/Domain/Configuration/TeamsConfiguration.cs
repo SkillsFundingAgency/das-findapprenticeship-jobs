@@ -1,3 +1,3 @@
 ﻿namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 
-public record SlackConfiguration(string? BotUserOAuthToken);
+public record TeamsConfiguration(string TeamsAlertWebhookUrl);

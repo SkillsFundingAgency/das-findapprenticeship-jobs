@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Slack;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.Application.Indexing;
+namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 
 public interface IIndexingAlertsManager
 {
@@ -15,20 +14,17 @@ public interface IIndexingAlertsManager
 public class IndexingAlertsManager(
     IOptions<IndexingAlertConfiguration> config,
     FunctionEnvironment environment,
-    ISlackClient slackClient,
+    ITeamsClient teamsClient,
     ILogger<IndexingAlertsManager> logger): IIndexingAlertsManager
 {
-    private readonly List<Block> _messageTemplate =
-    [
-        new HeaderBlock(new PlainText(":exclamation: FAA Indexing Issue", true)),
-        new SectionBlock(new MarkdownText($"Environment: *{environment.EnvironmentName}*")),
-        new DividerBlock()
-    ];
-    private Block IssueBlock(string text) => new SectionBlock(new MarkdownText($"Issue: *{text}*"));
-    private List<Block> IndexEmptyMessage => [.._messageTemplate, IssueBlock("the index contains no documents")];
-    private List<Block> NoNhsVacanciesImported => [.._messageTemplate, IssueBlock("no NHS vacancies were imported")];
-    private List<Block> NoNhsVacanciesReturned => [.._messageTemplate, IssueBlock("the external NHS API returned no vacancies")];
-    private List<Block> IndexThresholdBreachedMessage(int value) => [.._messageTemplate, IssueBlock($"a {value}% decrease in documents has been detected")];
+    private const string Origin = "FAA Indexer";
+    private static string Now => DateTime.UtcNow.ToString("d/M/yyyy @ HH:mm:ss");
+    private AlertMessage Alert(string message) => new(Origin, environment.EnvironmentName, message, Now);
+
+    private AlertMessage IndexEmptyMessage => Alert("The index contains no documents");
+    private AlertMessage NoNhsVacanciesImported => Alert("No NHS vacancies were imported");
+    private AlertMessage NoNhsVacanciesReturned => Alert("The external NHS API returned no vacancies");
+    private AlertMessage IndexThresholdBreachedMessage(int value) => Alert($"A {value}% decrease in documents has been detected");
 
     public async Task VerifySnapshotsAsync(IndexStatistics? oldStats, IndexStatistics? newStats, CancellationToken cancellationToken = default)
     {
@@ -56,19 +52,15 @@ public class IndexingAlertsManager(
         await SendAlertAsync(NoNhsVacanciesImported, cancellationToken);
     }
     
-    private async Task SendAlertAsync(List<Block> blocksMessage, CancellationToken cancellationToken = default)
+    private async Task SendAlertAsync(AlertMessage alertMessage, CancellationToken cancellationToken = default)
     {
-        var channels = config.Value.Channels ?? [];
         try
         {
-            foreach (var channel in channels)
+            logger.LogError("Alert manager is sending the following message: {Message}", alertMessage.Detail);
+            var result = await teamsClient.PostMessageAsync(alertMessage, cancellationToken);
+            if (!result.Ok)
             {
-                var postMessageRequest = new SlackMessage(channel, blocksMessage);
-                var result = await slackClient.PostMessageAsync(postMessageRequest, cancellationToken);
-                if (!result.Ok)
-                {
-                    logger.LogWarning("Slack PostMessage failed. Response error: {ResponseError}", result.Error);
-                }
+                logger.LogError("Posting the alert message failed. Response status code was '{StatusCode}'", result.StatusCode);
             }
         }
         catch (Exception e)
@@ -93,7 +85,7 @@ public class IndexingAlertsManager(
             var change = countBefore is 0 ? 0 : (double)diff / countBefore * 100;
             if (change <= -config.Value.DocumentDecreasePercentageThreshold)
             {
-                await SendAlertAsync(IndexThresholdBreachedMessage((int)Math.Round(change)), cancellationToken);
+                await SendAlertAsync(IndexThresholdBreachedMessage(Math.Abs((int)Math.Round(change))), cancellationToken);
             }    
         }
     }

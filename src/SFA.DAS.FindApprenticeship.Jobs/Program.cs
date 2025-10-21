@@ -11,13 +11,12 @@ using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Encoding;
 using SFA.DAS.FindApprenticeship.Jobs.Application;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-using SFA.DAS.FindApprenticeship.Jobs.Application.Indexing;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Slack;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
@@ -48,8 +47,8 @@ var host = new HostBuilder()
         services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
         services.Configure<IndexingAlertConfiguration>(configuration.GetSection(nameof(IndexingAlertConfiguration)));
         services.AddSingleton(cfg => cfg.GetService<IOptions<IndexingAlertConfiguration>>().Value);
-        services.Configure<SlackConfiguration>(configuration.GetSection(nameof(SlackConfiguration)));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<SlackConfiguration>>().Value);
+        services.Configure<TeamsConfiguration>(configuration.GetSection(nameof(TeamsConfiguration)));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<TeamsConfiguration>>().Value);
         
         // Configure the DAS Encoding service
         var dasEncodingConfig = new EncodingConfig { Encodings = [] };
@@ -60,7 +59,7 @@ var host = new HostBuilder()
         var environmentName = configuration["Values:EnvironmentName"] ?? configuration["EnvironmentName"];
         services.AddSingleton(new FunctionEnvironment(environmentName));
 
-        services.AddHttpClient<ISlackClient, SlackClient>()
+        services.AddHttpClient<ITeamsClient, TeamsClient>()
             .AddPolicyHandler(_ => HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
