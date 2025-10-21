@@ -8,7 +8,7 @@ public class WhenSendingNhsApiAlert
 {
     [Test, MoqAutoData]
     public async Task SendNhsApiAlertAsync_Calls_The_Teams_Api(
-        [Frozen] IOptions<IndexingAlertConfiguration> alertConfig,
+        [Frozen] IOptions<IndexingAlertingConfiguration> alertConfig,
         [Frozen] Mock<ITeamsClient> teamsClient,
         [Frozen] FunctionEnvironment environment,
         IndexingAlertsManager sut)

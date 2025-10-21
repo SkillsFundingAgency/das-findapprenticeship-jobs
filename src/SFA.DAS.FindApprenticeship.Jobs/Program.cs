@@ -45,10 +45,8 @@ var host = new HostBuilder()
 
         services.Configure<FindApprenticeshipJobsConfiguration>(configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
         services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
-        services.Configure<IndexingAlertConfiguration>(configuration.GetSection(nameof(IndexingAlertConfiguration)));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<IndexingAlertConfiguration>>().Value);
-        services.Configure<TeamsConfiguration>(configuration.GetSection(nameof(TeamsConfiguration)));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<TeamsConfiguration>>().Value);
+        services.Configure<IndexingAlertingConfiguration>(configuration.GetSection(nameof(IndexingAlertingConfiguration)));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<IndexingAlertingConfiguration>>().Value);
         
         // Configure the DAS Encoding service
         var dasEncodingConfig = new EncodingConfig { Encodings = [] };

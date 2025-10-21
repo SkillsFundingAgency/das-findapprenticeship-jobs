@@ -9,7 +9,7 @@ public interface ITeamsClient
     Task<TeamsResponse> PostMessageAsync(AlertMessage message, CancellationToken cancellationToken = default);
 }
 
-public class TeamsClient(IOptions<TeamsConfiguration> configuration, HttpClient httpClient, ILogger<TeamsClient> logger): ITeamsClient
+public class TeamsClient(IOptions<IndexingAlertingConfiguration> configuration, HttpClient httpClient, ILogger<TeamsClient> logger): ITeamsClient
 {
     public async Task<TeamsResponse> PostMessageAsync(AlertMessage message, CancellationToken cancellationToken = default)
     {

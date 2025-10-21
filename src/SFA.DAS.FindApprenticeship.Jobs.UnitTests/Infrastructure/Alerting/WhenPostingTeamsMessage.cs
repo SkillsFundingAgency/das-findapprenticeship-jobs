@@ -22,7 +22,7 @@ internal class WhenPostingTeamsMessage
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
             .Callback((HttpRequestMessage request, CancellationToken _) => { capturedRequest = request; })
             .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("", new MediaTypeHeaderValue("application/json")) });
-        var configuration = new OptionsWrapper<TeamsConfiguration>(new TeamsConfiguration("https://localhost"));
+        var configuration = new OptionsWrapper<IndexingAlertingConfiguration>(new IndexingAlertingConfiguration("https://localhost"));
         
         var httpClient = new HttpClient(handler.Object);
         var sut = new TeamsClient(configuration, httpClient, Mock.Of<ILogger<TeamsClient>>());

@@ -25,14 +25,14 @@ public class WhenVerifyingSnapshots
         long newCount,
         int messageCount,
         Mock<FunctionEnvironment> environment,
-        Mock<IOptions<IndexingAlertConfiguration>> alertConfig,
+        Mock<IOptions<IndexingAlertingConfiguration>> alertConfig,
         Mock<ITeamsClient> teamsClient)
     {
         // arrange
         var oldStats = new IndexStatistics(oldCount);
         var newStats = new IndexStatistics(newCount);
 
-        alertConfig.Setup(x => x.Value).Returns(new IndexingAlertConfiguration(threshold));
+        alertConfig.Setup(x => x.Value).Returns(new IndexingAlertingConfiguration("", threshold));
         var sut = new IndexingAlertsManager(alertConfig.Object, environment.Object, teamsClient.Object, Mock.Of<ILogger<IndexingAlertsManager>>());
         
         // act

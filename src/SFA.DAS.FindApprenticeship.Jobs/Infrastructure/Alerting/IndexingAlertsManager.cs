@@ -12,7 +12,7 @@ public interface IIndexingAlertsManager
 }
 
 public class IndexingAlertsManager(
-    IOptions<IndexingAlertConfiguration> config,
+    IOptions<IndexingAlertingConfiguration> config,
     FunctionEnvironment environment,
     ITeamsClient teamsClient,
     ILogger<IndexingAlertsManager> logger): IIndexingAlertsManager
