@@ -1,4 +1,3 @@
-using SFA.DAS.Common.Domain.Models;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 
@@ -10,7 +9,7 @@ public class GetVacanciesClosingSoonTimerTrigger(IVacancyClosingSoonHandler hand
     [Function("GetVacanciesClosingSoonTimerTrigger")]
     public async Task<List<VacancyQueueItem>> Run([TimerTrigger("0 8 * * *")] TimerInfo myTimer)
     {
-        log.LogInformation($"Application reminder function executed at: {DateTime.UtcNow}");
+        log.LogInformation("Application reminder function executed at: {DateTime}", DateTime.UtcNow);
 
         var returnList = new List<VacancyQueueItem>();
         var vacanciesExpiringInTwoDays = await handler.Handle(2);
@@ -28,7 +27,7 @@ public class GetVacanciesClosingSoonHttpTrigger(IVacancyClosingSoonHandler handl
     [Function("GetVacanciesClosingSoonHttpTrigger")]
     public async Task<List<VacancyQueueItem>> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
     {
-        log.LogInformation($"Application reminder function executed at: {DateTime.UtcNow}");
+        log.LogInformation("Application reminder function executed at: {DateTime}", DateTime.UtcNow);
 
         var returnList = new List<VacancyQueueItem>();
         var vacanciesExpiringInTwoDays = await handler.Handle(2);

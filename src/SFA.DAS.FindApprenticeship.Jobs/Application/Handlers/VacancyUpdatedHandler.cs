@@ -15,14 +15,14 @@ public class VacancyUpdatedHandler(
     {
         var vacancyReferenceIds = new List<string>();
 
-        log.LogInformation($"Vacancy Updated Event handler invoked at {DateTime.UtcNow}");
+        log.LogInformation("Vacancy Updated Event handler invoked at {DateTime}", DateTime.UtcNow);
 
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
-        var indexName = alias?.Indexes?.FirstOrDefault();
+        var indexName = alias.Indexes?.FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(indexName))
         {
-            log.LogWarning($"Unable to update vacancy reference {vacancyUpdatedEvent.VacancyReference} - no index is aliased");
+            log.LogWarning("Unable to update vacancy reference {VacancyReference} - no index is aliased", vacancyUpdatedEvent.VacancyReference);
             return;
         }
 

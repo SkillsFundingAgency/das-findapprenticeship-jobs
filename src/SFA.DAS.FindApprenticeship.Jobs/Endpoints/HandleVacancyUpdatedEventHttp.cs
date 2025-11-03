@@ -9,7 +9,7 @@ public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdated
     [Function("HandleVacancyUpdatedEventHttp")]
     public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
     {
-        log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.UtcNow}");
+        log.LogInformation("HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime}", DateTime.UtcNow);
 
         var command = await JsonSerializer.DeserializeAsync<LiveVacancyUpdatedEvent>(
             await req.Content.ReadAsStreamAsync(),
@@ -23,6 +23,6 @@ public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdated
         }
 
         await vacancyUpdatedHandler.Handle(command);
-        log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+        log.LogInformation("HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime}", DateTime.UtcNow);
     }
 }

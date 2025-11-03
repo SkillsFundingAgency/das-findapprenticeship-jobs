@@ -7,10 +7,9 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
     {
         public async Task Handle(LiveVacancyUpdatedEvent message, IMessageHandlerContext context)
         {
-            log.LogInformation($"NServiceBus VacancyUpdated trigger function executed at {DateTime.UtcNow}");
+            log.LogInformation("NServiceBus VacancyUpdated trigger function executed at {DateTime}", DateTime.UtcNow);
             await vacancyUpdatedHandler.Handle(message);
-            log.LogInformation($"NServiceBus VacancyUpdated trigger function finished at {DateTime.UtcNow}");
-
+            log.LogInformation("NServiceBus VacancyUpdated trigger function finished at {DateTime}", DateTime.UtcNow);
         }
     }
 }
