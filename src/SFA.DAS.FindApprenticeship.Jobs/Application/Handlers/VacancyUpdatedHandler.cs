@@ -18,7 +18,7 @@ public class VacancyUpdatedHandler(
         log.LogInformation("Vacancy Updated Event handler invoked at {DateTime}", DateTime.UtcNow);
 
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
-        var indexName = alias.Indexes?.FirstOrDefault();
+        var indexName = alias?.Indexes?.FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(indexName))
         {
