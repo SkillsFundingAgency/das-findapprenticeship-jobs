@@ -13,13 +13,13 @@ public class VacancyApprovedHandler(
 {
     public async Task Handle(VacancyApprovedEvent vacancyApprovedEvent)
     {
-        log.LogInformation($"Vacancy Approved Event handler invoked at {DateTime.UtcNow}");
+        log.LogInformation("Vacancy Approved Event handler invoked at {DateTime}", DateTime.UtcNow);
 
         var alias = await azureSearchHelper.GetAlias(Domain.Constants.AliasName);
         var indexName = alias?.Indexes.FirstOrDefault();
 
         var approvedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyApprovedEvent.VacancyReference);
-        if (approvedVacancy is not null && !string.IsNullOrEmpty(indexName))
+        if (!string.IsNullOrEmpty(indexName))
         {
             var documents = documentFactory.Create(approvedVacancy);
             await azureSearchHelper.UploadDocuments(indexName, documents);

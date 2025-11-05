@@ -31,8 +31,8 @@ public class LiveVacancy
     public string ApplicationMethod { get; set; } = null!;
     public string? ApplicationUrl { get; set; }
     public string? ApplicationInstructions { get; set; }
-    public string AccountPublicHashedId { get; set; } = null!;
-    public string AccountLegalEntityPublicHashedId { get; set; } = null!;
+    public int AccountId { get; set; }
+    public int AccountLegalEntityId { get; set; }
     public long Ukprn { get; set; }
     public string? ProviderName { get; set; }
     public DateTime PostedDate { get; set; }
@@ -78,8 +78,8 @@ public class Address
     public string? AddressLine3 { get; set; }
     public string? AddressLine4 { get; set; }
     public string? Postcode { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
+    public double? Latitude { get; set; } = 0.00;
+    public double? Longitude { get; set; } = 0.00;
     public string? Country { get; set; }
 }
 

@@ -183,15 +183,15 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         ApprenticeAzureSearchDocumentFactory sut)
     {
         // arrange
-        encodingService.Setup(x => x.Decode(liveVacancy.AccountPublicHashedId, EncodingType.AccountId)).Returns(888);
-        encodingService.Setup(x => x.Decode(liveVacancy.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(999);
+        encodingService.Setup(x => x.Encode(liveVacancy.AccountId, EncodingType.AccountId)).Returns("888");
+        encodingService.Setup(x => x.Encode(liveVacancy.AccountLegalEntityId, EncodingType.PublicAccountLegalEntityId)).Returns("999");
 
         // act
         var searchDocument = sut.Create(liveVacancy).ToList().First();
 
         // assert
-        searchDocument.AccountId.Should().Be(888);
-        searchDocument.AccountLegalEntityId.Should().Be(999);
+        searchDocument.AccountPublicHashedId.Should().Be("888");
+        searchDocument.AccountLegalEntityPublicHashedId.Should().Be("999");
     }
 
     private static void AssertDocumentIsMappedWithoutAddresses(ApprenticeAzureSearchDocument document, LiveVacancy source)
@@ -200,8 +200,8 @@ public class ApprenticeAzureSearchDocumentFactoryTests
         {
             document.ApplicationUrl.Should().Be(source.ApplicationUrl);
             document.ApplicationInstructions.Should().Be(source.ApplicationInstructions);
-            document.AccountPublicHashedId.Should().Be(source.AccountPublicHashedId);
-            document.AccountLegalEntityPublicHashedId.Should().Be(source.AccountLegalEntityPublicHashedId);
+            document.AccountId.Should().Be(source.AccountId);
+            document.AccountLegalEntityId.Should().Be(source.AccountLegalEntityId);
             document.AdditionalQuestion1.Should().Be(source.AdditionalQuestion1);
             document.AdditionalQuestion2.Should().Be(source.AdditionalQuestion2);
             document.AnonymousEmployerName.Should().Be(source.AnonymousEmployerName);

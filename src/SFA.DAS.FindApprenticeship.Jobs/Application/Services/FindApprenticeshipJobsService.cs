@@ -16,7 +16,6 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         return liveVacancies.Body;
     }
 
-
     public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference)
     {
         var liveVacancy = await apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference.ToShortString()));
@@ -62,12 +61,9 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
     {
         var actual = await apiClient.PostWithResponseCode<SavedSearchCandidateVacancies>(new PostGetSavedSearchResultsForCandidateRequest(request));
         
-        if(actual.StatusCode == HttpStatusCode.NotFound)
-        {
-            return null;
-        }
-
-        return actual.Body;
+        return actual.StatusCode == HttpStatusCode.NotFound
+            ? null
+            : actual.Body;
     }
 
     public async Task<GetInactiveCandidatesApiResponse> GetDormantCandidates(string cutOffDateTime, int pageNumber, int pageSize)
