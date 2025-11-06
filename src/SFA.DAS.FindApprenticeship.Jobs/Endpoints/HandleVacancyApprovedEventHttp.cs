@@ -9,7 +9,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
         [Function("HandleVacancyApprovedEventHttp")]
         public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
         {
-            log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function executed at {DateTime.UtcNow}");
+            log.LogInformation("HandleVacancyApprovedEvent HTTP trigger function executed at {DateTime}", DateTime.UtcNow);
 
             var command = await JsonSerializer.DeserializeAsync<VacancyApprovedEvent>(
                 await req.Content.ReadAsStreamAsync(),
@@ -23,7 +23,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
             }
 
             await vacancyApprovedHandler.Handle(command);
-            log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+            log.LogInformation("HandleVacancyApprovedEvent HTTP trigger function finished at {DateTime}", DateTime.UtcNow);
         }
     }
 }

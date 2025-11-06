@@ -40,7 +40,7 @@ public class ApprenticeAzureSearchDocument
             IsPositiveAboutDisability = source.IsPositiveAboutDisability,
             IsPrimaryLocation = true,
             IsRecruitVacancy = source.IsRecruitVacancy,
-            Location = GeographyPoint.Create(source.Address!.Latitude, source.Address!.Longitude),
+            Location = GeographyPoint.Create(source.Address.Latitude ?? 0.00, source.Address.Longitude ?? 0.00),
             LongDescription = source.LongDescription,
             NumberOfPositions = source.NumberOfPositions,
             OtherAddresses = [],
@@ -289,8 +289,8 @@ public class AddressAzureSearchDocument
             AddressLine3 = source.AddressLine3,
             AddressLine4 = source.AddressLine4,
             Postcode = source.Postcode,
-            Longitude = source.Longitude,
-            Latitude = source.Latitude,
+            Longitude = source.Longitude ?? 0.00,
+            Latitude = source.Latitude ?? 0.00,
             Country = source.Country,
         };
     }
@@ -331,8 +331,8 @@ public class OtherAddressAzureSearchDocument
             AddressLine3 = source.AddressLine3,
             AddressLine4 = source.AddressLine4,
             Postcode = source.Postcode,
-            Longitude = source.Longitude,
-            Latitude = source.Latitude,
+            Longitude = source.Longitude ?? 0.00,
+            Latitude = source.Latitude ?? 0.00,
             Country = source.Country,
         };
     }
