@@ -1,6 +1,8 @@
-﻿namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Enums;
+
+namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 public record NhsVacancy : ExternalLiveVacancy
 {
-    public const string VacancySource = "NHS";
+    public readonly VacancyDataSource VacancySource = VacancyDataSource.Nhs;
 }

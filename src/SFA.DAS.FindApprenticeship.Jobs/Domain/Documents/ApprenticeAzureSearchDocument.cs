@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Indexes;
 using Microsoft.Spatial;
 using Azure.Core.Serialization;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Enums;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
@@ -9,20 +10,20 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 public class ApprenticeAzureSearchDocument
 {
     public static implicit operator ApprenticeAzureSearchDocument(NhsVacancy source)
-        => MapFromExternal(source, NhsVacancy.VacancySource);
+        => MapFromExternal(source, source.VacancySource);
 
     public static implicit operator ApprenticeAzureSearchDocument(CsjVacancy source)
-        => MapFromExternal(source, CsjVacancy.VacancySource);
+        => MapFromExternal(source, source.VacancySource);
 
-    private static ApprenticeAzureSearchDocument MapFromExternal(ExternalLiveVacancy source, string vacancySource)
+    private static ApprenticeAzureSearchDocument MapFromExternal(ExternalLiveVacancy source, VacancyDataSource vacancySource)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
         return new ApprenticeAzureSearchDocument
         {
-            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
-            AccountPublicHashedId = source.AccountPublicHashedId,
+            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId ?? "",
+            AccountPublicHashedId = source.AccountPublicHashedId ?? "",
             AdditionalQuestion1 = source.AdditionalQuestion1,
             AdditionalQuestion2 = source.AdditionalQuestion2,
             Address = (AddressAzureSearchDocument)source.Address!,
@@ -70,12 +71,12 @@ public class ApprenticeAzureSearchDocument
             Title = source.Title,
             TrainingDescription = source.TrainingDescription,
             TypicalJobTitles = source.TypicalJobTitles,
-            Ukprn = source.Ukprn.ToString(),
+            Ukprn = source.Ukprn.ToString() ?? "",
             VacancyLocationType = source.VacancyLocationType,
             VacancyReference = source.VacancyReference,
-            VacancySource = vacancySource,
+            VacancySource = vacancySource.ToString(),
             Wage = (WageAzureSearchDocument)source.Wage!,
-            WageText = source.Wage?.WageText
+            WageText = source.Wage?.WageText ?? ""
         };
     }
 
