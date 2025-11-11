@@ -305,7 +305,7 @@ public class TestDataValues
         TotalLiveVacanciesReturned = PageSize,
         TotalLiveVacancies = 100,
         TotalPages = 100 / PageSize,
-        Vacancies = new List<ExternalLiveVacancy>
+        Vacancies = new List<NhsVacancy>
             {
                 new()
                 {

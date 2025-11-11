@@ -8,7 +8,15 @@ public class RecruitIndexerHttp(IRecruitIndexerJobHandler handler, ILogger<Recru
     [Function("RecruitIndexerHttp")]
     public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest _)
     {
-        log.LogInformation("Recruit Indexer HTTP function executed at: {DateTime}", DateTime.UtcNow);
-        await handler.Handle();
+        try
+        {
+            log.LogInformation("Recruit Indexer HTTP function executed at: {DateTime}", DateTime.UtcNow);
+            await handler.Handle();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

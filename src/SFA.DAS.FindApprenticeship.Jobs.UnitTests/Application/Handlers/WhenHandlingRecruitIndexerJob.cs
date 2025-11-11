@@ -29,8 +29,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         [Test, MoqAutoData]
         public async Task Then_The_LiveVacancies_Are_Retrieved_And_Index_Is_Created(
             List<LiveVacancy> liveVacancies,
-            List<ExternalLiveVacancy> nhsLiveVacancies,
-            List<ExternalLiveVacancy> civilServiceLiveVacancies,
+            List<NhsVacancy> nhsLiveVacancies,
+            List<CsjVacancy> civilServiceLiveVacancies,
             [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -61,7 +61,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
                 TotalPages = 1
             };
 
-            var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse()
+            var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse
             {
                 Vacancies = civilServiceLiveVacancies,
                 PageNo = 1,
@@ -116,7 +116,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         public async Task Handle_Should_Add_NhsLiveVacancies_With_EnglandOnly_Address_To_BatchDocuments(
             string countryName,
             List<LiveVacancy> liveVacancies,
-            ExternalLiveVacancy nhsLiveVacancy,
+            NhsVacancy nhsLiveVacancy,
             [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
             [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -141,7 +141,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
 
             var nhsLiveVacanciesApiResponse = new GetNhsLiveVacanciesApiResponse
             {
-                Vacancies = new List<ExternalLiveVacancy> {nhsLiveVacancy},
+                Vacancies = new List<NhsVacancy> {nhsLiveVacancy},
                 PageNo = 1,
                 PageSize = liveVacancies.Count,
                 TotalLiveVacancies = liveVacancies.Count,
