@@ -26,7 +26,10 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
                 var document = MapWithoutAddress(vacancy);
                 document.Address = (AddressAzureSearchDocument)address;
                 document.IsPrimaryLocation = true;
-                document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
+                if (address.Latitude is not null && address.Longitude is not null)
+                {
+                    document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
+                }
                 return [document];
             }
             case AvailableWhere.MultipleLocations:
@@ -40,7 +43,10 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
                     document.Address = (AddressAzureSearchDocument)address;
                     document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
                     document.IsPrimaryLocation = count == 1;
-                    document.Location = GeographyPoint.Create(address.Latitude, address.Longitude);
+                    if (address.Latitude is not null && address.Longitude is not null)
+                    {
+                        document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
+                    }
                     document.OtherAddresses = locations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
                     results.Add(document);
                 }
@@ -56,9 +62,9 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
             default:
             {
                 var document = MapWithoutAddress(vacancy);
-                document.Address = (AddressAzureSearchDocument)vacancy.Address;
+                document.Address = vacancy.Address is not null ? (AddressAzureSearchDocument)vacancy.Address : null;
                 document.IsPrimaryLocation = true;
-                document.Location = GeographyPoint.Create(vacancy.Address!.Latitude, vacancy.Address.Longitude);
+                document.Location = GeographyPoint.Create(vacancy.Address?.Latitude ?? 0.00, vacancy.Address?.Longitude ?? 0.00);
                 return [document];
             }
         }
@@ -66,15 +72,15 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
     
     private ApprenticeAzureSearchDocument MapWithoutAddress(LiveVacancy vacancy)
     {
-        var accountId = encodingService.Decode(vacancy.AccountPublicHashedId, EncodingType.AccountId);
-        var accountLegalEntityId = encodingService.Decode(vacancy.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId);
+        var accountPublicHashedId = encodingService.Encode(vacancy.AccountId, EncodingType.AccountId);
+        var accountLegalEntityPublicHashedId = encodingService.Encode(vacancy.AccountLegalEntityId, EncodingType.PublicAccountLegalEntityId);
         
         return new ApprenticeAzureSearchDocument
         {
-            AccountId = accountId,
-            AccountLegalEntityId = accountLegalEntityId,
-            AccountLegalEntityPublicHashedId = vacancy.AccountLegalEntityPublicHashedId,
-            AccountPublicHashedId = vacancy.AccountPublicHashedId,
+            AccountId = vacancy.AccountId,
+            AccountLegalEntityId = vacancy.AccountLegalEntityId,
+            AccountLegalEntityPublicHashedId = accountLegalEntityPublicHashedId,
+            AccountPublicHashedId = accountPublicHashedId,
             AdditionalQuestion1 = vacancy.AdditionalQuestion1,
             AdditionalQuestion2 = vacancy.AdditionalQuestion2,
             AdditionalTrainingDescription = vacancy.AdditionalTrainingDescription,

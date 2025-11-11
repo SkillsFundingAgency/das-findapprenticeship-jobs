@@ -5,7 +5,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 public interface IFindApprenticeshipJobsService
 {
-    Task<GetLiveVacanciesApiResponse?> GetLiveVacancies(int pageNumber, int pageSize, DateTime? closingDate = null);
+    Task<GetLiveVacanciesApiResponse> GetLiveVacancies(int pageNumber, int pageSize, DateTime? closingDate = null);
     Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference);
     Task<GetNhsLiveVacanciesApiResponse?> GetNhsLiveVacancies();
     Task<GetCivilServiceLiveVacanciesApiResponse?> GetCivilServiceLiveVacancies();
