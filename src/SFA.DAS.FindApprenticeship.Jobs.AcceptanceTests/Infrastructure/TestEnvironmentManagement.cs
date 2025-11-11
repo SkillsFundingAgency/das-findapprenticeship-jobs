@@ -17,24 +17,20 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.FindApprenticeship.Jobs.AcceptanceTests.Infrastructure;
 
 [Binding]
-public class TestEnvironmentManagement
+public class TestEnvironmentManagement(ScenarioContext context)
 {
-    private readonly ScenarioContext _context;
     private static HttpClient _staticClient;
     private Mock<IApiClient> _mockApiClient;
     private Mock<IAzureSearchHelper> _mockAzureSearchHelper;
     private static TestServer _server;
-
-    public TestEnvironmentManagement(ScenarioContext context)
-    {
-        _context = context;
-    }
 
     [BeforeScenario("MockApiClient")]
     public void Start()
     {
         _mockApiClient = new Mock<IApiClient>();
         _mockApiClient.Setup(x => x.Get<GetLiveVacanciesApiResponse>(It.IsAny<GetLiveVacanciesApiRequest>())).ReturnsAsync(TestDataValues.LiveVacanciesApiResponse);
+        _mockApiClient.Setup(x => x.Get<GetNhsLiveVacanciesApiResponse>(It.IsAny<GetNhsLiveVacanciesApiRequest>())).ReturnsAsync(TestDataValues.NhsVacanciesApiResponse);
+        _mockApiClient.Setup(x => x.Get<GetCivilServiceLiveVacanciesApiResponse>(It.IsAny<GetCivilServiceVacanciesApiRequest>())).ReturnsAsync(TestDataValues.CsjVacanciesApiResponse);
         _mockAzureSearchHelper = new Mock<IAzureSearchHelper>();
         _mockAzureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>())).Returns(It.IsAny<Task<Response<SearchIndex>>>());
         _mockAzureSearchHelper.Setup(x => x.DeleteIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
@@ -48,9 +44,9 @@ public class TestEnvironmentManagement
 
         _staticClient = _server.CreateClient();
 
-        _context.Set(_mockApiClient, ContextKeys.MockApiClient);
-        _context.Set(_mockAzureSearchHelper, ContextKeys.MockAzureSearchHelper);
-        _context.Set(_staticClient, ContextKeys.HttpClient);
+        context.Set(_mockApiClient, ContextKeys.MockApiClient);
+        context.Set(_mockAzureSearchHelper, ContextKeys.MockAzureSearchHelper);
+        context.Set(_staticClient, ContextKeys.HttpClient);
     }
 
     [AfterScenario("MockApiClient")]

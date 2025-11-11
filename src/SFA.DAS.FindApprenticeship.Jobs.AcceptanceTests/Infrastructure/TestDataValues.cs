@@ -382,11 +382,101 @@ public class TestDataValues
             }
     };
 
+    private static readonly GetCivilServiceLiveVacanciesApiResponse CsjVacancies = new()
+    {
+        PageNo = PageNo,
+        PageSize = PageSize,
+        TotalLiveVacanciesReturned = PageSize,
+        TotalLiveVacancies = 100,
+        TotalPages = 100 / PageSize,
+        Vacancies = new List<CsjVacancy>
+            {
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    VacancyReference = "1593309",
+                    Title = "Automation: HMRC - PEC Tests",
+                    ApprenticeshipTitle = "AHP IMSK Services - Business & Administration Apprentice",
+                    Description = "An exciting opportunity has arisen for highly motivated, enthusiastic and hardworking individuals to join the AHP IMSK Team as a Business and Admin Ap...",
+                    ApplicationUrl = "https://cshr-config.tal.net/vx/lang-en-GB/appcentre-11/candidate/postings/4830?instant=apply",
+                    Address = new Address
+                    {
+                        AddressLine1 = null,
+                        AddressLine2 = null,
+                        AddressLine4 = "Whitehaven",
+                        Postcode = "CA28 8JG",
+                        Latitude = 54.530059,
+                        Longitude = -3.562598
+                    },
+                    OtherAddresses = [],
+                    EmployerName = "Cabinet Office",
+                    Ukprn = 0,
+                    ProviderName = "",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
+                    StartDate = new DateTime(2025, 02, 01),
+                    ClosingDate = new DateTime(2025, 01, 01),
+                    Route = "",
+                    Level = 4,
+                    Wage = new Wage
+                    {
+                        Duration = 2,
+                        DurationUnit = "Year",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Fixed",
+                        WageText = "75000 to 95000"
+                    }
+                },
+                new()
+                {
+                    VacancyId = Guid.NewGuid(),
+                    VacancyReference = "7894225",
+                    Title = "Automation: HMRC - PEC Tests 2",
+                    ApprenticeshipTitle = "AHP IMSK Services - Business & Administration Apprentice",
+                    Description = "An exciting opportunity has arisen for highly motivated, enthusiastic and hardworking individuals to join the AHP IMSK Team as a Business and Admin Ap...",
+                    ApplicationUrl = "https://cshr-config.tal.net/vx/lang-en-GB/appcentre-11/candidate/postings/4830?instant=apply",
+                    Address = new Address
+                    {
+                        AddressLine1 = null,
+                        AddressLine2 = null,
+                        AddressLine4 = "Whitehaven",
+                        Postcode = "CA28 8JG",
+                        Latitude = 54.530059,
+                        Longitude = -3.562598
+                    },
+                    OtherAddresses = [],
+                    EmployerName = "Cabinet Office",
+                    Ukprn = 0,
+                    ProviderName = "",
+                    PostedDate = new DateTime(2023, 10, 05),
+                    StandardLarsCode = 91,
+                    StartDate = new DateTime(2025, 02, 01),
+                    ClosingDate = new DateTime(2025, 01, 01),
+                    Route = "",
+                    Level = 4,
+                    Wage = new Wage
+                    {
+                        Duration = 2,
+                        DurationUnit = "Year",
+                        WorkingWeekDescription = "Monday to Friday 9am to 5pm, shifts, may work evenings and weekends.",
+                        WeeklyHours = 35,
+                        WageType = "Fixed",
+                        WageText = "75000 to 95000"
+                    }
+                },
+            }
+    };
+
     public static readonly ApiResponse<GetLiveVacanciesApiResponse> LiveVacanciesApiResponse = new(body: LiveVacancies,
         System.Net.HttpStatusCode.OK,
         "");
 
     public static readonly ApiResponse<GetNhsLiveVacanciesApiResponse> NhsVacanciesApiResponse = new(body: NhsVacancies,
+        System.Net.HttpStatusCode.OK,
+        "");
+
+    public static readonly ApiResponse<GetCivilServiceLiveVacanciesApiResponse> CsjVacanciesApiResponse = new(body: CsjVacancies,
         System.Net.HttpStatusCode.OK,
         "");
 }
