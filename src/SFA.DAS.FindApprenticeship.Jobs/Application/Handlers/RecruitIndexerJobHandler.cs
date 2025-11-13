@@ -37,6 +37,11 @@ public class RecruitIndexerJobHandler(
                 break;
             }
             
+            // THIS IS FOR TESTING ONLY AND SHOULD NOT BE MERGED
+            var takeCount = (int)Math.Round(vacancies.Count * 0.4, MidpointRounding.ToZero);
+            vacancies = vacancies.Take(takeCount).ToList();
+            // -------------------------------------------------
+            
             var documents = vacancies
                 .SelectMany(recruitDocumentFactory.Create)
                 .ToList();
@@ -47,6 +52,10 @@ public class RecruitIndexerJobHandler(
         }
         
         var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
+        
+        // THIS IS FOR TESTING ONLY AND SHOULD NOT BE MERGED
+        nhsLiveVacancies = null;
+        // -------------------------------------------------
         if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
         {
             var documents = nhsLiveVacancies.Vacancies
