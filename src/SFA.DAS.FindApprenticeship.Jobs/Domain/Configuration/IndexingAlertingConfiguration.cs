@@ -1,3 +1,7 @@
 ﻿namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 
-public record IndexingAlertingConfiguration(string TeamsAlertWebhookUrl, int DocumentDecreasePercentageThreshold = 50);
+public class IndexingAlertingConfiguration
+{
+    public required string TeamsAlertWebhookUrl { get; init; }
+    public int DocumentDecreasePercentageThreshold { get; init; } = 50;
+}
