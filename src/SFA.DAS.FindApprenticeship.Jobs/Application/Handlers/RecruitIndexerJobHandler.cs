@@ -53,15 +53,17 @@ public class RecruitIndexerJobHandler(
         
         var nhsLiveVacancies = await findApprenticeshipJobsService.GetNhsLiveVacancies();
         
-        // THIS IS FOR TESTING ONLY AND SHOULD NOT BE MERGED
-        nhsLiveVacancies = null;
-        // -------------------------------------------------
         if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
         {
             var documents = nhsLiveVacancies.Vacancies
                 .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
                 .Select(x => (ApprenticeAzureSearchDocument)x)
                 .ToList();
+            
+            // THIS IS FOR TESTING ONLY AND SHOULD NOT BE MERGED
+            documents.Clear();
+            // -------------------------------------------------
+
 
             if (documents is { Count: 0 })
             {
