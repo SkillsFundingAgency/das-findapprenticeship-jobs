@@ -9,6 +9,9 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
+
+public record struct IndexStatistics(long DocumentCount);
+
 public class AzureSearchHelper : IAzureSearchHelper
 {
     private readonly ILogger<AzureSearchHelper> _logger;
@@ -102,7 +105,6 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-
     public async Task<List<SearchIndex>> GetIndexes()
     {
         try
@@ -180,6 +182,33 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, $"Failure returned when deleting document(s) with reference(s) {string.Join(", ", ids)}");
+        }
+    }
+
+    public async Task<IndexStatistics?> GetAliasStatisticsAsync(string aliasName, CancellationToken cancellationToken = default)
+    {
+        var alias = await GetAlias(aliasName);
+        if (alias is not { Indexes.Count: > 0 })
+        {
+            return null;
+        }
+        
+        var indexName = alias.Indexes.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(indexName))
+        {
+            _logger.LogWarning("Alias {AliasName} appears not to point to an index", aliasName);
+            return null;
+        }
+        
+        try
+        {
+            var stats = await _adminIndexClient.GetIndexStatisticsAsync(indexName, cancellationToken);
+            return stats == null ? null : new IndexStatistics(stats.Value.DocumentCount); 
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error fetching index '{IndexName}' statistics", indexName);
+            return null;
         }
     }
 }
