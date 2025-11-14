@@ -32,7 +32,11 @@ public class WhenVerifyingSnapshots
         var oldStats = new IndexStatistics(oldCount);
         var newStats = new IndexStatistics(newCount);
 
-        alertConfig.Setup(x => x.Value).Returns(new IndexingAlertingConfiguration("", threshold));
+        alertConfig.Setup(x => x.Value).Returns(new IndexingAlertingConfiguration
+        {
+            TeamsAlertWebhookUrl = "",
+            DocumentDecreasePercentageThreshold = threshold
+        });
         var sut = new IndexingAlertsManager(alertConfig.Object, environment.Object, teamsClient.Object, Mock.Of<ILogger<IndexingAlertsManager>>());
         
         // act
