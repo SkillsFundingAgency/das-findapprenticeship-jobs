@@ -1,4 +1,5 @@
 ﻿using FluentAssertions.Execution;
+using SFA.DAS.FindApprenticeship.Jobs.Application;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain;
@@ -153,23 +154,64 @@ public class WhenHandlingRecruitIndexerJob
 
     [Test, MoqAutoData]
     public async Task Then_The_Index_Statistics_Are_Checked_For_Issues(
+        List<LiveVacancy> liveVacancies,
+        List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsVacancies,
+        ApprenticeAzureSearchDocument searchDocument,
+        [Frozen] Mock<IApprenticeAzureSearchDocumentFactory> recruitDocumentFactory,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
         RecruitIndexerJobHandler sut)
     {
         // arrange
         var beforeStats = new IndexStatistics(1000);
-        var afterStats = new IndexStatistics(100);
         azureSearchHelper
-            .SetupSequence(x => x.GetAliasStatisticsAsync(Constants.AliasName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(beforeStats)
-            .ReturnsAsync(afterStats);
+            .Setup(x => x.GetAliasStatisticsAsync(Constants.AliasName, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(beforeStats);
+        
+        var liveVacanciesResponse = new GetLiveVacanciesApiResponse
+        {
+            PageNo = 1,
+            PageSize = 100,
+            TotalLiveVacancies = liveVacancies.Count,
+            TotalLiveVacanciesReturned = liveVacancies.Count,
+            TotalPages = 1,
+            Vacancies = liveVacancies
+        };
 
+        nhsVacancies.ForEach(x => x.Address.Country = Constants.EnglandOnly);
+        var nhsVacanciesResponse = new GetNhsLiveVacanciesApiResponse
+        {
+            PageNo = 1,
+            PageSize = 100,
+            TotalLiveVacancies = nhsVacancies.Count,
+            TotalLiveVacanciesReturned = nhsVacancies.Count,
+            TotalPages = 1,
+            Vacancies = nhsVacancies
+        };
+        
+        findApprenticeshipJobsService
+            .Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), null))
+            .ReturnsAsync(liveVacanciesResponse);
+        
+        findApprenticeshipJobsService
+            .Setup(x => x.GetNhsLiveVacancies())
+            .ReturnsAsync(nhsVacanciesResponse);
+
+        recruitDocumentFactory.Setup(x => x.Create(It.IsAny<LiveVacancy>())).Returns([searchDocument]);
+        
+        IndexStatistics? capturedStats = null;
+        indexingAlertsManager
+            .Setup(x => x.VerifySnapshotsAsync(beforeStats, It.IsAny<IndexStatistics>(), It.IsAny<CancellationToken>()))
+            .Callback<IndexStatistics?, IndexStatistics?, CancellationToken>((_, st, _) => { capturedStats = st; });
+    
         // act
         await sut.Handle();
-
+    
         // assert
-        indexingAlertsManager.Verify(x => x.VerifySnapshotsAsync(beforeStats, afterStats, It.IsAny<CancellationToken>()), Times.Once());
+        indexingAlertsManager.Verify(x => x.VerifySnapshotsAsync(beforeStats, It.IsAny<IndexStatistics>(), It.IsAny<CancellationToken>()), Times.Once());
+        capturedStats.Should().NotBeNull();
+        capturedStats.Value.DocumentCount.Should().Be(liveVacancies.Count + nhsVacancies.Count);
     }
     
     [Test, MoqAutoData]
