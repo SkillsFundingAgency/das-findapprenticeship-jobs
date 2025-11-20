@@ -70,6 +70,7 @@ public class RecruitIndexerJobHandler(
         if (updateAlias)
         {
             await azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
+            Thread.Sleep(5000);
             var newStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName);
             await indexingAlertsManager.VerifySnapshotsAsync(oldStats, newStats);
         }
