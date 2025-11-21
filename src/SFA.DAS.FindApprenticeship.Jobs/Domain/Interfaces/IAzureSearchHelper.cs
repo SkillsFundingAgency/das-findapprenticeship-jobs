@@ -17,4 +17,5 @@ public interface IAzureSearchHelper
     Task<Response<ApprenticeAzureSearchDocument>?> GetDocument(string indexName, string vacancyReference);
     Task DeleteDocuments(string indexName, IEnumerable<string> ids);
     Task<IndexStatistics?> GetAliasStatisticsAsync(string aliasName, CancellationToken cancellationToken = default);
+    Task<IndexStatistics?> GetIndexStatisticsAsync(string indexName, CancellationToken cancellationToken = default);
 }
