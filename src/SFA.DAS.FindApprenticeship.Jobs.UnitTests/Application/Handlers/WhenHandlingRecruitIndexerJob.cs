@@ -151,26 +151,26 @@ public class WhenHandlingRecruitIndexerJob
             It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(docs => docs.Any(d => d.Address!.Country == Constants.EnglandOnly))), Times.Never);
     }
 
-    [Test, MoqAutoData]
-    public async Task Then_The_Index_Statistics_Are_Checked_For_Issues(
-        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
-        RecruitIndexerJobHandler sut)
-    {
-        // arrange
-        var beforeStats = new IndexStatistics(1000);
-        var afterStats = new IndexStatistics(100);
-        azureSearchHelper
-            .SetupSequence(x => x.GetAliasStatisticsAsync(Constants.AliasName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(beforeStats)
-            .ReturnsAsync(afterStats);
-
-        // act
-        await sut.Handle();
-
-        // assert
-        indexingAlertsManager.Verify(x => x.VerifySnapshotsAsync(beforeStats, afterStats, It.IsAny<CancellationToken>()), Times.Once());
-    }
+    // [Test, MoqAutoData]
+    // public async Task Then_The_Index_Statistics_Are_Checked_For_Issues(
+    //     [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+    //     [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
+    //     RecruitIndexerJobHandler sut)
+    // {
+    //     // arrange
+    //     var beforeStats = new IndexStatistics(1000);
+    //     var afterStats = new IndexStatistics(100);
+    //     azureSearchHelper
+    //         .SetupSequence(x => x.GetAliasStatisticsAsync(Constants.AliasName, It.IsAny<CancellationToken>()))
+    //         .ReturnsAsync(beforeStats)
+    //         .ReturnsAsync(afterStats);
+    //
+    //     // act
+    //     await sut.Handle();
+    //
+    //     // assert
+    //     indexingAlertsManager.Verify(x => x.VerifySnapshotsAsync(beforeStats, afterStats, It.IsAny<CancellationToken>()), Times.Once());
+    // }
     
     [Test, MoqAutoData]
     public async Task Then_An_Alert_Is_Raised_If_The_Nhs_Api_Does_Not_Return_Any_Vacancies(

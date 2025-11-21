@@ -1,4 +1,5 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Domain;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
@@ -26,6 +27,7 @@ public class RecruitIndexerJobHandler(
         var pageNo = 1;
         var totalPages = 100;
         var updateAlias = false;
+        long totalDocumentsCount = 0;
         while (pageNo <= totalPages)
         {
             var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize);
@@ -43,6 +45,7 @@ public class RecruitIndexerJobHandler(
             
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             pageNo++;
+            totalDocumentsCount += documents.Count;
             updateAlias = true;
         }
         
@@ -60,6 +63,7 @@ public class RecruitIndexerJobHandler(
             }
             
             await azureSearchHelperService.UploadDocuments(indexName, documents);
+            totalDocumentsCount += documents.Count;
             updateAlias = true;
         }
         else
@@ -70,8 +74,7 @@ public class RecruitIndexerJobHandler(
         if (updateAlias)
         {
             await azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
-            Thread.Sleep(5000);
-            var newStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName);
+            var newStats = new IndexStatistics(totalDocumentsCount);
             await indexingAlertsManager.VerifySnapshotsAsync(oldStats, newStats);
         }
     }
