@@ -199,11 +199,21 @@ public class AzureSearchHelper : IAzureSearchHelper
             _logger.LogWarning("Alias {AliasName} appears not to point to an index", aliasName);
             return null;
         }
-        
+
+        return await GetIndexStatisticsAsync(indexName, cancellationToken);
+    }
+
+    public async Task<IndexStatistics?> GetIndexStatisticsAsync(string indexName, CancellationToken cancellationToken = default)
+    {
         try
         {
+            _logger.LogInformation("Getting index statistics for index {IndexName}", indexName);
             var stats = await _adminIndexClient.GetIndexStatisticsAsync(indexName, cancellationToken);
-            return stats == null ? null : new IndexStatistics(stats.Value.DocumentCount); 
+            if (stats is not null)
+            {
+                _logger.LogInformation("Document count={DocumentCount}, Storage size={StorageSize}", stats.Value.DocumentCount, stats.Value.StorageSize);
+            }
+            return stats == null ? null : new IndexStatistics(stats.Value.DocumentCount);
         }
         catch (Exception e)
         {
