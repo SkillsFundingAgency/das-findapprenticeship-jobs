@@ -2,6 +2,7 @@
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 
@@ -9,13 +10,16 @@ public class RecruitIndexerJobHandler(
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     IAzureSearchHelper azureSearchHelperService,
     IDateTimeService dateTimeService,
-    IApprenticeAzureSearchDocumentFactory recruitDocumentFactory)
+    IApprenticeAzureSearchDocumentFactory recruitDocumentFactory,
+    IIndexingAlertsManager indexingAlertsManager)
     : IRecruitIndexerJobHandler
 {
     private const int PageSize = 500;
 
     public async Task Handle()
     {
+        var oldStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName);
+        
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
         await azureSearchHelperService.CreateIndex(indexName);
 
@@ -51,8 +55,17 @@ public class RecruitIndexerJobHandler(
                 .Select(x => (ApprenticeAzureSearchDocument)x)
                 .ToList();
 
+            if (documents is { Count: 0 })
+            {
+                await indexingAlertsManager.SendNhsImportAlertAsync();
+            }
+            
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             updateAlias = true;
+        }
+        else
+        {
+            await indexingAlertsManager.SendNhsApiAlertAsync();
         }
 
         // Retrieve Civil Service live vacancies
@@ -70,6 +83,8 @@ public class RecruitIndexerJobHandler(
         if (updateAlias)
         {
             await azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
+            var newStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName);
+            await indexingAlertsManager.VerifySnapshotsAsync(oldStats, newStats);
         }
     }
 }

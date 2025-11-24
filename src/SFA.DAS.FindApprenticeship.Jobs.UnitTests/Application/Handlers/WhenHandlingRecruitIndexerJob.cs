@@ -1,30 +1,32 @@
 ﻿using FluentAssertions.Execution;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
+using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
-{
-    public class WhenHandlingRecruitIndexerJob
-    {
-        [TestCase("\"OneLocation\"", AvailableWhere.OneLocation)]
-        [TestCase("\"MultipleLocations\"", AvailableWhere.MultipleLocations)]
-        [TestCase("\"AcrossEngland\"", AvailableWhere.AcrossEngland)]
-        [TestCase("null", null)]
-        public void Then_EmploymentLocationOption_Can_Be_Deserialized(string? value, AvailableWhere? expected)
-        {
-            // arrange
-            var json = $"{{\"EmploymentLocationOption\":{value}}}";
-            
-            // act
-            var newLiveVacancy = System.Text.Json.JsonSerializer.Deserialize<LiveVacancy>(json);
+namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
 
-            // assert
-            newLiveVacancy.Should().NotBeNull();
-            newLiveVacancy!.EmploymentLocationOption.Should().Be(expected);
-        }
+public class WhenHandlingRecruitIndexerJob
+{
+    [TestCase("\"OneLocation\"", AvailableWhere.OneLocation)]
+    [TestCase("\"MultipleLocations\"", AvailableWhere.MultipleLocations)]
+    [TestCase("\"AcrossEngland\"", AvailableWhere.AcrossEngland)]
+    [TestCase("null", null)]
+    public void Then_EmploymentLocationOption_Can_Be_Deserialized(string? value, AvailableWhere? expected)
+    {
+        // arrange
+        var json = $"{{\"EmploymentLocationOption\":{value}}}";
+            
+        // act
+        var newLiveVacancy = System.Text.Json.JsonSerializer.Deserialize<LiveVacancy>(json);
+
+        // assert
+        newLiveVacancy.Should().NotBeNull();
+        newLiveVacancy!.EmploymentLocationOption.Should().Be(expected);
+    }
         
         [Test, MoqAutoData]
         public async Task Then_The_LiveVacancies_Are_Retrieved_And_Index_Is_Created(
@@ -39,27 +41,27 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         {
             dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
 
-            var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
+        var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
 
-            var liveVacanciesApiResponse = new GetLiveVacanciesApiResponse
-            {
-                Vacancies = liveVacancies,
-                PageNo = 1,
-                PageSize = liveVacancies.Count,
-                TotalLiveVacancies = liveVacancies.Count,
-                TotalLiveVacanciesReturned = liveVacancies.Count,
-                TotalPages = 1
-            };
+        var liveVacanciesApiResponse = new GetLiveVacanciesApiResponse
+        {
+            Vacancies = liveVacancies,
+            PageNo = 1,
+            PageSize = liveVacancies.Count,
+            TotalLiveVacancies = liveVacancies.Count,
+            TotalLiveVacanciesReturned = liveVacancies.Count,
+            TotalPages = 1
+        };
 
-            var nhsLiveVacanciesApiResponse = new GetNhsLiveVacanciesApiResponse
-            {
-                Vacancies = nhsLiveVacancies,
-                PageNo = 1,
-                PageSize = liveVacancies.Count,
-                TotalLiveVacancies = liveVacancies.Count,
-                TotalLiveVacanciesReturned = liveVacancies.Count,
-                TotalPages = 1
-            };
+        var nhsLiveVacanciesApiResponse = new GetNhsLiveVacanciesApiResponse
+        {
+            Vacancies = nhsLiveVacancies,
+            PageNo = 1,
+            PageSize = liveVacancies.Count,
+            TotalLiveVacancies = liveVacancies.Count,
+            TotalLiveVacanciesReturned = liveVacancies.Count,
+            TotalPages = 1
+        };
 
             var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse
             {
@@ -78,7 +80,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);
 
-            await sut.Handle();
+        await sut.Handle();
 
             using (new AssertionScope())
             {
@@ -101,15 +103,15 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(() => null);
             findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(() => null);
 
-            await sut.Handle();
+        await sut.Handle();
 
-            using (new AssertionScope())
-            {
-                azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Once());
-                azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Never());
-                azureSearchHelper.Verify(x => x.UpdateAlias(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            }
+        using (new AssertionScope())
+        {
+            azureSearchHelper.Verify(x => x.CreateIndex(It.IsAny<string>()), Times.Once());
+            azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Never());
+            azureSearchHelper.Verify(x => x.UpdateAlias(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
+    }
 
 
         [Test, MoqAutoData]
@@ -125,19 +127,19 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
         {
             nhsLiveVacancy.Address!.Country = countryName;
 
-            dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
+        dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
 
-            var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
+        var expectedIndexName = $"{Constants.IndexPrefix}{currentDateTime.ToString(Constants.IndexDateSuffixFormat)}";
 
-            var liveVacanciesApiResponse = new GetLiveVacanciesApiResponse
-            {
-                Vacancies = [],
-                PageNo = 1,
-                PageSize = 0,
-                TotalLiveVacancies = 0,
-                TotalLiveVacanciesReturned = 0,
-                TotalPages = 1
-            };
+        var liveVacanciesApiResponse = new GetLiveVacanciesApiResponse
+        {
+            Vacancies = [],
+            PageNo = 1,
+            PageSize = 0,
+            TotalLiveVacancies = 0,
+            TotalLiveVacanciesReturned = 0,
+            TotalPages = 1
+        };
 
             var nhsLiveVacanciesApiResponse = new GetNhsLiveVacanciesApiResponse
             {
@@ -166,12 +168,64 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers
             azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
             azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);
 
-            // Act
-            await sut.Handle();
+        // Act
+        await sut.Handle();
 
-            // Assert
-            azureSearchHelper.Verify(s => s.UploadDocuments(It.IsAny<string>(),
-                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(docs => docs.Any(d => d.Address!.Country == Constants.EnglandOnly))), Times.Never);
-        }
+        // Assert
+        azureSearchHelper.Verify(s => s.UploadDocuments(It.IsAny<string>(),
+            It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(docs => docs.Any(d => d.Address!.Country == Constants.EnglandOnly))), Times.Never);
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Index_Statistics_Are_Checked_For_Issues(
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
+        RecruitIndexerJobHandler sut)
+    {
+        // arrange
+        var beforeStats = new IndexStatistics(1000);
+        var afterStats = new IndexStatistics(100);
+        azureSearchHelper
+            .SetupSequence(x => x.GetAliasStatisticsAsync(Constants.AliasName, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(beforeStats)
+            .ReturnsAsync(afterStats);
+
+        // act
+        await sut.Handle();
+
+        // assert
+        indexingAlertsManager.Verify(x => x.VerifySnapshotsAsync(beforeStats, afterStats, It.IsAny<CancellationToken>()), Times.Once());
+    }
+    
+    [Test, MoqAutoData]
+    public async Task Then_An_Alert_Is_Raised_If_The_Nhs_Api_Does_Not_Return_Any_Vacancies(
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
+        RecruitIndexerJobHandler sut)
+    {
+        // arrange
+        findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(new GetNhsLiveVacanciesApiResponse { Vacancies = [] });
+
+        // act
+        await sut.Handle();
+
+        // assert
+        indexingAlertsManager.Verify(x => x.SendNhsApiAlertAsync(It.IsAny<CancellationToken>()), Times.Once());
+    }
+    
+    [Test, MoqAutoData]
+    public async Task Then_An_Alert_Is_Raised_If_The_Nhs_Api_Returns_Null(
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
+        RecruitIndexerJobHandler sut)
+    {
+        // arrange
+        findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync((GetNhsLiveVacanciesApiResponse)null!);
+
+        // act
+        await sut.Handle();
+
+        // assert
+        indexingAlertsManager.Verify(x => x.SendNhsApiAlertAsync(It.IsAny<CancellationToken>()), Times.Once());
     }
 }

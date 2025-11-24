@@ -16,6 +16,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
@@ -44,6 +45,8 @@ var host = new HostBuilder()
 
         services.Configure<FindApprenticeshipJobsConfiguration>(configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
         services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
+        services.Configure<IndexingAlertingConfiguration>(configuration.GetSection(nameof(IndexingAlertingConfiguration)));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<IndexingAlertingConfiguration>>().Value);
         
         // Configure the DAS Encoding service
         var dasEncodingConfig = new EncodingConfig { Encodings = [] };
@@ -54,10 +57,16 @@ var host = new HostBuilder()
         var environmentName = configuration["Values:EnvironmentName"] ?? configuration["EnvironmentName"];
         services.AddSingleton(new FunctionEnvironment(environmentName));
 
+        services.AddHttpClient<ITeamsClient, TeamsClient>()
+            .AddPolicyHandler(_ => HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+        
         services.AddTransient<IApprenticeAzureSearchDocumentFactory, ApprenticeAzureSearchDocumentFactory>();
         services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();
         services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
         services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
+        services.AddTransient<IIndexingAlertsManager, IndexingAlertsManager>();
         services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
         services.AddTransient<IIndexCleanupJobHandler, IndexCleanupJobHandler>();
         services.AddTransient<IVacancyUpdatedHandler, VacancyUpdatedHandler>();
