@@ -4,5 +4,5 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 public record CsjVacancy : ExternalLiveVacancy
 {
-    public readonly VacancyDataSource VacancySource = VacancyDataSource.Csj;
+    public const VacancyDataSource VacancySource = VacancyDataSource.Csj;
 }

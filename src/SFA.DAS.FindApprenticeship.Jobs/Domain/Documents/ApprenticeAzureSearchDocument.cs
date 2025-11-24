@@ -10,10 +10,10 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 public class ApprenticeAzureSearchDocument
 {
     public static implicit operator ApprenticeAzureSearchDocument(NhsVacancy source)
-        => MapFromExternal(source, source.VacancySource);
+        => MapFromExternal(source, NhsVacancy.VacancySource);
 
     public static implicit operator ApprenticeAzureSearchDocument(CsjVacancy source)
-        => MapFromExternal(source, source.VacancySource);
+        => MapFromExternal(source, CsjVacancy.VacancySource);
 
     private static ApprenticeAzureSearchDocument MapFromExternal(ExternalLiveVacancy source, VacancyDataSource vacancySource)
     {
