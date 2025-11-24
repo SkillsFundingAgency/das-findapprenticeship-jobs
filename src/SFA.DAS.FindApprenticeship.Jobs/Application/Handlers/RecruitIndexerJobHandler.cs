@@ -16,9 +16,9 @@ public class RecruitIndexerJobHandler(
 {
     private const int PageSize = 500;
 
-    public async Task Handle()
+    public async Task Handle(CancellationToken cancellationToken = default)
     {
-        var oldStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName);
+        var oldStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName, cancellationToken);
         
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
         await azureSearchHelperService.CreateIndex(indexName);
@@ -57,7 +57,7 @@ public class RecruitIndexerJobHandler(
 
             if (documents is { Count: 0 })
             {
-                await indexingAlertsManager.SendNhsImportAlertAsync();
+                await indexingAlertsManager.SendNhsImportAlertAsync(cancellationToken);
             }
             
             await azureSearchHelperService.UploadDocuments(indexName, documents);
@@ -65,7 +65,7 @@ public class RecruitIndexerJobHandler(
         }
         else
         {
-            await indexingAlertsManager.SendNhsApiAlertAsync();
+            await indexingAlertsManager.SendNhsApiAlertAsync(cancellationToken);
         }
 
         // Retrieve Civil Service live vacancies
@@ -73,9 +73,15 @@ public class RecruitIndexerJobHandler(
         if (civilServiceLiveVacancies != null && civilServiceLiveVacancies.Vacancies.Any())
         {
             var documents = civilServiceLiveVacancies.Vacancies
-                .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                .Where(fil => string.Equals(fil.Address.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
                 .Select(x => (ApprenticeAzureSearchDocument)x)
                 .ToList();
+
+            if (documents is { Count: 0 })
+            {
+                await indexingAlertsManager.SendCsjImportAlertAsync(cancellationToken);
+            }
+
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             updateAlias = true;
         }
@@ -83,8 +89,8 @@ public class RecruitIndexerJobHandler(
         if (updateAlias)
         {
             await azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
-            var newStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName);
-            await indexingAlertsManager.VerifySnapshotsAsync(oldStats, newStats);
+            var newStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName, cancellationToken);
+            await indexingAlertsManager.VerifySnapshotsAsync(oldStats, newStats, cancellationToken);
         }
     }
 }
