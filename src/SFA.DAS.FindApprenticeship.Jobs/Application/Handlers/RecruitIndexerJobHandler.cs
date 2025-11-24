@@ -1,4 +1,5 @@
-﻿using SFA.DAS.FindApprenticeship.Jobs.Domain;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
@@ -26,6 +27,7 @@ public class RecruitIndexerJobHandler(
         var pageNo = 1;
         var totalPages = 100;
         var updateAlias = false;
+        long totalDocumentsCount = 0;
         while (pageNo <= totalPages)
         {
             var liveVacancies = await findApprenticeshipJobsService.GetLiveVacancies(pageNo, PageSize);
@@ -43,6 +45,7 @@ public class RecruitIndexerJobHandler(
 
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             pageNo++;
+            totalDocumentsCount += documents.Count;
             updateAlias = true;
         }
 
@@ -51,7 +54,7 @@ public class RecruitIndexerJobHandler(
         if (nhsLiveVacancies != null && nhsLiveVacancies.Vacancies.Any())
         {
             var documents = nhsLiveVacancies.Vacancies
-                .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                .Where(fil => string.Equals(fil.Address.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
                 .Select(x => (ApprenticeAzureSearchDocument)x)
                 .ToList();
 
@@ -61,6 +64,7 @@ public class RecruitIndexerJobHandler(
             }
             
             await azureSearchHelperService.UploadDocuments(indexName, documents);
+            totalDocumentsCount += documents.Count;
             updateAlias = true;
         }
         else
@@ -83,13 +87,18 @@ public class RecruitIndexerJobHandler(
             }
 
             await azureSearchHelperService.UploadDocuments(indexName, documents);
+            totalDocumentsCount += documents.Count;
             updateAlias = true;
+        }
+        else
+        {
+            await indexingAlertsManager.SendCsjImportAlertAsync(cancellationToken);
         }
 
         if (updateAlias)
         {
             await azureSearchHelperService.UpdateAlias(Constants.AliasName, indexName);
-            var newStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName, cancellationToken);
+            var newStats = new IndexStatistics(totalDocumentsCount);
             await indexingAlertsManager.VerifySnapshotsAsync(oldStats, newStats, cancellationToken);
         }
     }
