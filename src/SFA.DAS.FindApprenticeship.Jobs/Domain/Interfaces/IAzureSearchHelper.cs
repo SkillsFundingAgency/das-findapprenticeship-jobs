@@ -1,8 +1,10 @@
 ﻿using Azure.Search.Documents.Indexes.Models;
 using Azure;
+using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+
 public interface IAzureSearchHelper
 {
     Task CreateIndex(string indexName);
@@ -14,4 +16,5 @@ public interface IAzureSearchHelper
     Task UpdateAlias(string aliasName, string indexName);
     Task<Response<ApprenticeAzureSearchDocument>?> GetDocument(string indexName, string vacancyReference);
     Task DeleteDocuments(string indexName, IEnumerable<string> ids);
+    Task<IndexStatistics?> GetAliasStatisticsAsync(string aliasName, CancellationToken cancellationToken = default);
 }
