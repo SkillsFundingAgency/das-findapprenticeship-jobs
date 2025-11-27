@@ -22,6 +22,8 @@ using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.HealthChecks;
 
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
 var host = new HostBuilder()
@@ -141,7 +143,10 @@ var host = new HostBuilder()
                     .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                         retryAttempt)));
             });
-        
+
+        services
+            .AddHealthChecks()
+            .AddCheck<AzureKeyVaultSecretHealthCheck>("AzureKeyVaultSecret");
         services
             .AddApplicationInsightsTelemetryWorkerService()
             .ConfigureFunctionsApplicationInsights();
