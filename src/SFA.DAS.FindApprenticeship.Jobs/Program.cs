@@ -1,3 +1,6 @@
+using Azure;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -18,6 +21,7 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.StartupExtensions;
+using System.Security.Cryptography.X509Certificates;
 
 [assembly: NServiceBusTriggerFunction("SFA.DAS.FindApprenticeship.Jobs")]
 var host = new HostBuilder()
@@ -81,10 +85,54 @@ var host = new HostBuilder()
         services.AddTransient<IUpdateCandidateStatusHandler, UpdateCandidateStatusHandler>();
         services.AddTransient<IDateTimeService, DateTimeService>();
         services.AddTransient<IBatchTaskRunner, BatchTaskRunner>();
-        services.AddHttpClient<IOuterApiClient, OuterApiClient>
-            (
-                options => options.Timeout = TimeSpan.FromMinutes(30)
-            )
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>()
+            .ConfigureHttpClient((sp, client) =>
+            {
+                var config = sp.GetRequiredService<IOptions<FindApprenticeshipJobsConfiguration>>().Value;
+
+                var baseUrl = !string.IsNullOrEmpty(config.ApimBaseUrlSecure) && config.UseSecureGateway
+                    ? config.ApimBaseUrlSecure
+                    : config.ApimBaseUrl;
+
+                client.BaseAddress = new Uri(baseUrl!);
+                client.Timeout = TimeSpan.FromMinutes(30);
+            })
+            .ConfigurePrimaryHttpMessageHandler(sp =>
+            {
+                var config = sp.GetRequiredService<IOptions<FindApprenticeshipJobsConfiguration>>().Value;
+                var logger = sp.GetRequiredService<ILogger<FindApprenticeshipJobsConfiguration>>();
+
+                if (string.IsNullOrEmpty(config.SecretClientUrl) || string.IsNullOrEmpty(config.SecretName))
+                {
+                    logger.LogInformation("No client cert configuration to add");
+                    return new HttpClientHandler();
+                }
+
+                try
+                {
+                    var credential = new DefaultAzureCredential();
+                    var secretClient = new SecretClient(new Uri(config.SecretClientUrl!), credential);
+
+                    var secret = secretClient.GetSecret(config.SecretName!);
+                    if (!secret.HasValue)
+                    {
+                        throw new Exception($"Has errored - {secret.GetRawResponse().Content.ToDynamicFromJson()}");
+                    }
+
+                    var handler = new HttpClientHandler();
+                    handler.ClientCertificates.Add(
+                        new X509Certificate2(Convert.FromBase64String(secret.Value.Value))
+                    );
+
+                    logger.LogInformation("Added client cert configuration");
+                    return handler;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Unable to add client cert configuration");
+                    return new HttpClientHandler();
+                }
+            })
             .SetHandlerLifetime(TimeSpan.FromMinutes(10))
             .AddPolicyHandler(_ =>
             {
@@ -93,7 +141,6 @@ var host = new HostBuilder()
                     .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                         retryAttempt)));
             });
-        
         
         services
             .AddApplicationInsightsTelemetryWorkerService()

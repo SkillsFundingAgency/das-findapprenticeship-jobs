@@ -31,7 +31,10 @@ public class WhenCallingGet
         };
 
         var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.ApimBaseUrl + getTestRequest.GetUrl, config.ApimKey, HttpMethod.Get);
-        var client = new HttpClient(httpMessageHandler.Object);
+        var client = new HttpClient(httpMessageHandler.Object)
+        {
+            BaseAddress = new Uri(config.ApimBaseUrl)
+        };
         var apiClient = new OuterApiClient(client, configMock.Object);
 
         var actual = await apiClient.Get<List<string>>(getTestRequest);
@@ -54,7 +57,10 @@ public class WhenCallingGet
         };
 
         var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.ApimBaseUrl + getTestRequest.GetUrl, config.ApimKey, HttpMethod.Get);
-        var client = new HttpClient(httpMessageHandler.Object);
+        var client = new HttpClient(httpMessageHandler.Object)
+        {
+            BaseAddress = new Uri(config.ApimBaseUrl)
+        };
         var apiClient = new OuterApiClient(client, configMock.Object);
 
         var actual = await apiClient.Get<List<string>>(getTestRequest);
@@ -78,7 +84,10 @@ public class WhenCallingGet
         };
 
         var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.ApimBaseUrl + getTestRequest.GetUrl, config.ApimKey, HttpMethod.Get);
-        var client = new HttpClient(httpMessageHandler.Object);
+        var client = new HttpClient(httpMessageHandler.Object)
+        {
+            BaseAddress = new Uri(config.ApimBaseUrl)
+        };
         var apiClient = new OuterApiClient(client, configMock.Object);
 
         var actual = await apiClient.Get<List<string>>(getTestRequest);

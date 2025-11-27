@@ -29,7 +29,7 @@ public class WhenCallingPost
         };
 
         var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.ApimBaseUrl + postTestRequest.PostUrl, config.ApimKey, HttpMethod.Post);
-        var client = new HttpClient(httpMessageHandler.Object);
+        var client = new HttpClient(httpMessageHandler.Object) { BaseAddress = new Uri(config.ApimBaseUrl) };
         var apiClient = new OuterApiClient(client, configMock.Object);
 
         var actual = await apiClient.Post<NullResponse>(postTestRequest);
@@ -52,7 +52,7 @@ public class WhenCallingPost
         };
 
         var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.ApimBaseUrl + postTestRequest.PostUrl, config.ApimKey, HttpMethod.Post);
-        var client = new HttpClient(httpMessageHandler.Object);
+        var client = new HttpClient(httpMessageHandler.Object) { BaseAddress = new Uri(config.ApimBaseUrl) };
         var apiClient = new OuterApiClient(client, configMock.Object);
 
         var actual = await apiClient.Post<NullResponse>(postTestRequest);
