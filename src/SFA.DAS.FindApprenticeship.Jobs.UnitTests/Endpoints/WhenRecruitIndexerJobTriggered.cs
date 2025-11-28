@@ -16,6 +16,6 @@ public class WhenRecruitIndexerJobTriggered
         
         await sut.Run(It.IsAny<TimerInfo>());
 
-        handler.Verify(x => x.Handle(), Times.Once());
+        handler.Verify(x => x.Handle(CancellationToken.None), Times.Once());
     }
 }

@@ -20,7 +20,7 @@ public class WhenHandlingRecruitIndexerJob
     {
         // arrange
         var json = $"{{\"EmploymentLocationOption\":{value}}}";
-            
+
         // act
         var newLiveVacancy = System.Text.Json.JsonSerializer.Deserialize<LiveVacancy>(json);
 
@@ -28,11 +28,12 @@ public class WhenHandlingRecruitIndexerJob
         newLiveVacancy.Should().NotBeNull();
         newLiveVacancy!.EmploymentLocationOption.Should().Be(expected);
     }
-        
+
     [Test, MoqAutoData]
     public async Task Then_The_LiveVacancies_Are_Retrieved_And_Index_Is_Created(
         List<LiveVacancy> liveVacancies,
-        List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsLiveVacancies,
+        List<NhsVacancy> nhsLiveVacancies,
+        List<CsjVacancy> civilServiceLiveVacancies,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -63,8 +64,19 @@ public class WhenHandlingRecruitIndexerJob
             TotalPages = 1
         };
 
+        var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse
+        {
+            Vacancies = civilServiceLiveVacancies,
+            PageNo = 1,
+            PageSize = liveVacancies.Count,
+            TotalLiveVacancies = liveVacancies.Count,
+            TotalLiveVacanciesReturned = liveVacancies.Count,
+            TotalPages = 1
+        };
+
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 500, null)).ReturnsAsync(liveVacanciesApiResponse);
         findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(nhsLiveVacanciesApiResponse);
+        findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(civilServiceLiveVacanciesApiResponse);
         azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
         azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
         azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);
@@ -75,8 +87,9 @@ public class WhenHandlingRecruitIndexerJob
         {
             findApprenticeshipJobsService.Verify(x => x.GetLiveVacancies(It.IsAny<int>(), 500, null), Times.Exactly(liveVacanciesApiResponse.TotalPages));
             findApprenticeshipJobsService.Verify(x => x.GetNhsLiveVacancies(), Times.Exactly(nhsLiveVacanciesApiResponse.TotalPages));
+            findApprenticeshipJobsService.Verify(x => x.GetCivilServiceLiveVacancies(), Times.Exactly(1));
             azureSearchHelper.Verify(x => x.CreateIndex(expectedIndexName), Times.Once());
-            azureSearchHelper.Verify(x => x.UploadDocuments(expectedIndexName, It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(2));
+            azureSearchHelper.Verify(x => x.UploadDocuments(expectedIndexName, It.IsAny<List<ApprenticeAzureSearchDocument>>()), Times.Exactly(3));
             azureSearchHelper.Verify(x => x.UpdateAlias(Constants.AliasName, expectedIndexName), Times.Once);
         }
     }
@@ -89,6 +102,7 @@ public class WhenHandlingRecruitIndexerJob
     {
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), 500, null)).ReturnsAsync(() => null);
         findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(() => null);
+        findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(() => null);
 
         await sut.Handle();
 
@@ -105,7 +119,7 @@ public class WhenHandlingRecruitIndexerJob
     public async Task Handle_Should_Add_NhsLiveVacancies_With_EnglandOnly_Address_To_BatchDocuments(
         string countryName,
         List<LiveVacancy> liveVacancies,
-        GetNhsLiveVacanciesApiResponse.NhsLiveVacancy nhsLiveVacancy,
+        NhsVacancy nhsLiveVacancy,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         [Frozen] Mock<IDateTimeService> dateTimeService,
@@ -130,7 +144,17 @@ public class WhenHandlingRecruitIndexerJob
 
         var nhsLiveVacanciesApiResponse = new GetNhsLiveVacanciesApiResponse
         {
-            Vacancies = new List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy>{nhsLiveVacancy},
+            Vacancies = new List<NhsVacancy> { nhsLiveVacancy },
+            PageNo = 1,
+            PageSize = liveVacancies.Count,
+            TotalLiveVacancies = liveVacancies.Count,
+            TotalLiveVacanciesReturned = liveVacancies.Count,
+            TotalPages = 1
+        };
+
+        var civilServiceLiveVacanciesApiResponse = new GetCivilServiceLiveVacanciesApiResponse
+        {
+            Vacancies = [],
             PageNo = 1,
             PageSize = liveVacancies.Count,
             TotalLiveVacancies = liveVacancies.Count,
@@ -140,6 +164,7 @@ public class WhenHandlingRecruitIndexerJob
 
         findApprenticeshipJobsService.Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), null)).ReturnsAsync(liveVacanciesApiResponse);
         findApprenticeshipJobsService.Setup(x => x.GetNhsLiveVacancies()).ReturnsAsync(nhsLiveVacanciesApiResponse);
+        findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync(civilServiceLiveVacanciesApiResponse);
         azureSearchHelper.Setup(x => x.CreateIndex(It.IsAny<string>())).Returns(Task.CompletedTask);
         azureSearchHelper.Setup(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<List<ApprenticeAzureSearchDocument>>())).Returns(Task.CompletedTask);
         azureSearchHelper.Setup(x => x.UpdateAlias(Constants.AliasName, expectedIndexName)).Returns(Task.CompletedTask);
@@ -155,7 +180,8 @@ public class WhenHandlingRecruitIndexerJob
     [Test, MoqAutoData]
     public async Task Then_The_Index_Statistics_Are_Checked_For_Issues(
         List<LiveVacancy> liveVacancies,
-        List<GetNhsLiveVacanciesApiResponse.NhsLiveVacancy> nhsVacancies,
+        List<NhsVacancy> nhsVacancies,
+        List<CsjVacancy> csjVacancies,
         ApprenticeAzureSearchDocument searchDocument,
         [Frozen] Mock<IApprenticeAzureSearchDocumentFactory> recruitDocumentFactory,
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
@@ -168,7 +194,7 @@ public class WhenHandlingRecruitIndexerJob
         azureSearchHelper
             .Setup(x => x.GetAliasStatisticsAsync(Constants.AliasName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(beforeStats);
-        
+
         var liveVacanciesResponse = new GetLiveVacanciesApiResponse
         {
             PageNo = 1,
@@ -189,31 +215,46 @@ public class WhenHandlingRecruitIndexerJob
             TotalPages = 1,
             Vacancies = nhsVacancies
         };
-        
+
+        csjVacancies.ForEach(x => x.Address.Country = Constants.EnglandOnly);
+        var csjVacanciesResponse = new GetCivilServiceLiveVacanciesApiResponse
+        {
+            PageNo = 1,
+            PageSize = 100,
+            TotalLiveVacancies = csjVacancies.Count,
+            TotalLiveVacanciesReturned = csjVacancies.Count,
+            TotalPages = 1,
+            Vacancies = csjVacancies
+        };
+
         findApprenticeshipJobsService
             .Setup(x => x.GetLiveVacancies(It.IsAny<int>(), It.IsAny<int>(), null))
             .ReturnsAsync(liveVacanciesResponse);
-        
+
         findApprenticeshipJobsService
             .Setup(x => x.GetNhsLiveVacancies())
             .ReturnsAsync(nhsVacanciesResponse);
 
+        findApprenticeshipJobsService
+            .Setup(x => x.GetCivilServiceLiveVacancies())
+            .ReturnsAsync(csjVacanciesResponse);
+
         recruitDocumentFactory.Setup(x => x.Create(It.IsAny<LiveVacancy>())).Returns([searchDocument]);
-        
+
         IndexStatistics? capturedStats = null;
         indexingAlertsManager
             .Setup(x => x.VerifySnapshotsAsync(beforeStats, It.IsAny<IndexStatistics>(), It.IsAny<CancellationToken>()))
             .Callback<IndexStatistics?, IndexStatistics?, CancellationToken>((_, st, _) => { capturedStats = st; });
-    
+
         // act
         await sut.Handle();
-    
+
         // assert
         indexingAlertsManager.Verify(x => x.VerifySnapshotsAsync(beforeStats, It.IsAny<IndexStatistics>(), It.IsAny<CancellationToken>()), Times.Once());
         capturedStats.Should().NotBeNull();
-        capturedStats.Value.DocumentCount.Should().Be(liveVacancies.Count + nhsVacancies.Count);
+        capturedStats.Value.DocumentCount.Should().Be(liveVacancies.Count + nhsVacancies.Count + csjVacancies.Count);
     }
-    
+
     [Test, MoqAutoData]
     public async Task Then_An_Alert_Is_Raised_If_The_Nhs_Api_Does_Not_Return_Any_Vacancies(
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
@@ -229,7 +270,7 @@ public class WhenHandlingRecruitIndexerJob
         // assert
         indexingAlertsManager.Verify(x => x.SendNhsApiAlertAsync(It.IsAny<CancellationToken>()), Times.Once());
     }
-    
+
     [Test, MoqAutoData]
     public async Task Then_An_Alert_Is_Raised_If_The_Nhs_Api_Returns_Null(
         [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
@@ -244,5 +285,21 @@ public class WhenHandlingRecruitIndexerJob
 
         // assert
         indexingAlertsManager.Verify(x => x.SendNhsApiAlertAsync(It.IsAny<CancellationToken>()), Times.Once());
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_An_Alert_Is_Raised_If_The_Csj_Api_Returns_Null(
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IIndexingAlertsManager> indexingAlertsManager,
+        RecruitIndexerJobHandler sut)
+    {
+        // arrange
+        findApprenticeshipJobsService.Setup(x => x.GetCivilServiceLiveVacancies()).ReturnsAsync((GetCivilServiceLiveVacanciesApiResponse)null!);
+
+        // act
+        await sut.Handle();
+
+        // assert
+        indexingAlertsManager.Verify(x => x.SendCsjImportAlertAsync(It.IsAny<CancellationToken>()), Times.Once());
     }
 }

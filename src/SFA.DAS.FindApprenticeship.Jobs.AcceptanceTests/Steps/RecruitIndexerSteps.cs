@@ -42,6 +42,7 @@ public class RecruitIndexerSteps
     {
         var recruitService = _context.Get<Mock<IOuterApiClient>>(ContextKeys.MockApiClient);
         await recruitService.Object.Get<GetLiveVacanciesApiResponse>(It.IsAny<GetLiveVacanciesApiRequest>());
+        await recruitService.Object.Get<GetCivilServiceLiveVacanciesApiResponse>(It.IsAny<GetCivilServiceVacanciesApiRequest>());
     }
 
     [Then(@"they are added to the search index")]
