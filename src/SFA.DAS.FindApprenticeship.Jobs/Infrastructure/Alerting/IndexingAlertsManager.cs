@@ -9,6 +9,7 @@ public interface IIndexingAlertsManager
     Task VerifySnapshotsAsync(IndexStatistics? oldStats, IndexStatistics? newStats, CancellationToken cancellationToken = default);
     Task SendNhsApiAlertAsync(CancellationToken cancellationToken = default);
     Task SendNhsImportAlertAsync(CancellationToken cancellationToken = default);
+    Task SendCsjImportAlertAsync(CancellationToken cancellationToken = default);
 }
 
 public class IndexingAlertsManager(
@@ -24,6 +25,7 @@ public class IndexingAlertsManager(
     private AlertMessage IndexEmptyMessage => Alert("The index contains no documents");
     private AlertMessage NoNhsVacanciesImported => Alert("No NHS vacancies were imported");
     private AlertMessage NoNhsVacanciesReturned => Alert("The external NHS API returned no vacancies");
+    private AlertMessage NoCivilServiceVacanciesReturned => Alert("The external CSJ API returned no vacancies");
     private AlertMessage IndexThresholdBreachedMessage(int value) => Alert($"A {value}% decrease in documents has been detected");
 
     public async Task VerifySnapshotsAsync(IndexStatistics? oldStats, IndexStatistics? newStats, CancellationToken cancellationToken = default)
@@ -51,7 +53,12 @@ public class IndexingAlertsManager(
     {
         await SendAlertAsync(NoNhsVacanciesImported, cancellationToken);
     }
-    
+
+    public async Task SendCsjImportAlertAsync(CancellationToken cancellationToken = default)
+    {
+        await SendAlertAsync(NoCivilServiceVacanciesReturned, cancellationToken);
+    }
+
     private async Task SendAlertAsync(AlertMessage alertMessage, CancellationToken cancellationToken = default)
     {
         try
