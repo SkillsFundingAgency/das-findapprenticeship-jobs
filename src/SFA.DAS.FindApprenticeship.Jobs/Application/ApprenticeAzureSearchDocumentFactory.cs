@@ -8,6 +8,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application;
 public interface IApprenticeAzureSearchDocumentFactory
 {
     IEnumerable<ApprenticeAzureSearchDocument> Create(LiveVacancy vacancy);
+    IEnumerable<ApprenticeAzureSearchDocument> Create(CsjVacancy vacancy);
 }
 
 public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingService): IApprenticeAzureSearchDocumentFactory
@@ -143,5 +144,60 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
         ];
         
         return string.Join(",", lines.Where(x => !string.IsNullOrWhiteSpace(x))).ToLowerInvariant();
+    }
+
+    public IEnumerable<ApprenticeAzureSearchDocument> Create(CsjVacancy vacancy)
+    {
+        switch (vacancy.EmploymentLocationOption)
+        {
+            case AvailableWhere.OneLocation:
+                {
+                    var address = vacancy.Address;
+                    var document = (ApprenticeAzureSearchDocument)vacancy;
+                    document.Address = (AddressAzureSearchDocument)address;
+                    document.IsPrimaryLocation = true;
+                    if (address is {Latitude: not null, Longitude: not null})
+                    {
+                        document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
+                    }
+                    return [document];
+                }
+            case AvailableWhere.MultipleLocations:
+                {
+                    var results = new List<ApprenticeAzureSearchDocument>();
+                    var allLocations = new List<Address>();
+
+                    if (vacancy.Address is not null)
+                        allLocations.Add(vacancy.Address);
+
+                    if (vacancy.OtherAddresses.Count > 0)
+                        allLocations.AddRange(vacancy.OtherAddresses.DistinctBy(FlattenAddress));
+
+                    var count = 0;
+                    foreach (var address in allLocations)
+                    {
+                        var document = (ApprenticeAzureSearchDocument)vacancy;
+                        document.Address = (AddressAzureSearchDocument)address;
+                        document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
+                        document.IsPrimaryLocation = count == 1;
+                        if (address.Latitude is not null && address.Longitude is not null)
+                        {
+                            document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
+                        }
+                        document.OtherAddresses = allLocations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
+                        results.Add(document);
+                    }
+                    return results;
+                }
+            case AvailableWhere.AcrossEngland:
+            case null:
+            default:
+                {
+                    var document = (ApprenticeAzureSearchDocument)vacancy;
+                    document.Address = vacancy.Address is not null ? (AddressAzureSearchDocument)vacancy.Address : null;
+                    document.IsPrimaryLocation = true;
+                    return [document];
+                }
+        }
     }
 }

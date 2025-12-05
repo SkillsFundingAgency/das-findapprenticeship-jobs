@@ -20,7 +20,6 @@ public class RecruitIndexerJobHandler(
     public async Task Handle(CancellationToken cancellationToken = default)
     {
         var oldStats = await azureSearchHelperService.GetAliasStatisticsAsync(Constants.AliasName, cancellationToken);
-        
         var indexName = $"{Constants.IndexPrefix}{dateTimeService.GetCurrentDateTime().ToString(Constants.IndexDateSuffixFormat)}";
         await azureSearchHelperService.CreateIndex(indexName);
 
@@ -62,7 +61,7 @@ public class RecruitIndexerJobHandler(
             {
                 await indexingAlertsManager.SendNhsImportAlertAsync(cancellationToken);
             }
-            
+
             await azureSearchHelperService.UploadDocuments(indexName, documents);
             totalDocumentsCount += documents.Count;
             updateAlias = true;
@@ -77,8 +76,8 @@ public class RecruitIndexerJobHandler(
         if (civilServiceLiveVacancies != null && civilServiceLiveVacancies.Vacancies.Any())
         {
             var documents = civilServiceLiveVacancies.Vacancies
-                .Where(fil => string.Equals(fil.Address.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
-                .Select(x => (ApprenticeAzureSearchDocument)x)
+                .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                .SelectMany(recruitDocumentFactory.Create)
                 .ToList();
 
             if (documents is { Count: 0 })
