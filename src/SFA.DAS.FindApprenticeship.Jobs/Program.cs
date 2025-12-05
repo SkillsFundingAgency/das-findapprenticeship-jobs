@@ -1,4 +1,5 @@
 using Azure;
+using Azure.Core;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.Extensions.Configuration;
@@ -94,8 +95,11 @@ var host = new HostBuilder()
                     ? config.ApimBaseUrlSecure
                     : config.ApimBaseUrl;
 
+                if (string.IsNullOrWhiteSpace(baseUrl))
+                    throw new InvalidOperationException("ApimBaseUrl (or ApimBaseUrlSecure) is not configured.");
+
                 client.BaseAddress = new Uri(baseUrl!);
-                client.Timeout = TimeSpan.FromMinutes(30);
+                client.Timeout = TimeSpan.FromSeconds(30);
             })
             .ConfigurePrimaryHttpMessageHandler(sp =>
             {
@@ -108,10 +112,33 @@ var host = new HostBuilder()
                     return new HttpClientHandler();
                 }
 
+                var credentialOptions = new DefaultAzureCredentialOptions
+                {
+                    Retry =
+                    {
+                        NetworkTimeout = TimeSpan.FromSeconds(5),
+                        MaxRetries = 3,
+                        Mode = RetryMode.Exponential,
+                        Delay = TimeSpan.FromMilliseconds(200),
+                        MaxDelay = TimeSpan.FromSeconds(5)
+                    }
+                };
+                var secretClientOptions = new SecretClientOptions
+                {
+                    Retry =
+                    {
+                        NetworkTimeout = TimeSpan.FromSeconds(5),
+                        MaxRetries = 3,
+                        Mode = RetryMode.Exponential,
+                        Delay = TimeSpan.FromMilliseconds(200),
+                        MaxDelay = TimeSpan.FromSeconds(5)
+                    }
+                };
+
                 try
                 {
-                    var credential = new DefaultAzureCredential();
-                    var secretClient = new SecretClient(new Uri(config.SecretClientUrl!), credential);
+                    var credential = new DefaultAzureCredential(credentialOptions);
+                    var secretClient = new SecretClient(new Uri(config.SecretClientUrl!), credential, secretClientOptions);
 
                     var secret = secretClient.GetSecret(config.SecretName!);
                     if (!secret.HasValue)
