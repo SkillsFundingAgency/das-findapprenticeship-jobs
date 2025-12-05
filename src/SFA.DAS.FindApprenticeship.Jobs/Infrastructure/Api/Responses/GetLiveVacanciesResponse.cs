@@ -31,8 +31,8 @@ public class LiveVacancy
     public string ApplicationMethod { get; set; } = null!;
     public string? ApplicationUrl { get; set; }
     public string? ApplicationInstructions { get; set; }
-    public int AccountId { get; set; }
-    public int AccountLegalEntityId { get; set; }
+    public long AccountId { get; set; }
+    public long AccountLegalEntityId { get; set; }
     public long Ukprn { get; set; }
     public string? ProviderName { get; set; }
     public DateTime PostedDate { get; set; }

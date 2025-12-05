@@ -2,23 +2,31 @@
 using Azure.Search.Documents.Indexes;
 using Microsoft.Spatial;
 using Azure.Core.Serialization;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Enums;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 
 public class ApprenticeAzureSearchDocument
 {
-    private const string VacancySourceNhs = "NHS";
-    
-    public static implicit operator ApprenticeAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
+    public static implicit operator ApprenticeAzureSearchDocument(NhsVacancy source)
+        => MapFromExternal(source, NhsVacancy.VacancySource);
+
+    public static implicit operator ApprenticeAzureSearchDocument(CsjVacancy source)
+        => MapFromExternal(source, CsjVacancy.VacancySource);
+
+    private static ApprenticeAzureSearchDocument MapFromExternal(ExternalLiveVacancy source, VacancyDataSource vacancySource)
     {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
+
         return new ApprenticeAzureSearchDocument
         {
-            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId,
-            AccountPublicHashedId = source.AccountPublicHashedId,
+            AccountLegalEntityPublicHashedId = source.AccountLegalEntityPublicHashedId ?? "",
+            AccountPublicHashedId = source.AccountPublicHashedId ?? "",
             AdditionalQuestion1 = source.AdditionalQuestion1,
             AdditionalQuestion2 = source.AdditionalQuestion2,
-            Address = (AddressAzureSearchDocument)source.Address,
+            Address = (AddressAzureSearchDocument)source.Address!,
             AnonymousEmployerName = source.AnonymousEmployerName,
             ApplicationMethod = source.ApplicationMethod,
             ApplicationUrl = source.ApplicationUrl,
@@ -33,14 +41,16 @@ public class ApprenticeAzureSearchDocument
             EmployerDescription = source.EmployerDescription,
             EmployerName = source.EmployerName,
             EmployerWebsiteUrl = source.EmployerWebsiteUrl,
-            HoursPerWeek = (double)source.Wage!.WeeklyHours,
+            HoursPerWeek = (double?)source.Wage?.WeeklyHours ?? 0.0,
             Id = source.VacancyReference,
             IsDisabilityConfident = source.IsDisabilityConfident,
             IsEmployerAnonymous = source.IsEmployerAnonymous,
             IsPositiveAboutDisability = source.IsPositiveAboutDisability,
             IsPrimaryLocation = true,
             IsRecruitVacancy = source.IsRecruitVacancy,
-            Location = GeographyPoint.Create(source.Address.Latitude ?? 0.00, source.Address.Longitude ?? 0.00),
+            Location = GeographyPoint.Create(
+                source.Address?.Latitude ?? 0.00,
+                source.Address?.Longitude ?? 0.00),
             LongDescription = source.LongDescription,
             NumberOfPositions = source.NumberOfPositions,
             OtherAddresses = [],
@@ -50,24 +60,26 @@ public class ApprenticeAzureSearchDocument
             ProviderContactName = source.ProviderContactName,
             ProviderContactPhone = source.ProviderContactPhone,
             ProviderName = source.ProviderName,
-            Qualifications = source.Qualifications.Select(q => (QualificationAzureSearchDocument)q).ToList(),
+            Qualifications = source.Qualifications?
+                .Select(q => (QualificationAzureSearchDocument)q)
+                .ToList() ?? [],
             Route = source.Route,
             SearchTags = source.SearchTags,
-            Skills = source.Skills.ToList(),
+            Skills = source.Skills?.ToList() ?? [],
             StartDate = source.StartDate,
             ThingsToConsider = source.ThingsToConsider,
             Title = source.Title,
             TrainingDescription = source.TrainingDescription,
             TypicalJobTitles = source.TypicalJobTitles,
-            Ukprn = source.Ukprn.ToString(),
+            Ukprn = source.Ukprn.ToString() ?? "",
             VacancyLocationType = source.VacancyLocationType,
-            VacancyReference = $"{source.VacancyReference}",
-            VacancySource = VacancySourceNhs,
-            Wage = (WageAzureSearchDocument)source.Wage,
-            WageText = source.Wage.WageText,
+            VacancyReference = source.VacancyReference,
+            VacancySource = vacancySource.ToString(),
+            Wage = (WageAzureSearchDocument)source.Wage!,
+            WageText = source.Wage?.WageText ?? ""
         };
     }
-    
+
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Description { get; set; }
 
@@ -254,7 +266,7 @@ public class CourseAzureSearchDocument
         };
     }
 
-    public static implicit operator CourseAzureSearchDocument(GetNhsLiveVacanciesApiResponse.NhsLiveVacancy source)
+    public static implicit operator CourseAzureSearchDocument(ExternalLiveVacancy source)
     {
         return new CourseAzureSearchDocument
         {
