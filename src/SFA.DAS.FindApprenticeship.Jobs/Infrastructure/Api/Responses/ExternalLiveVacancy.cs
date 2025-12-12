@@ -1,7 +1,7 @@
 ﻿namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 public record ExternalLiveVacancy
 {
-    public Address Address { get; set; } = null!;
+    public Address? Address { get; set; }
     public bool IsDisabilityConfident { get; set; }
     public bool IsEmployerAnonymous { get; set; }
     public bool IsPositiveAboutDisability { get; set; }
