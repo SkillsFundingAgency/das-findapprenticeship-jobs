@@ -76,7 +76,6 @@ public class RecruitIndexerJobHandler(
         if (civilServiceLiveVacancies != null && civilServiceLiveVacancies.Vacancies.Any())
         {
             var documents = civilServiceLiveVacancies.Vacancies
-                .Where(fil => string.Equals(fil.Address?.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
                 .SelectMany(recruitDocumentFactory.Create)
                 .ToList();
 
