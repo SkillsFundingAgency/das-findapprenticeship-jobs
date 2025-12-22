@@ -217,6 +217,8 @@ public class WhenHandlingRecruitIndexerJob
         };
 
         csjVacancies.ForEach(x => x.Address.Country = Constants.EnglandOnly);
+        csjVacancies.ForEach(x => x.EmploymentLocationOption = AvailableWhere.OneLocation);
+        csjVacancies.ForEach(x => x.OtherAddresses = []);
         var csjVacanciesResponse = new GetCivilServiceLiveVacanciesApiResponse
         {
             PageNo = 1,
@@ -240,6 +242,7 @@ public class WhenHandlingRecruitIndexerJob
             .ReturnsAsync(csjVacanciesResponse);
 
         recruitDocumentFactory.Setup(x => x.Create(It.IsAny<LiveVacancy>())).Returns([searchDocument]);
+        recruitDocumentFactory.Setup(x => x.Create(It.IsAny<CsjVacancy>())).Returns([searchDocument]);
 
         IndexStatistics? capturedStats = null;
         indexingAlertsManager
