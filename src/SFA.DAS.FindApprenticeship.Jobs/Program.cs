@@ -57,10 +57,20 @@ var host = new HostBuilder()
         var environmentName = configuration["Values:EnvironmentName"] ?? configuration["EnvironmentName"];
         services.AddSingleton(new FunctionEnvironment(environmentName));
 
-        services.AddHttpClient<ITeamsClient, TeamsClient>()
-            .AddPolicyHandler(_ => HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+        var alertingConfiguration = new IndexingAlertingConfiguration();
+        context.Configuration.GetSection(nameof(IndexingAlertingConfiguration)).Bind(alertingConfiguration);
+        
+        if (alertingConfiguration.Enabled)
+        {
+            services.AddHttpClient<ITeamsClient, TeamsClient>()
+                .AddPolicyHandler(_ => HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+        }
+        else
+        {
+            services.AddHttpClient<ITeamsClient, NoLoggingTeamsClient>();
+        }
         
         services.AddTransient<IApprenticeAzureSearchDocumentFactory, ApprenticeAzureSearchDocumentFactory>();
         services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();

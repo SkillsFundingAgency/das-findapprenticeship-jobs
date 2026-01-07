@@ -2,6 +2,7 @@
 
 public class IndexingAlertingConfiguration
 {
-    public required string TeamsAlertWebhookUrl { get; init; }
     public int DocumentDecreasePercentageThreshold { get; init; } = 50;
+    public bool Enabled { get; init; }
+    public string TeamsAlertWebhookUrl { get; init; } = string.Empty;
 }

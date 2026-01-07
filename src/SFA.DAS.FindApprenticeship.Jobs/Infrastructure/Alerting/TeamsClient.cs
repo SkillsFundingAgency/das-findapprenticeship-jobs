@@ -4,6 +4,8 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 
+public record TeamsResponse(bool Ok, HttpStatusCode? StatusCode);
+
 public interface ITeamsClient
 {
     Task<TeamsResponse> PostMessageAsync(AlertMessage message, CancellationToken cancellationToken = default);
@@ -31,4 +33,10 @@ public class TeamsClient(IOptions<IndexingAlertingConfiguration> configuration, 
     }
 }
 
-public record TeamsResponse(bool Ok, HttpStatusCode? StatusCode);
+public class NoLoggingTeamsClient : ITeamsClient
+{
+    public Task<TeamsResponse> PostMessageAsync(AlertMessage message, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(new TeamsResponse(true, HttpStatusCode.OK));
+    }
+}
