@@ -34,9 +34,8 @@ var host = new HostBuilder()
                 builder.AddFilter(typeof(Program).Namespace, LogLevel.Information);
                 builder.SetMinimumLevel(LogLevel.Trace);
                 builder.AddConsole();
-
             }
-            );
+        );
 
         var configuration = context.Configuration;
 
@@ -45,8 +44,6 @@ var host = new HostBuilder()
 
         services.Configure<FindApprenticeshipJobsConfiguration>(configuration.GetSection(nameof(FindApprenticeshipJobsConfiguration)));
         services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipJobsConfiguration>>().Value);
-        services.Configure<IndexingAlertingConfiguration>(configuration.GetSection(nameof(IndexingAlertingConfiguration)));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<IndexingAlertingConfiguration>>().Value);
         
         // Configure the DAS Encoding service
         var dasEncodingConfig = new EncodingConfig { Encodings = [] };
@@ -59,6 +56,7 @@ var host = new HostBuilder()
 
         var alertingConfiguration = new IndexingAlertingConfiguration();
         context.Configuration.GetSection(nameof(IndexingAlertingConfiguration)).Bind(alertingConfiguration);
+        services.AddSingleton<IIndexingAlertingConfiguration>(alertingConfiguration);
         
         if (alertingConfiguration.Enabled)
         {

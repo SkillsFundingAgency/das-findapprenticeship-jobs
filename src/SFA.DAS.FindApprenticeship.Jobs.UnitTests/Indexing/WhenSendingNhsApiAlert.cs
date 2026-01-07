@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Indexing;
@@ -8,7 +7,6 @@ public class WhenSendingNhsApiAlert
 {
     [Test, MoqAutoData]
     public async Task SendNhsApiAlertAsync_Calls_The_Teams_Api(
-        [Frozen] IOptions<IndexingAlertingConfiguration> alertConfig,
         [Frozen] Mock<ITeamsClient> teamsClient,
         [Frozen] FunctionEnvironment environment,
         IndexingAlertsManager sut)
