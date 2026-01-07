@@ -1,6 +1,5 @@
 using Azure;
 using Azure.Core;
-using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,8 +9,6 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
-using SFA.DAS.Api.Common.Infrastructure;
-using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Encoding;
 using SFA.DAS.FindApprenticeship.Jobs.Application;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
@@ -66,11 +63,13 @@ var host = new HostBuilder()
             .AddPolicyHandler(_ => HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
-        
+
+        services.AddSingleton<TokenCredential>(sp =>
+            AzureCredentialFactory.BuildCredential(sp.GetRequiredService<IConfiguration>()));
+
         services.AddTransient<IApprenticeAzureSearchDocumentFactory, ApprenticeAzureSearchDocumentFactory>();
         services.AddTransient<IFindApprenticeshipJobsService, FindApprenticeshipJobsService>();
         services.AddTransient<IAzureSearchHelper, AzureSearchHelper>();
-        services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
         services.AddTransient<IIndexingAlertsManager, IndexingAlertsManager>();
         services.AddTransient<IRecruitIndexerJobHandler, RecruitIndexerJobHandler>();
         services.AddTransient<IIndexCleanupJobHandler, IndexCleanupJobHandler>();
@@ -112,17 +111,6 @@ var host = new HostBuilder()
                     return new HttpClientHandler();
                 }
 
-                var credentialOptions = new DefaultAzureCredentialOptions
-                {
-                    Retry =
-                    {
-                        NetworkTimeout = TimeSpan.FromSeconds(5),
-                        MaxRetries = 3,
-                        Mode = RetryMode.Exponential,
-                        Delay = TimeSpan.FromMilliseconds(200),
-                        MaxDelay = TimeSpan.FromSeconds(5)
-                    }
-                };
                 var secretClientOptions = new SecretClientOptions
                 {
                     Retry =
@@ -137,7 +125,7 @@ var host = new HostBuilder()
 
                 try
                 {
-                    var credential = new DefaultAzureCredential(credentialOptions);
+                    var credential = sp.GetRequiredService<TokenCredential>();
                     var secretClient = new SecretClient(new Uri(config.SecretClientUrl!), credential, secretClientOptions);
 
                     var secret = secretClient.GetSecret(config.SecretName!);
@@ -157,6 +145,10 @@ var host = new HostBuilder()
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "Unable to add client cert configuration");
+
+                    if (config.UseSecureGateway)
+                        throw;
+
                     return new HttpClientHandler();
                 }
             })
