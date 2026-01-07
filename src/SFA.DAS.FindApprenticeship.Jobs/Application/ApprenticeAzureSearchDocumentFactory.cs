@@ -1,5 +1,6 @@
 ﻿using Microsoft.Spatial;
 using SFA.DAS.Encoding;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
@@ -156,6 +157,7 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
                     var document = (ApprenticeAzureSearchDocument)vacancy;
                     document.Address = (AddressAzureSearchDocument)address;
                     document.IsPrimaryLocation = true;
+                    document.AvailableWhere = nameof(AvailableWhere.OneLocation);
                     if (address is {Latitude: not null, Longitude: not null})
                     {
                         document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
@@ -167,11 +169,13 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
                     var results = new List<ApprenticeAzureSearchDocument>();
                     var allLocations = new List<Address>();
 
-                    if (vacancy.Address is not null)
+                    if (vacancy.Address is not null && string.Equals(vacancy.Address.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
                         allLocations.Add(vacancy.Address);
 
                     if (vacancy.OtherAddresses.Count > 0)
-                        allLocations.AddRange(vacancy.OtherAddresses.DistinctBy(FlattenAddress));
+                        allLocations.AddRange(vacancy.OtherAddresses
+                            .Where(x => string.Equals(x.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                            .DistinctBy(FlattenAddress));
 
                     var count = 0;
                     foreach (var address in allLocations)
@@ -180,6 +184,9 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
                         document.Address = (AddressAzureSearchDocument)address;
                         document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
                         document.IsPrimaryLocation = count == 1;
+                        document.AvailableWhere = allLocations.Count > 1 
+                            ? nameof(AvailableWhere.MultipleLocations) 
+                            : nameof(AvailableWhere.OneLocation);
                         if (address.Latitude is not null && address.Longitude is not null)
                         {
                             document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
