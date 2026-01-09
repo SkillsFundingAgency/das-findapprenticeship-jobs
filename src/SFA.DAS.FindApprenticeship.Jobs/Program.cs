@@ -67,7 +67,7 @@ var host = new HostBuilder()
         }
         else
         {
-            services.AddHttpClient<ITeamsClient, NoLoggingTeamsClient>();
+            services.AddSingleton<ITeamsClient, NoLoggingTeamsClient>();
         }
         
         services.AddTransient<IApprenticeAzureSearchDocumentFactory, ApprenticeAzureSearchDocumentFactory>();
