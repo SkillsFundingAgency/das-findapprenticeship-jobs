@@ -1,5 +1,6 @@
 ﻿using Microsoft.Spatial;
 using SFA.DAS.Encoding;
+using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
@@ -8,6 +9,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Application;
 public interface IApprenticeAzureSearchDocumentFactory
 {
     IEnumerable<ApprenticeAzureSearchDocument> Create(LiveVacancy vacancy);
+    IEnumerable<ApprenticeAzureSearchDocument> Create(CsjVacancy vacancy);
 }
 
 public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingService): IApprenticeAzureSearchDocumentFactory
@@ -143,5 +145,66 @@ public class ApprenticeAzureSearchDocumentFactory(IEncodingService encodingServi
         ];
         
         return string.Join(",", lines.Where(x => !string.IsNullOrWhiteSpace(x))).ToLowerInvariant();
+    }
+
+    public IEnumerable<ApprenticeAzureSearchDocument> Create(CsjVacancy vacancy)
+    {
+        switch (vacancy.EmploymentLocationOption)
+        {
+            case AvailableWhere.OneLocation:
+                {
+                    var address = vacancy.Address;
+                    var document = (ApprenticeAzureSearchDocument)vacancy;
+                    document.Address = (AddressAzureSearchDocument)address;
+                    document.IsPrimaryLocation = true;
+                    document.AvailableWhere = nameof(AvailableWhere.OneLocation);
+                    if (address is {Latitude: not null, Longitude: not null})
+                    {
+                        document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
+                    }
+                    return [document];
+                }
+            case AvailableWhere.MultipleLocations:
+                {
+                    var results = new List<ApprenticeAzureSearchDocument>();
+                    var allLocations = new List<Address>();
+
+                    if (vacancy.Address is not null && string.Equals(vacancy.Address.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                        allLocations.Add(vacancy.Address);
+
+                    if (vacancy.OtherAddresses.Count > 0)
+                        allLocations.AddRange(vacancy.OtherAddresses
+                            .Where(x => string.Equals(x.Country, Constants.EnglandOnly, StringComparison.InvariantCultureIgnoreCase))
+                            .DistinctBy(FlattenAddress));
+
+                    var count = 0;
+                    foreach (var address in allLocations)
+                    {
+                        var document = (ApprenticeAzureSearchDocument)vacancy;
+                        document.Address = (AddressAzureSearchDocument)address;
+                        document.Id = count++ == 0 ? document.Id : $"{document.Id}-{count}";
+                        document.IsPrimaryLocation = count == 1;
+                        document.AvailableWhere = allLocations.Count > 1 
+                            ? nameof(AvailableWhere.MultipleLocations) 
+                            : nameof(AvailableWhere.OneLocation);
+                        if (address.Latitude is not null && address.Longitude is not null)
+                        {
+                            document.Location = GeographyPoint.Create(address.Latitude ?? 0.00, address.Longitude ?? 0.00);
+                        }
+                        document.OtherAddresses = allLocations.Except([address]).Select(OtherAddressAzureSearchDocument.From).ToList();
+                        results.Add(document);
+                    }
+                    return results;
+                }
+            case AvailableWhere.AcrossEngland:
+            case null:
+            default:
+                {
+                    var document = (ApprenticeAzureSearchDocument)vacancy;
+                    document.Address = vacancy.Address is not null ? (AddressAzureSearchDocument)vacancy.Address : null;
+                    document.IsPrimaryLocation = true;
+                    return [document];
+                }
+        }
     }
 }
