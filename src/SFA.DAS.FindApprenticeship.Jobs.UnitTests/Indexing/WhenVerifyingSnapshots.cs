@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Application.Services;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 
@@ -24,20 +23,15 @@ public class WhenVerifyingSnapshots
         long oldCount,
         long newCount,
         int messageCount,
-        Mock<FunctionEnvironment> environment,
-        Mock<IOptions<IndexingAlertingConfiguration>> alertConfig,
-        Mock<ITeamsClient> teamsClient)
+        [Frozen] Mock<FunctionEnvironment> environment,
+        [Frozen] Mock<IIndexingAlertingConfiguration> alertConfig,
+        [Frozen] Mock<ITeamsClient> teamsClient,
+        IndexingAlertsManager sut)
     {
         // arrange
         var oldStats = new IndexStatistics(oldCount);
         var newStats = new IndexStatistics(newCount);
-
-        alertConfig.Setup(x => x.Value).Returns(new IndexingAlertingConfiguration
-        {
-            TeamsAlertWebhookUrl = "",
-            DocumentDecreasePercentageThreshold = threshold
-        });
-        var sut = new IndexingAlertsManager(alertConfig.Object, environment.Object, teamsClient.Object, Mock.Of<ILogger<IndexingAlertsManager>>());
+        alertConfig.Setup(x => x.DocumentDecreasePercentageThreshold).Returns(threshold);
         
         // act
         await sut.VerifySnapshotsAsync(oldStats, newStats);
