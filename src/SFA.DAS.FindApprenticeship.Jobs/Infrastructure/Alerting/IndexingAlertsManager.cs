@@ -13,7 +13,7 @@ public interface IIndexingAlertsManager
 }
 
 public class IndexingAlertsManager(
-    IOptions<IndexingAlertingConfiguration> config,
+    IIndexingAlertingConfiguration config,
     FunctionEnvironment environment,
     ITeamsClient teamsClient,
     ILogger<IndexingAlertsManager> logger): IIndexingAlertsManager
@@ -90,7 +90,7 @@ public class IndexingAlertsManager(
         if (diff is not 0)
         {
             var change = countBefore is 0 ? 0 : (double)diff / countBefore * 100;
-            if (change <= -config.Value.DocumentDecreasePercentageThreshold)
+            if (change <= -config.DocumentDecreasePercentageThreshold)
             {
                 await SendAlertAsync(IndexThresholdBreachedMessage(Math.Abs((int)Math.Round(change))), cancellationToken);
             }    
