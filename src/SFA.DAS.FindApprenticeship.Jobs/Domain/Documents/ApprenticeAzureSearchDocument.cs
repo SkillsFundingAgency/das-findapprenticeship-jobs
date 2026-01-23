@@ -322,10 +322,10 @@ public class AddressAzureSearchDocument
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string? Postcode { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsFilterable = true)]
     public double Latitude { get; set; }
 
-    [SimpleField]
+    [SimpleField(IsFilterable = true)]
     public double Longitude { get; set; }
 
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
