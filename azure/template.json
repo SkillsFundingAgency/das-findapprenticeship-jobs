@@ -466,7 +466,6 @@
                 "[concat(variables('functionAppName'), '-', parameters('utcValue'))]"
             ]
         }
-
     ],
     "outputs": {
         "ResourceGroupName": {
