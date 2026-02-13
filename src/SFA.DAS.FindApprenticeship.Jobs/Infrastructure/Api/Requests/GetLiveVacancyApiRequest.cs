@@ -3,9 +3,9 @@
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 public class GetLiveVacancyApiRequest : IGetApiRequest
 {
-    private readonly long _vacancyReference;
+    private readonly string _vacancyReference;
 
-    public GetLiveVacancyApiRequest(long vacancyReference)
+    public GetLiveVacancyApiRequest(string vacancyReference)
     {
         _vacancyReference = vacancyReference;
     }

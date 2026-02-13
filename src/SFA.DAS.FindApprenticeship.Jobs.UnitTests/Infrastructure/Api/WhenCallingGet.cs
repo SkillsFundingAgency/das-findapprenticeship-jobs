@@ -7,9 +7,11 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Infrastructure.Api;
+
 public class WhenCallingGet
 {
     [Test, MoqAutoData]
@@ -38,7 +40,7 @@ public class WhenCallingGet
     }
 
     [Test, AutoData]
-    public async Task Then_If_It_Is_Not_Successful_An_Exception_Is_Thrown(
+    public async Task Then_If_It_Is_Not_Successful_Error_Content_Is_Returned(
     FindApprenticeshipJobsConfiguration config)
     {
         config.ApimBaseUrl = $"https://test.local/{config.ApimBaseUrl}/";

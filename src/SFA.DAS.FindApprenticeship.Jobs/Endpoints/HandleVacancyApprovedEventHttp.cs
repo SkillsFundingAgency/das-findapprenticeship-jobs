@@ -1,28 +1,15 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System.Net.Http;
 using System.Text.Json;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyApprovedEventHttp
+    public class HandleVacancyApprovedEventHttp(IVacancyApprovedHandler vacancyApprovedHandler, ILogger<HandleVacancyApprovedEventHttp> log)
     {
-        private readonly IVacancyApprovedHandler _vacancyApprovedHandler;
-
-        public HandleVacancyApprovedEventHttp(IVacancyApprovedHandler vacancyApprovedHandler)
+        [Function("HandleVacancyApprovedEventHttp")]
+        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
         {
-            _vacancyApprovedHandler = vacancyApprovedHandler;
-        }
-
-        [FunctionName("HandleVacancyApprovedEventHttp")]
-        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
-        {
-            log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function executed at {DateTime.UtcNow}");
+            log.LogInformation("HandleVacancyApprovedEvent HTTP trigger function executed at {DateTime}", DateTime.UtcNow);
 
             var command = await JsonSerializer.DeserializeAsync<VacancyApprovedEvent>(
                 await req.Content.ReadAsStreamAsync(),
@@ -35,8 +22,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                     nameof(req));
             }
 
-            await _vacancyApprovedHandler.Handle(command, log);
-            log.LogInformation($"HandleVacancyApprovedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+            await vacancyApprovedHandler.Handle(command);
+            log.LogInformation("HandleVacancyApprovedEvent HTTP trigger function finished at {DateTime}", DateTime.UtcNow);
         }
     }
 }

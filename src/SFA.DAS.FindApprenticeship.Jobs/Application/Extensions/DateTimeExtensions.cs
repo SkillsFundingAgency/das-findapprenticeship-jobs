@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.FindApprenticeship.Jobs.Application.Extensions
+﻿namespace SFA.DAS.FindApprenticeship.Jobs.Application.Extensions
 {
     public static class TimeSpanExtensions
     {

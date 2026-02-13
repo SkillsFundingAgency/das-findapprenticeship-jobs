@@ -1,17 +1,12 @@
-﻿using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NUnit.Framework;
+using SFA.DAS.FindApprenticeship.Jobs.Application;
 using SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Events;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Application.Handlers;
 
@@ -26,23 +21,29 @@ public class WhenHandlingVacancyApprovedEvent
         int programmeId,
         Response<ApprenticeAzureSearchDocument> document,
         Response<GetLiveVacancyApiResponse> liveVacancy,
-        [Frozen] Mock<IRecruitService> recruitService,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IApprenticeAzureSearchDocumentFactory> documentFactory,
         VacancyApprovedHandler sut)
     {
+        // arrange
         liveVacancy.Value.StandardLarsCode = programmeId;
 
-        recruitService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
-        azureSearchHelper.Setup(x => x.GetDocument(indexName, $"VAC{vacancyApprovedEvent.VacancyReference}")).ReturnsAsync(document);
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference)).ReturnsAsync(liveVacancy);
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => new SearchAlias(Constants.AliasName, new[] { indexName }));
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName)).ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
+        documentFactory.Setup(x => x.Create(liveVacancy)).Returns([document.Value]);
 
-        await sut.Handle(vacancyApprovedEvent, log);
+        // act
+        await sut.Handle(vacancyApprovedEvent);
 
-        azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
-                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d =>
-                    d.Single().VacancyReference == $"VAC{liveVacancy.Value.VacancyReference}")),
-            Times.Once());
+        // assert
+        azureSearchHelper.Verify(
+            x => x.UploadDocuments(indexName, 
+                It.Is<IEnumerable<ApprenticeAzureSearchDocument>>(d => d.Single() == document.Value)),
+            Times.Once()
+        );
     }
 
     [Test, MoqAutoData]
@@ -55,9 +56,38 @@ public class WhenHandlingVacancyApprovedEvent
         azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
             .ReturnsAsync(() => null);
 
-        await sut.Handle(vacancyApprovedEvent, log);
+        await sut.Handle(vacancyApprovedEvent);
 
         azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()),
             Times.Never());
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_The_Vacancy_With_OtherAddresses_Is_Uploaded_To_The_Index(
+        List<Address> otherAddresses,
+        ILogger log,
+        VacancyApprovedEvent vacancyApprovedEvent,
+        string indexName,
+        int programmeId,
+        GetLiveVacancyApiResponse liveVacancy,
+        List<ApprenticeAzureSearchDocument> azureSearchDocuments,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IApprenticeAzureSearchDocumentFactory> azureDocumentFactory,
+        VacancyApprovedHandler sut)
+    {
+        liveVacancy.EmploymentLocations = otherAddresses;
+        liveVacancy.StandardLarsCode = programmeId;
+
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyApprovedEvent.VacancyReference))
+            .ReturnsAsync(liveVacancy);
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(() => new SearchAlias(Constants.AliasName, [indexName]));
+        azureDocumentFactory.Setup(x=>x.Create(liveVacancy)).Returns(azureSearchDocuments);
+
+        await sut.Handle(vacancyApprovedEvent);
+
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.Is<string>(i => i == indexName),
+                azureSearchDocuments), Times.Once());
     }
 }

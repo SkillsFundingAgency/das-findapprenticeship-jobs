@@ -1,26 +1,28 @@
-﻿using Azure.Core.Serialization;
-using Azure.Search.Documents;
-using Azure;
-using System;
-using Azure.Search.Documents.Indexes;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using Azure.Search.Documents.Indexes.Models;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Azure;
+using Azure.Core.Serialization;
 using Azure.Identity;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Documents;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
+
+public record struct IndexStatistics(long DocumentCount);
+
 public class AzureSearchHelper : IAzureSearchHelper
 {
+    private readonly ILogger<AzureSearchHelper> _logger;
     private readonly SearchIndexClient _adminIndexClient;
     private readonly DefaultAzureCredential _azureKeyCredential;
     private readonly SearchClientOptions _clientOptions;
     private readonly Uri _endpoint;
 
-    public AzureSearchHelper(FindApprenticeshipJobsConfiguration configuration)
+    public AzureSearchHelper(FindApprenticeshipJobsConfiguration configuration, ILogger<AzureSearchHelper> logger)
     {
+        _logger = logger;
         _clientOptions = new SearchClientOptions
         {
             Serializer = new JsonObjectSerializer(new System.Text.Json.JsonSerializerOptions
@@ -53,6 +55,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when creating index with name {IndexName}", indexName);
             throw new RequestFailedException($"Failure returned when creating index with name {indexName}", ex);
         }
     }
@@ -70,6 +73,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when deleting index with name {IndexName}", indexName);
             throw new RequestFailedException($"Failure returned when deleting index with name {indexName}", ex);
         }
     }
@@ -83,7 +87,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when uploading documents to index", ex);
+            _logger.LogWarning(ex, "returned when uploading documents to index with name {IndexName}", indexName);
+            throw new RequestFailedException("Failure returned when uploading documents to index", ex);
         }
     }
 
@@ -95,10 +100,10 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when requesting index with name {IndexName}", indexName);
             throw new RequestFailedException($"Failure returned when requesting index with name {indexName}", ex);
         }
     }
-
 
     public async Task<List<SearchIndex>> GetIndexes()
     {
@@ -117,7 +122,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when requesting indexes", ex);
+            _logger.LogWarning(ex, "Failure returned when requesting indexes");
+            throw new RequestFailedException("Failure returned when requesting indexes", ex);
         }
     }
 
@@ -133,11 +139,12 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failure returned when requesting alias {AliasName}", aliasName);
             throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
         }
     }
 
-    public async Task<Response<ApprenticeAzureSearchDocument>> GetDocument(string indexName, string vacancyReference)
+    public async Task<Response<ApprenticeAzureSearchDocument>?> GetDocument(string indexName, string vacancyReference)
     {
         try
         {
@@ -146,8 +153,10 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when requesting document {vacancyReference}", ex);
+            _logger.LogWarning(ex, "Failure returned when requesting document {VacancyReference}", vacancyReference);
         }
+
+        return null;
     }
 
     public async Task UpdateAlias(string aliasName, string indexName)
@@ -163,16 +172,53 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task DeleteDocument(string indexName, string vacancyReference)
+    public async Task DeleteDocuments(string indexName, IEnumerable<string> ids)
     {
         try
         {
             var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
-            await searchClient.DeleteDocumentsAsync("VacancyReference", new []{ vacancyReference });
+            await searchClient.DeleteDocumentsAsync("Id", ids);
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when deleting document with reference {vacancyReference}", ex);
+            _logger.LogWarning(ex, $"Failure returned when deleting document(s) with reference(s) {string.Join(", ", ids)}");
+        }
+    }
+
+    public async Task<IndexStatistics?> GetAliasStatisticsAsync(string aliasName, CancellationToken cancellationToken = default)
+    {
+        var alias = await GetAlias(aliasName);
+        if (alias is not { Indexes.Count: > 0 })
+        {
+            return null;
+        }
+        
+        var indexName = alias.Indexes.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(indexName))
+        {
+            _logger.LogWarning("Alias {AliasName} appears not to point to an index", aliasName);
+            return null;
+        }
+
+        return await GetIndexStatisticsAsync(indexName, cancellationToken);
+    }
+
+    public async Task<IndexStatistics?> GetIndexStatisticsAsync(string indexName, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Getting index statistics for index {IndexName}", indexName);
+            var stats = await _adminIndexClient.GetIndexStatisticsAsync(indexName, cancellationToken);
+            if (stats is not null)
+            {
+                _logger.LogInformation("Document count={DocumentCount}, Storage size={StorageSize}", stats.Value.DocumentCount, stats.Value.StorageSize);
+            }
+            return stats == null ? null : new IndexStatistics(stats.Value.DocumentCount);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error fetching index '{IndexName}' statistics", indexName);
+            return null;
         }
     }
 }

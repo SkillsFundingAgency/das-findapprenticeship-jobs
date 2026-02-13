@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
-using System.Threading.Tasks;
+﻿using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using System.Text.Json;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
@@ -22,6 +20,28 @@ public abstract class ApiClientBase
 
         return await ProcessResponse<TResponse>(response);
     }
+    public async Task<ApiResponse<TResponse>> Post<TResponse>(IPostApiRequest request)
+    {
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
+        await AddAuthenticationHeader(requestMessage);
+
+        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+        return await ProcessResponse<TResponse>(response);
+    }
+
+    public async Task<ApiResponse<TResponse>> PostWithResponseCode<TResponse>(IPostApiRequestWithData request)
+    {
+        var stringContent = new StringContent(JsonSerializer.Serialize(request.Data), System.Text.Encoding.UTF8, "application/json");
+
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
+        requestMessage.Content = stringContent;
+        await AddAuthenticationHeader(requestMessage);
+
+        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+        return await ProcessResponse<TResponse>(response);
+    }
 
     protected abstract Task AddAuthenticationHeader(HttpRequestMessage httpRequestMessage);
 
@@ -36,7 +56,7 @@ public abstract class ApiClientBase
         {
             errorContent = json;
         }
-        else
+        else if (typeof(TResponse) != typeof(NullResponse))
         {
             responseBody = JsonSerializer.Deserialize<TResponse>
                 (json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });

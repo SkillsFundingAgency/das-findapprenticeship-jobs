@@ -1,26 +1,24 @@
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
+namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
+
+public class RecruitIndexerHttp(IRecruitIndexerJobHandler handler,
+    ILogger<RecruitIndexerHttp> log)
 {
-    public class RecruitIndexerHttp
+    [Function("RecruitIndexerHttp")]
+    public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest _,
+        CancellationToken cancellationToken)
     {
-        private readonly IRecruitIndexerJobHandler _handler;
-        public RecruitIndexerHttp(IRecruitIndexerJobHandler handler)
+        try
         {
-            _handler = handler;
+            log.LogInformation("Recruit Indexer HTTP function executed at: {UtcNow}", DateTime.UtcNow);
+            await handler.Handle(cancellationToken);
         }
-
-        [FunctionName("RecruitIndexerHttp")]
-        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req, ILogger log)
+        catch (Exception e)
         {
-            log.LogInformation($"Recruit Indexer HTTP function executed at: {DateTime.UtcNow}");
-            await _handler.Handle();
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

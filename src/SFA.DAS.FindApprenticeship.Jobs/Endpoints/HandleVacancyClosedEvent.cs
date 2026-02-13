@@ -1,29 +1,15 @@
-using System;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-using SFA.DAS.NServiceBus.AzureFunction.Attributes;
-using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System.Threading.Tasks;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
+using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyClosedEvent
+    public class HandleVacancyClosedEvent(IVacancyClosedHandler vacancyClosedHandler, ILogger<HandleVacancyClosedEvent> log) : IHandleMessages<VacancyClosedEvent>
     {
-        private readonly IVacancyClosedHandler _vacancyClosedHandler;
-
-        public HandleVacancyClosedEvent(IVacancyClosedHandler vacancyClosedHandler)
+        public async Task Handle(VacancyClosedEvent command,  IMessageHandlerContext context)
         {
-            _vacancyClosedHandler = vacancyClosedHandler;
-        }
-
-        [FunctionName("HandleVacancyClosedEvent")]
-        public async Task Run([NServiceBusTrigger(Endpoint = QueueNames.VacancyClosed)] VacancyClosedEvent command, ILogger log)
-        {
-            log.LogInformation($"NServiceBus VacancyClosed trigger function executed at {DateTime.UtcNow}");
-            await _vacancyClosedHandler.Handle(command, log);
-            log.LogInformation($"NServiceBus VacancyClosed trigger function finished at {DateTime.UtcNow}");
+            log.LogInformation("NServiceBus VacancyClosed trigger function executed at {DateTime}", DateTime.UtcNow);
+            await vacancyClosedHandler.Handle(command);
+            log.LogInformation("NServiceBus VacancyClosed trigger function finished at {DateTime}", DateTime.UtcNow);
         }
     }
 }

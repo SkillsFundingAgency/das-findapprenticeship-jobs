@@ -1,28 +1,15 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System.Net.Http;
 using System.Text.Json;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
 {
-    public class HandleVacancyClosedEventHttp
+    public class HandleVacancyClosedEventHttp(IVacancyClosedHandler vacancyClosedHandler, ILogger<HandleVacancyClosedEventHttp> log)
     {
-        private readonly IVacancyClosedHandler _vacancyClosedHandler;
-
-        public HandleVacancyClosedEventHttp(IVacancyClosedHandler vacancyClosedHandler)
+        [Function("HandleVacancyClosedEventHttp")]
+        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
         {
-            _vacancyClosedHandler = vacancyClosedHandler;
-        }
-
-        [FunctionName("HandleVacancyClosedEventHttp")]
-        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
-        {
-            log.LogInformation($"HandleVacancyClosedEvent HTTP trigger function executed at {DateTime.UtcNow}");
+            log.LogInformation("HandleVacancyClosedEvent HTTP trigger function executed at {DateTime}", DateTime.UtcNow);
 
             var command = await JsonSerializer.DeserializeAsync<VacancyClosedEvent>(
                 await req.Content.ReadAsStreamAsync(),
@@ -35,8 +22,8 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
                     nameof(req));
             }
 
-            await _vacancyClosedHandler.Handle(command, log);
-            log.LogInformation($"HandleVacancyClosedEvent HTTP trigger function finished at {DateTime.UtcNow}");
+            await vacancyClosedHandler.Handle(command);
+            log.LogInformation("HandleVacancyClosedEvent HTTP trigger function finished at {DateTime}", DateTime.UtcNow);
         }
     }
 }

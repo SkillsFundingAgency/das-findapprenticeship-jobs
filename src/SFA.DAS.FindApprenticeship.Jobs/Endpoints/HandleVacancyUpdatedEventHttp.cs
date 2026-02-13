@@ -1,42 +1,28 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
-using System.Net.Http;
 using System.Text.Json;
 using Esfa.Recruit.Vacancies.Client.Domain.Events;
 
-namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints
+namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
+
+public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdatedHandler, ILogger<HandleVacancyUpdatedEventHttp> log)
 {
-    public class HandleVacancyUpdatedEventHttp
+    [Function("HandleVacancyUpdatedEventHttp")]
+    public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
     {
-        private readonly IVacancyUpdatedHandler _vacancyUpdatedHandler;
+        log.LogInformation("HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime}", DateTime.UtcNow);
 
-        public HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdatedHandler)
+        var command = await JsonSerializer.DeserializeAsync<LiveVacancyUpdatedEvent>(
+            await req.Content.ReadAsStreamAsync(),
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        if (command == null || command.VacancyId == Guid.Empty)
         {
-            _vacancyUpdatedHandler = vacancyUpdatedHandler;
+            throw new ArgumentException(
+                $"HandleVacancyUpdatedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
+                nameof(req));
         }
 
-        [FunctionName("HandleVacancyUpdatedEventHttp")]
-        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req, ILogger log)
-        {
-            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime.UtcNow}");
-
-            var command = await JsonSerializer.DeserializeAsync<LiveVacancyUpdatedEvent>(
-                await req.Content.ReadAsStreamAsync(),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            if (command == null || command.VacancyId == Guid.Empty)
-            {
-                throw new ArgumentException(
-                    $"HandleVacancyUpdatedEvent HTTP trigger function found empty request at {DateTime.UtcNow}",
-                    nameof(req));
-            }
-
-            await _vacancyUpdatedHandler.Handle(command, log);
-            log.LogInformation($"HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime.UtcNow}");
-        }
+        await vacancyUpdatedHandler.Handle(command);
+        log.LogInformation("HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime}", DateTime.UtcNow);
     }
 }
