@@ -3,15 +3,9 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Configuration;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-public class OuterApiClient : ApiClientBase, IOuterApiClient
+public class OuterApiClient(HttpClient httpClient, IOptions<FindApprenticeshipJobsConfiguration> configuration) : ApiClientBase(httpClient), IOuterApiClient
 {
-    private readonly FindApprenticeshipJobsConfiguration _configuration;
-
-    public OuterApiClient(HttpClient httpClient, IOptions<FindApprenticeshipJobsConfiguration> configuration) : base(httpClient)
-    {
-        _configuration = configuration.Value;
-        httpClient.BaseAddress = new System.Uri(configuration.Value.ApimBaseUrl);
-    }
+    private readonly FindApprenticeshipJobsConfiguration _configuration = configuration.Value;
 
     protected override Task AddAuthenticationHeader(HttpRequestMessage httpRequestMessage)
     {
