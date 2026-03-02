@@ -353,6 +353,10 @@
                                     "value": "1"
                                 },
                                 {
+                                    "name": "WEBSITE_LOAD_USER_PROFILE",
+                                    "value": "1"
+                                },
+                                {
                                     "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
                                     "value": "[parameters('SharedServiceBusFqdn')]"
                                 }
