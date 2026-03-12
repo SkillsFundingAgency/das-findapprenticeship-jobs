@@ -13,7 +13,11 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
     public async Task<GetLiveVacanciesApiResponse> GetLiveVacancies(int pageNumber, int pageSize, DateTime? closingDate = null)
     {
         var liveVacancies = await apiClient.Get<GetLiveVacanciesApiResponse>(new GetLiveVacanciesApiRequest(pageNumber, pageSize, closingDate));
-        return liveVacancies.Body;
+        if (liveVacancies.StatusCode == HttpStatusCode.OK)
+        {
+            return liveVacancies.Body;    
+        }
+        throw new Exception($"Failed to get live vacancies: {liveVacancies.StatusCode} ex: {liveVacancies.ErrorContent}");
     }
 
     public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference)

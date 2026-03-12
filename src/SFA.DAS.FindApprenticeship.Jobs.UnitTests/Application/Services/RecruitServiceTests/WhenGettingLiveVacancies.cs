@@ -36,4 +36,19 @@ public class WhenGettingLiveVacancies
             actual.PageNo.Should().Be(pageNo);
         }
     }
+    [Test, MoqAutoData]
+    public void Then_The_Api_Is_Called_And_If_Error_Exception_Is_Returned(
+        int pageSize,
+        int pageNo,
+        [Frozen] Mock<IOuterApiClient> apiClient,
+        FindApprenticeshipJobsService service)
+    {
+        apiClient.Setup(x =>
+                x.Get<GetLiveVacanciesApiResponse>(
+                    It.Is<GetLiveVacanciesApiRequest>(c => c.GetUrl.Contains($"livevacancies?pageSize={pageSize}&pageNo={pageNo}"))))
+            .ReturnsAsync(new ApiResponse<GetLiveVacanciesApiResponse>(null!, HttpStatusCode.InternalServerError, "response-error"));
+
+        Assert.ThrowsAsync<Exception>(async() => await service.GetLiveVacancies(pageNo, pageSize));
+
+    }
 }
