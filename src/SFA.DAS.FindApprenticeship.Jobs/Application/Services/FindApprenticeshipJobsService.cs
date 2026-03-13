@@ -4,11 +4,12 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Candidate;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.SavedSearches;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
+using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Alerting;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests;
 using SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Responses;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Services;
-public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApprenticeshipJobsService
+public class FindApprenticeshipJobsService(IOuterApiClient apiClient, IIndexingAlertsManager indexingAlertsManager) : IFindApprenticeshipJobsService
 {
     public async Task<GetLiveVacanciesApiResponse> GetLiveVacancies(int pageNumber, int pageSize, DateTime? closingDate = null)
     {
@@ -17,7 +18,9 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient) : IFindApp
         {
             return liveVacancies.Body;    
         }
-        throw new Exception($"Failed to get live vacancies: {liveVacancies.StatusCode} ex: {liveVacancies.ErrorContent}");
+
+        await indexingAlertsManager.SendFaaImportAlertAsync();
+        throw new HttpRequestException($"Failed to get live vacancies: {liveVacancies.StatusCode} ex: {liveVacancies.ErrorContent}");
     }
 
     public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference)
