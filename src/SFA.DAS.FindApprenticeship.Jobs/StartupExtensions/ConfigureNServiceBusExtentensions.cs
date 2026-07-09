@@ -12,6 +12,12 @@ public static class ConfigureNServiceBusExtension
     {
         hostBuilder.UseNServiceBus((config, endpointConfiguration) =>
         {
+            endpointConfiguration.AdvancedConfiguration.AssemblyScanner().ScanFileSystemAssemblies = false;
+            endpointConfiguration.AdvancedConfiguration.CustomDiagnosticsWriter((diagnostics, _) =>
+            {
+                Console.WriteLine(diagnostics);
+                return Task.CompletedTask;
+            });
             endpointConfiguration.Transport.SubscriptionRuleNamingConvention = AzureRuleNameShortener.Shorten;
             
             endpointConfiguration.AdvancedConfiguration.EnableInstallers();
