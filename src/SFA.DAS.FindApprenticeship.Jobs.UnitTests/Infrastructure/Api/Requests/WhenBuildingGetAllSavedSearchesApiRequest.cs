@@ -10,7 +10,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.UnitTests.Infrastructure.Api.Requests
         {
             var actual = new GetSavedSearchesApiRequest(pageNumber, pageSize, lastRunDateTime, maxApprenticeshipSearchResultCount);
 
-            actual.GetUrl.Should().Be($"savedSearches?pageSize={pageSize}&pageNo={pageNumber}&lastRunDateTime={lastRunDateTime}&maxApprenticeshipSearchResultCount={maxApprenticeshipSearchResultCount}");
+            actual.GetUrl.Should().Be($"savedSearches?pageSize={pageSize}&pageNumber={pageNumber}&lastRunDateTime={lastRunDateTime}&maxApprenticeshipSearchResultCount={maxApprenticeshipSearchResultCount}");
         }
     }
 }
