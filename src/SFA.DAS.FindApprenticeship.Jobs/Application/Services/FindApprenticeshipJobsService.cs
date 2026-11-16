@@ -53,16 +53,18 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient, IIndexingA
 
     public async Task<GetCandidateSavedSearchesApiResponse> GetSavedSearches(int pageNumber,
         int pageSize,
-        string lastRunDateTime,
-        int maxApprenticeshipSearchResultCount = 5,
-        string sortOrder = "AgeDesc")
+        string lastRunDateTime)
     {
         var savedSearches = await apiClient.Get<GetCandidateSavedSearchesApiResponse>(new GetSavedSearchesApiRequest(
             pageNumber,
             pageSize,
-            lastRunDateTime,
-            maxApprenticeshipSearchResultCount));
+            lastRunDateTime));
         return savedSearches.Body;
+    }
+
+    public async Task DeleteSavedSearchesAsync(IEnumerable<Guid> ids)
+    {
+        await apiClient.PostWithResponseCode<NullResponse>(new PostDeleteSavedSearchesRequest(ids));
     }
 
     public async Task SendSavedSearchNotification(SavedSearchCandidateVacancies savedSearchCandidateVacancies)

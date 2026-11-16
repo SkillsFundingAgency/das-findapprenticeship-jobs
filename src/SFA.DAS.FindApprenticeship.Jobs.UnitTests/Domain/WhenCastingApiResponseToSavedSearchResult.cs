@@ -10,6 +10,6 @@ public class WhenCastingApiResponseToSavedSearchResult
     {
         var actual = (SavedSearchResult)source;
 
-        actual.Should().BeEquivalentTo(source);
+        actual.Should().BeEquivalentTo(source, options => options.Excluding(x => x.HasInvalidSearchParameters));
     }
 }
