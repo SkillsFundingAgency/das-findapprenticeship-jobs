@@ -19,12 +19,11 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
     {
         const int pageNumber = 1;
         const int pageSize = 1000;
-        const int maxApprenticeshipSearchResultCount = 5;
-        const string sortOrder = "AgeDesc";
 
         dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
         var expectedRunDate = currentDateTime.AddDays(-7);
-            
+        
+        mockSavedSearchResult.ForEach(x => x.HasInvalidSearchParameters = false);
             
         var mockGetSavedSearchesApiResponse = new GetCandidateSavedSearchesApiResponse
         {
@@ -36,11 +35,11 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
         };
 
         findApprenticeShipJobsService.Setup(x =>
-                x.GetSavedSearches(pageNumber, pageSize, expectedRunDate.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder))
+                x.GetSavedSearches(pageNumber, pageSize, expectedRunDate.ToString("O")))
             .ReturnsAsync(mockGetSavedSearchesApiResponse);
             
         findApprenticeShipJobsService.Setup(x =>
-                x.GetSavedSearches(2, pageSize, expectedRunDate.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder))
+                x.GetSavedSearches(2, pageSize, expectedRunDate.ToString("O")))
             .ReturnsAsync(new GetCandidateSavedSearchesApiResponse
             {
                 SavedSearchResults = [],
@@ -67,15 +66,19 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
         DateTime currentDateTime,
         GetAllCandidatesWithSavedSearchesHandler sut)
     {
+        // arrange
         const int pageNumber = 1;
         const int pageSize = 1000;
-        const int maxApprenticeshipSearchResultCount = 5;
-        const string sortOrder = "AgeDesc";
 
-        dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
+        dateTimeService
+            .Setup(x => x.GetCurrentDateTime())
+            .Returns(currentDateTime);
+        
         var expectedRunDate = currentDateTime.AddDays(-7);
-            
-            
+        
+        mockSavedSearchResult.ForEach(x => x.HasInvalidSearchParameters = false);
+        mockSavedSearchResult2.ForEach(x => x.HasInvalidSearchParameters = false);
+
         var mockGetSavedSearchesApiResponse = new GetCandidateSavedSearchesApiResponse
         {
             SavedSearchResults = mockSavedSearchResult,
@@ -86,11 +89,11 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
         };
 
         findApprenticeShipJobsService.Setup(x =>
-                x.GetSavedSearches(pageNumber, pageSize, expectedRunDate.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder))
+                x.GetSavedSearches(pageNumber, pageSize, expectedRunDate.ToString("O")))
             .ReturnsAsync(mockGetSavedSearchesApiResponse);
             
         findApprenticeShipJobsService.Setup(x =>
-                x.GetSavedSearches(2, pageSize, expectedRunDate.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder))
+                x.GetSavedSearches(2, pageSize, expectedRunDate.ToString("O")))
             .ReturnsAsync(new GetCandidateSavedSearchesApiResponse
             {
                 SavedSearchResults = mockSavedSearchResult2,
@@ -99,7 +102,7 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
                 TotalPages = 3
             });
         findApprenticeShipJobsService.Setup(x =>
-                x.GetSavedSearches(3, pageSize, expectedRunDate.ToString("O"), maxApprenticeshipSearchResultCount, sortOrder))
+                x.GetSavedSearches(3, pageSize, expectedRunDate.ToString("O")))
             .ReturnsAsync(new GetCandidateSavedSearchesApiResponse
             {
                 SavedSearchResults = [],
@@ -108,8 +111,10 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
                 TotalPages = 2
             });
 
+        // act
         var result = await sut.Handle();
 
+        // assert
         using (new AssertionScope())
         {
             var results = mockSavedSearchResult;
@@ -118,5 +123,52 @@ public class WhenHandlingGetAllCandidatesWithSavedSearchesHandler
             result.Should().BeEquivalentTo(results.Select(c=>(SavedSearchResult)c).ToList(), options=> options.Excluding(c=>c.LastRunDate));
             result.TrueForAll(c => c.LastRunDate == expectedRunDate).Should().BeTrue();
         }
+    }
+
+    [Test, MoqAutoData]
+    public async Task Then_Saved_Searches_With_Invalid_Search_Parameters_Are_Deleted(
+        List<GetCandidateSavedSearchesApiResponse.SavedSearchResult> mockSavedSearchResult,
+        [Frozen] Mock<IFindApprenticeshipJobsService> faaJobService,
+        [Frozen] Mock<IDateTimeService> dateTimeService,
+        DateTime currentDateTime,
+        [Greedy] GetAllCandidatesWithSavedSearchesHandler sut)
+    {
+        // arrange
+        dateTimeService.Setup(x => x.GetCurrentDateTime()).Returns(currentDateTime);
+        var expectedRunDate = currentDateTime.AddDays(-7);
+        
+        mockSavedSearchResult.ForEach(x => x.HasInvalidSearchParameters = false);
+        mockSavedSearchResult[1].HasInvalidSearchParameters = true;
+            
+        var mockGetSavedSearchesApiResponse = new GetCandidateSavedSearchesApiResponse
+        {
+            SavedSearchResults = mockSavedSearchResult,
+            PageIndex = 1,
+            TotalCount = mockSavedSearchResult.Count,
+            PageSize = mockSavedSearchResult.Count,
+            TotalPages = 1
+        };
+
+        faaJobService
+            .Setup(x => x.GetSavedSearches(1, 1000, expectedRunDate.ToString("O")))
+            .ReturnsAsync(mockGetSavedSearchesApiResponse);
+
+        faaJobService
+            .Setup(x => x.GetSavedSearches(2, 1000, expectedRunDate.ToString("O")))
+            .ReturnsAsync(new GetCandidateSavedSearchesApiResponse { SavedSearchResults = [], PageIndex = 2, TotalCount = 3, TotalPages = 1 });
+
+        IEnumerable<Guid>? capturedIds = null;
+        faaJobService
+            .Setup(x => x.DeleteSavedSearchesAsync(It.IsAny<IEnumerable<Guid>>()))
+            .Callback<IEnumerable<Guid>>(x => capturedIds = x)
+            .Returns(Task.CompletedTask);
+
+        // act
+        var result = await sut.Handle();
+
+        // assert
+        result.Count.Should().Be(mockSavedSearchResult.Count - 1);
+        capturedIds.Should().NotBeNull();
+        capturedIds.Should().BeEquivalentTo([mockSavedSearchResult[1].Id]);
     }
 }

@@ -62,6 +62,9 @@ public class GetCandidateSavedSearchesApiResponse
 
         [JsonPropertyName("selectedApprenticeshipTypes")]
         public List<ApprenticeshipTypes>? SelectedApprenticeshipTypes { get; set; }
+
+        [JsonPropertyName("hasInvalidSearchParameters")]
+        public bool HasInvalidSearchParameters { get; set; }
     }
 
 }

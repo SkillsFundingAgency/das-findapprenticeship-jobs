@@ -12,13 +12,11 @@ public class WhenGetSavedSearches
         int pageNumber,
         int pageSize,
         string lastRunDateTime,
-        int maxApprenticeshipSearchResultCount,
-        string sortOrder,
         GetCandidateSavedSearchesApiResponse apiResponse,
         [Frozen] Mock<IOuterApiClient> outerApiClient,
         FindApprenticeshipJobsService service)
     {
-        var apiRequest = new GetSavedSearchesApiRequest(pageNumber, pageSize, lastRunDateTime,maxApprenticeshipSearchResultCount);
+        var apiRequest = new GetSavedSearchesApiRequest(pageNumber, pageSize, lastRunDateTime);
         outerApiClient
             .Setup(x => x.Get<GetCandidateSavedSearchesApiResponse>(
                 It.Is<GetSavedSearchesApiRequest>(c => 
@@ -26,7 +24,7 @@ public class WhenGetSavedSearches
                 )
             )).ReturnsAsync(new ApiResponse<GetCandidateSavedSearchesApiResponse>(apiResponse, HttpStatusCode.OK, ""));
         
-        var actual = await service.GetSavedSearches(pageNumber, pageSize, lastRunDateTime, maxApprenticeshipSearchResultCount, sortOrder);
+        var actual = await service.GetSavedSearches(pageNumber, pageSize, lastRunDateTime);
 
         actual.Should().BeEquivalentTo(apiResponse);
     }

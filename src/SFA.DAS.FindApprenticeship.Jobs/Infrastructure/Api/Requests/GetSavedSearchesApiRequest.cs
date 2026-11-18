@@ -2,13 +2,8 @@
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure.Api.Requests
 {
-    public class GetSavedSearchesApiRequest : IGetApiRequest
+    public class GetSavedSearchesApiRequest(int? pageNumber, int? pageSize, string? lastRunDateTime) : IGetApiRequest
     {
-        public GetSavedSearchesApiRequest(int? pageNumber, int? pageSize, string? lastRunDateTime, int? maxApprenticeshipSearchResultCount)
-        {
-            GetUrl = $"savedSearches?pageSize={pageSize}&pageNumber={pageNumber}&lastRunDateTime={lastRunDateTime}&maxApprenticeshipSearchResultCount={maxApprenticeshipSearchResultCount}"; 
-        }
-
-        public string GetUrl { get; }
+        public string GetUrl { get; } = $"savedSearches?pageSize={pageSize}&pageNumber={pageNumber}&lastRunDateTime={lastRunDateTime}";
     }
 }
