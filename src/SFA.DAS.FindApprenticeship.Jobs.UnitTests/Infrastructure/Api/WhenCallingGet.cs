@@ -89,6 +89,35 @@ public class WhenCallingGet
         actual.Body.Should().BeNull();
     }
 
+    [Test, AutoData]
+    public async Task Then_If_A_Successful_Response_Has_No_Body_Default_Is_Returned(
+        FindApprenticeshipJobsConfiguration config)
+    {
+        // Arrange
+        config.ApimBaseUrl = $"https://test.local/{config.ApimBaseUrl}/";
+        var configMock = new Mock<IOptions<FindApprenticeshipJobsConfiguration>>();
+        configMock.Setup(x => x.Value).Returns(config);
+        var getTestRequest = new GetTestRequest();
+        var response = new HttpResponseMessage
+        {
+            Content = new StringContent("  "),
+            StatusCode = HttpStatusCode.OK
+        };
+
+        var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.ApimBaseUrl + getTestRequest.GetUrl, config.ApimKey, HttpMethod.Get);
+        var client = new HttpClient(httpMessageHandler.Object)
+        {
+            BaseAddress = new Uri(config.ApimBaseUrl)
+        };
+        var apiClient = new OuterApiClient(client, configMock.Object);
+
+        // Act
+        var actual = await apiClient.Get<List<string>>(getTestRequest);
+
+        // Assert
+        actual.Body.Should().BeNull();
+    }
+
     private class GetTestRequest : IGetApiRequest
     {
         public GetTestRequest()

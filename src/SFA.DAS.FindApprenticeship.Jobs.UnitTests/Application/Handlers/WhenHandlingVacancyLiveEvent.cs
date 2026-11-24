@@ -63,6 +63,29 @@ public class WhenHandlingVacancyLiveEvent
     }
 
     [Test, MoqAutoData]
+    public async Task Then_The_Event_Is_Ignored_If_The_Vacancy_Is_Not_Found(
+        VacancyLiveEvent vacancyLiveEvent,
+        string indexName,
+        [Frozen] Mock<IFindApprenticeshipJobsService> findApprenticeshipJobsService,
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+        [Frozen] Mock<IApprenticeAzureSearchDocumentFactory> documentFactory,
+        VacancyLiveHandler sut)
+    {
+        // Arrange
+        azureSearchHelper.Setup(x => x.GetAlias(Constants.AliasName))
+            .ReturnsAsync(new SearchAlias(Constants.AliasName, [indexName]));
+        findApprenticeshipJobsService.Setup(x => x.GetLiveVacancy(vacancyLiveEvent.VacancyReference))
+            .ReturnsAsync((GetLiveVacancyApiResponse?)null);
+
+        // Act
+        await sut.Handle(vacancyLiveEvent);
+
+        // Assert
+        documentFactory.Verify(x => x.Create(It.IsAny<LiveVacancy>()), Times.Never());
+        azureSearchHelper.Verify(x => x.UploadDocuments(It.IsAny<string>(), It.IsAny<IEnumerable<ApprenticeAzureSearchDocument>>()), Times.Never());
+    }
+
+    [Test, MoqAutoData]
     public async Task Then_The_Vacancy_With_OtherAddresses_Is_Uploaded_To_The_Index(
         List<Address> otherAddresses,
         ILogger log,

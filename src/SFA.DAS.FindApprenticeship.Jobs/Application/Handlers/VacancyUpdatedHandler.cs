@@ -4,13 +4,11 @@ using SFA.DAS.FindApprenticeship.Jobs.Domain.Handlers;
 using SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Application.Handlers;
-public class VacancyUpdatedHandler(
-    IAzureSearchHelper azureSearchHelper,
+public class VacancyUpdatedHandler(IAzureSearchHelper azureSearchHelper,
     IFindApprenticeshipJobsService findApprenticeshipJobsService,
     ILogger<VacancyUpdatedHandler> log)
     : IVacancyUpdatedHandler
 {
-
     public async Task Handle(LiveVacancyUpdatedEvent vacancyUpdatedEvent)
     {
         var vacancyReferenceIds = new List<string>();
@@ -27,7 +25,15 @@ public class VacancyUpdatedHandler(
         }
 
         var updatedVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyUpdatedEvent.VacancyReference);
+
+        if(updatedVacancy is null)
+        {
+            log.LogWarning("Unable to update live vacancy reference {VacancyReference} - either vacancy not found or vacancy not live", vacancyUpdatedEvent.VacancyReference);
+            return;
+        }
+
         vacancyReferenceIds.Add(updatedVacancy.Id);
+
         // TODO - ADDRESSES!!
         if (updatedVacancy.OtherAddresses is {Count: > 0})
         {
