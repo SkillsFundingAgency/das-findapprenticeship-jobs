@@ -6,14 +6,14 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Endpoints;
 
 public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdatedHandler, ILogger<HandleVacancyUpdatedEventHttp> log)
 {
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     [Function("HandleVacancyUpdatedEventHttp")]
     public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestMessage req)
     {
         log.LogInformation("HandleVacancyUpdatedEvent HTTP trigger function executed at {DateTime}", DateTime.UtcNow);
 
-        var command = await JsonSerializer.DeserializeAsync<LiveVacancyUpdatedEvent>(
-            await req.Content.ReadAsStreamAsync(),
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var command = await JsonSerializer.DeserializeAsync<LiveVacancyUpdatedEvent>(await req.Content?.ReadAsStreamAsync()!, JsonOptions);
 
         if (command == null || command.VacancyId == Guid.Empty)
         {
@@ -23,6 +23,7 @@ public class HandleVacancyUpdatedEventHttp(IVacancyUpdatedHandler vacancyUpdated
         }
 
         await vacancyUpdatedHandler.Handle(command);
+
         log.LogInformation("HandleVacancyUpdatedEvent HTTP trigger function finished at {DateTime}", DateTime.UtcNow);
     }
 }

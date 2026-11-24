@@ -16,17 +16,25 @@ public class FindApprenticeshipJobsService(IOuterApiClient apiClient, IIndexingA
         var liveVacancies = await apiClient.Get<GetLiveVacanciesApiResponse>(new GetLiveVacanciesApiRequest(pageNumber, pageSize, closingDate));
         if (liveVacancies.StatusCode == HttpStatusCode.OK)
         {
-            return liveVacancies.Body;    
+            return liveVacancies.Body;
         }
 
         await indexingAlertsManager.SendFaaImportAlertAsync();
         throw new HttpRequestException($"Failed to get live vacancies: {liveVacancies.StatusCode} ex: {liveVacancies.ErrorContent}");
     }
 
-    public async Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference)
+    public async Task<GetLiveVacancyApiResponse?> GetLiveVacancy(VacancyReference vacancyReference)
     {
-        var liveVacancy = await apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference.ToShortString()));
-        return liveVacancy.Body;
+        var response = await apiClient.Get<GetLiveVacancyApiResponse>(new GetLiveVacancyApiRequest(vacancyReference.ToShortString()));
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        return response.StatusCode != HttpStatusCode.OK ?
+            throw new HttpRequestException($"Failed to get live vacancy: {response.StatusCode} ex: {response.ErrorContent}") 
+            : response.Body;
     }
 
     public async Task<GetNhsLiveVacanciesApiResponse?> GetNhsLiveVacancies()

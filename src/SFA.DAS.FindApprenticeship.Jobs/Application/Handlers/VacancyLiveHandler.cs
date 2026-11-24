@@ -19,6 +19,12 @@ public class VacancyLiveHandler(
         var indexName = alias?.Indexes.FirstOrDefault();
 
         var liveVacancy = await findApprenticeshipJobsService.GetLiveVacancy(vacancyLiveEvent.VacancyReference);
+        if (liveVacancy is null)
+        {
+            log.LogWarning("Unable to update live vacancy reference {VacancyReference} - either vacancy not found or vacancy not live", vacancyLiveEvent.VacancyReference);
+            return;
+        }
+
         if (!string.IsNullOrEmpty(indexName))
         {
             var documents = documentFactory.Create(liveVacancy);

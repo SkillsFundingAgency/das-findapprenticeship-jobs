@@ -2,30 +2,24 @@
 using System.Text.Json;
 
 namespace SFA.DAS.FindApprenticeship.Jobs.Infrastructure;
-public abstract class ApiClientBase
+public abstract class ApiClientBase(HttpClient httpClient)
 {
-    private readonly HttpClient _httpClient;
-
-    protected ApiClientBase(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-
     public async Task<ApiResponse<TResponse>> Get<TResponse>(IGetApiRequest request)
     {
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, request.GetUrl);
         await AddAuthenticationHeader(requestMessage);
 
-        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+        var response = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
         return await ProcessResponse<TResponse>(response);
     }
+
     public async Task<ApiResponse<TResponse>> Post<TResponse>(IPostApiRequest request)
     {
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
         await AddAuthenticationHeader(requestMessage);
 
-        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+        var response = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
         return await ProcessResponse<TResponse>(response);
     }
@@ -38,7 +32,7 @@ public abstract class ApiClientBase
         requestMessage.Content = stringContent;
         await AddAuthenticationHeader(requestMessage);
 
-        var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+        var response = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
         return await ProcessResponse<TResponse>(response);
     }
@@ -56,7 +50,7 @@ public abstract class ApiClientBase
         {
             errorContent = json;
         }
-        else if (typeof(TResponse) != typeof(NullResponse))
+        else if (typeof(TResponse) != typeof(NullResponse) && !string.IsNullOrWhiteSpace(json))
         {
             responseBody = JsonSerializer.Deserialize<TResponse>
                 (json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });

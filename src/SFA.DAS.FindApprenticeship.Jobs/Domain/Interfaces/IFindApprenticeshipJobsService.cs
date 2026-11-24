@@ -7,7 +7,7 @@ namespace SFA.DAS.FindApprenticeship.Jobs.Domain.Interfaces;
 public interface IFindApprenticeshipJobsService
 {
     Task<GetLiveVacanciesApiResponse> GetLiveVacancies(int pageNumber, int pageSize, DateTime? closingDate = null);
-    Task<GetLiveVacancyApiResponse> GetLiveVacancy(VacancyReference vacancyReference);
+    Task<GetLiveVacancyApiResponse?> GetLiveVacancy(VacancyReference vacancyReference);
     Task<GetNhsLiveVacanciesApiResponse?> GetNhsLiveVacancies();
     Task<GetCivilServiceLiveVacanciesApiResponse?> GetCivilServiceLiveVacancies();
     Task SendApplicationClosingSoonReminder(VacancyReference vacancyReference, int daysUntilExpiry);
